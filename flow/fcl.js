@@ -10,10 +10,10 @@ export function useFlow(config) {
   useEffect(() => {
     fcl.config({
       "env": "local",
-      "accessNode.api": "http://localhost:8888", // FIXME: works with :8080
+      "accessNode.api": "http://localhost:8080", // FIXME: works with :8080, but should work with :8888
       "discovery.wallet": "http://localhost:8701/fcl/authn",
-      "0xTOKENADDRESS": "0xf8d6e0586b0a20c7",
-      "0xFUNGIBLETOKENADDRESS": "0xf8d6e0586b0a20c7",
+      "0xTOKENADDRESS": "0x0ae53cb6e3f42a79",
+      "0xFUNGIBLETOKENADDRESS": "0xee82856bf20e2aa6",
       ...config
     })
   }, [config])
@@ -22,12 +22,14 @@ export function useFlow(config) {
   async function sendTransaction(cadence, args) {
     const transactionId = await fcl.mutate({
       cadence,
-      args,
+      args: (arg, t) => args,
       payer: fcl.authz,
       proposer: fcl.authz,
       authorizations: [fcl.authz],
       limit: 50,
     });
+
+    console.log("sending: ", transactionId)
 
     return {
       transactionId,

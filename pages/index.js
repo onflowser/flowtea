@@ -10,8 +10,8 @@ export default function Home () {
 
   function sendFlowTx() {
     sendTransaction(sendFlowTxCode, [
-      fcl.arg(1, t.UFix64),
-      fcl.arg('0xf8d6e0586b0a20c7', t.String),
+      fcl.arg(`1.0`, t.UFix64),
+      fcl.arg('0xf8d6e0586b0a20c7', t.Address),
     ]).then(console.log)
   }
 
