@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import * as fcl from '@onflow/fcl';
-import { toast } from 'react-hot-toast';
+import transferFlowCode from "./transactions/transfer-flow.cdc";
+import getFlowBalanceCode from "./scripts/get-flow-balance.cdc";
+import * as t from "@onflow/types";
 
 export function useFlow(config) {
   const [user, setUser] = useState({ loggedIn: null });
@@ -12,12 +14,28 @@ export function useFlow(config) {
       "env": "local",
       "accessNode.api": "http://localhost:8080", // FIXME: works with :8080, but should work with :8888
       "discovery.wallet": "http://localhost:8701/fcl/authn",
-      "0xTOKENADDRESS": "0x0ae53cb6e3f42a79",
+      "0xFLOWTOKENADDRESS": "0x0ae53cb6e3f42a79",
       "0xFUNGIBLETOKENADDRESS": "0xee82856bf20e2aa6",
       ...config
     })
   }, [config])
   useEffect(() => fcl.currentUser().subscribe(setUser), []);
+
+  async function getFlowBalance(address) {
+    return fcl.send([
+      fcl.script(getFlowBalanceCode),
+      fcl.args([
+        fcl.arg(address, t.Address),
+      ])
+    ]).then(fcl.decode)
+  }
+
+  function transferFlow(amount, receiverAddress) {
+    return sendTransaction(transferFlowCode, [
+      fcl.arg(amount, t.UFix64),
+      fcl.arg(receiverAddress, t.Address),
+    ])
+  }
 
   async function sendTransaction(cadence, args) {
     const transactionId = await fcl.mutate({
@@ -29,8 +47,6 @@ export function useFlow(config) {
       limit: 50,
     });
 
-    console.log("sending: ", transactionId)
-
     return {
       transactionId,
       status: await fcl.tx(transactionId).onceSealed(),
@@ -40,12 +56,8 @@ export function useFlow(config) {
   async function logout() {
     setLoggingOut(true);
     try {
-      await fcl.unauthenticate();
-      toast('Logged out!');
-    } catch (e) {
-      console.log(e);
-      toast.error(`Logout failed: ${e.message}`);
-    } finally {
+      return fcl.unauthenticate();
+    }  finally {
       setLoggingOut(false);
     }
   }
@@ -53,12 +65,7 @@ export function useFlow(config) {
   async function login() {
     setLoggingIn(true);
     try {
-      const result = await fcl.authenticate();
-      if (result.loggedIn) {
-        toast('Logged in!');
-      }
-    } catch (e) {
-      toast.error(`Login failed: ${e.message}`);
+      return fcl.authenticate();
     } finally {
       setLoggingIn(false);
     }
@@ -71,6 +78,9 @@ export function useFlow(config) {
     isLoggingIn,
     isLoggingOut,
     isLoggedIn: user.loggedIn,
-    sendTransaction,
+    tx: {
+      transferFlow,
+      getFlowBalance
+    }
   };
 }
