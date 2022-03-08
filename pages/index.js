@@ -1,62 +1,31 @@
-import * as fcl from "@onflow/fcl";
-import { useState } from "react";
-
-
-fcl.config({
-  // "env": "local",
-  "env": "testnet",
-  "accessNode.api": "http://localhost:8080",
-  // "accessNode.api": "https://access-testnet.onflow.org",
-  "discovery.wallet": "http://localhost:8701/fcl/authn", // Endpoint set to Testnet
-  // "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn", // Endpoint set to Testnet
-  "app.detail.title": "Support #onflow",
-})
+import { useFlow } from "../flow/fcl";
+import * as t from "@onflow/types"
+import * as fcl from "@onflow/fcl"
+import sendFlowTxCode from "../flow/transactions/send-flow.cdc";
 
 export default function Home () {
-  const [auth, setAuth] = useState();
+  const {isLoggedIn, user, login, logout, sendTransaction} = useFlow({
+    "app.detail.title": "Support on Flow",
+  })
 
-  function login () {
-    fcl.authenticate().then(setAuth)
-  }
-
-  function logout () {
-    fcl.currentUser().unauthenticate();
-  }
-
-  async function sendTx () {
-    const response = await fcl.send([
-      fcl.transaction`
-    transaction {
-      prepare(acct: AuthAccount) {
-        log("Hello from prepare")
-      }
-      execute {
-        log("Hello from execute")
-      }
-    }
-  `,
-      fcl.proposer(fcl.currentUser().authorization),
-      fcl.authorizations([
-        fcl.currentUser().authorization,
-      ]),
-      fcl.payer(fcl.currentUser().authorization),
-    ])
-
-    const transaction = await fcl.tx(response).onceSealed()
-    console.log(transaction)
+  function sendFlowTx() {
+    sendTransaction(sendFlowTxCode, [
+      fcl.arg(1, t.UFix64),
+      fcl.arg('0xf8d6e0586b0a20c7', t.String),
+    ]).then(console.log)
   }
 
   return (
     <div>
-      {auth ? `Address: ${auth.addr}` : 'Please sign in'}
+      {isLoggedIn ? `Address: ${user.addr}` : 'Please sign in'}
       <main>
-        {auth ? (
+        {isLoggedIn ? (
           <>
             <button onClick={logout}>Logout</button>
-            <button onClick={sendTx}>Send</button>
+            <button onClick={sendFlowTx}>Send</button>
           </>
         ) : <button onClick={login}>Login</button>}
-        {auth && <pre>{JSON.stringify(auth, null, 4)}</pre>}
+        {isLoggedIn && <pre>{JSON.stringify(user, null, 4)}</pre>}
       </main>
     </div>
   )
