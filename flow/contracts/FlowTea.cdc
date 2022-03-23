@@ -8,25 +8,32 @@ pub contract FlowTea {
     // service owner wallet, receives fee payments
     // access(contract) let ownerWallet: Capability<&{FungibleToken.Receiver}>
 
-    pub event Donation(from: Address, to: Address, message: String, recurring: Bool)
+    pub event Donation(from: Address, to: Address, amount: UFix64, message: String, recurring: Bool)
 
-    pub fun donate(fromVault: @FungibleToken.Vault, fromAddress: Address, toAddress: Address, message: String, recurring: Bool) {
-        // Get a reference to the recipient's Receiver
+    pub fun donate(vaultRef: &FungibleToken.Vault, amount: UFix64, fromAddress: Address, toAddress: Address, message: String, recurring: Bool) {
+        // calculate fee amount - predefined percentage of the total amount
+        let feeAmount = amount / self.fee
+        // withdraw tokens to temporary vaults
+        let donationVault <- vaultRef.withdraw(amount: amount)
+        let feeVault <- vaultRef.withdraw(amount: feeAmount)
+
+        // get a reference to the recipient's Receiver
         let receiverRef =  getAccount(toAddress)
             .getCapability(/public/flowTokenReceiver)
             .borrow<&{FungibleToken.Receiver}>()
                ?? panic("Could not borrow receiver reference to the recipient's Vault")
 
-        // Deposit the withdrawn tokens in the recipient's receiver
-        receiverRef.deposit(from: <-fromVault)
+        // deposit donation in the recipient wallet
+        receiverRef.deposit(from: <-donationVault)
+        // deposit fee to the service owner wallet
+        receiverRef.deposit(from: <-feeVault)
 
-        emit Donation(from: fromAddress, to: toAddress, message: message, recurring: recurring)
+        emit Donation(from: fromAddress, to: toAddress, amount: amount, message: message, recurring: recurring)
     }
 
     // TODO: add argument fee: UFix64
     // TODO: initialise owner wallet
-    // TODO: add fee split logic
     init() {
-        self.fee = 10.0
+        self.fee = 2.0
     }
 }

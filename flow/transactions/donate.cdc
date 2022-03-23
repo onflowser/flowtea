@@ -12,21 +12,20 @@ import FlowTea from 0xf8d6e0586b0a20c7
 transaction(message: String, amount: UFix64, to: Address) {
 
     // The Vault resource that holds the tokens that are being transferred
-    let fromVault: @FungibleToken.Vault
+    // let fromVault: @FungibleToken.Vault
     let fromAddress: Address
+    let vaultRef: &FungibleToken.Vault
 
     prepare(signer: AuthAccount) {
 
         // Get a reference to the signer's stored vault
-        let vaultRef = signer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
+        self.vaultRef = signer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
            ?? panic("Could not borrow reference to the owner's Vault!")
 
-        // Withdraw tokens from the signer's stored vault
-        self.fromVault <- vaultRef.withdraw(amount: amount)
         self.fromAddress = signer.address
     }
 
     execute {
-        FlowTea.donate(fromVault: <- self.fromVault, fromAddress: self.fromAddress, toAddress: to, message: message, recurring: false)
+        FlowTea.donate(vaultRef: self.vaultRef, amount: amount, fromAddress: self.fromAddress, toAddress: to, message: message, recurring: false)
     }
 }
