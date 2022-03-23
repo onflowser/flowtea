@@ -1,4 +1,4 @@
-# Coffee on Flow
+# Flowtea
 
 A simpler way to support your favourite creators on Flow blockchain.
 

@@ -5,7 +5,25 @@
 			"serviceAccount": "emulator-account"
 		}
 	},
-	"contracts": {},
+	"contracts": {
+		"FlowTea": {
+			"source": "./flow/contracts/FlowTea.cdc",
+			"aliases": {
+				"testnet": "9a0766d93b6608b7",
+				"emulator": "ee82856bf20e2aa6"
+			}
+		},
+		"FungibleToken": {
+			"aliases": {
+				"emulator": "ee82856bf20e2aa6"
+			}
+		},
+		"FlowToken": {
+			"aliases": {
+				"emulator": "0ae53cb6e3f42a79"
+			}
+		}
+	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
 		"mainnet": "access.mainnet.nodes.onflow.org:9000",
@@ -17,5 +35,9 @@
 			"key": "c0c32c699e30eb2da7d3875dc27fe8428868de290fa466447d03c3d953bbc4fe"
 		}
 	},
-	"deployments": {}
+	"deployments": {
+		"emulator": {
+			"emulator-account": ["FlowTea"]
+		}
+	}
 }
