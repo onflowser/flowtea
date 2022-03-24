@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
+// @ts-ignore
 import * as fcl from '@onflow/fcl';
-import transferFlowCode from "./transactions/transfer-flow.cdc";
-import getFlowBalanceCode from "./scripts/get-flow-balance.cdc";
+// @ts-ignore
 import * as t from "@onflow/types";
 
-export function useFlow(config) {
+// cadence files
+// @ts-ignore
+import getFlowBalanceCode from "./scripts/get-flow-balance.cdc";
+// @ts-ignore
+import donateFlowCode from "./transactions/donate.cdc";
+
+export function useFlow(config: any) {
   const [user, setUser] = useState({ loggedIn: null });
   const [isLoggingIn, setLoggingIn] = useState(false);
   const [isLoggingOut, setLoggingOut] = useState(false);
@@ -21,7 +27,7 @@ export function useFlow(config) {
   }, [config])
   useEffect(() => fcl.currentUser().subscribe(setUser), []);
 
-  async function getFlowBalance(address) {
+  async function getFlowBalance(address: string) {
     return fcl.send([
       fcl.script(getFlowBalanceCode),
       fcl.args([
@@ -30,17 +36,17 @@ export function useFlow(config) {
     ]).then(fcl.decode)
   }
 
-  function transferFlow(amount, receiverAddress) {
-    return sendTransaction(transferFlowCode, [
+  function donateFlow(amount: number, receiverAddress: string) {
+    return sendTransaction(donateFlowCode, [
       fcl.arg(amount, t.UFix64),
       fcl.arg(receiverAddress, t.Address),
     ])
   }
 
-  async function sendTransaction(cadence, args) {
+  async function sendTransaction(cadence: string, args: any[]) {
     const transactionId = await fcl.mutate({
       cadence,
-      args: (arg, t) => args,
+      args: () => args,
       payer: fcl.authz,
       proposer: fcl.authz,
       authorizations: [fcl.authz],
@@ -79,7 +85,7 @@ export function useFlow(config) {
     isLoggingOut,
     isLoggedIn: user.loggedIn,
     tx: {
-      transferFlow,
+      donateFlow,
       getFlowBalance
     }
   };
