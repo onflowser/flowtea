@@ -16,6 +16,7 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^4.3.0",
     "@onflow/types": "^0.0.6",
     "@types/node": "17.0.23",
     "@types/react": "17.0.42",
