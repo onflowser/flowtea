@@ -6,10 +6,15 @@
 		}
 	},
 	"contracts": {
-		"FlowTea": {
-			"source": "./flow/contracts/FlowTea.cdc",
+		"TeaDonation": {
+			"source": "./flow/contracts/TeaDonation.cdc",
 			"aliases": {
-				"testnet": "9a0766d93b6608b7",
+				"emulator": "ee82856bf20e2aa6"
+			}
+		},
+		"TeaProfile": {
+			"source": "./flow/contracts/TeaProfile.cdc",
+			"aliases": {
 				"emulator": "ee82856bf20e2aa6"
 			}
 		},
@@ -32,12 +37,12 @@
 	"accounts": {
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
-			"key": "c0c32c699e30eb2da7d3875dc27fe8428868de290fa466447d03c3d953bbc4fe"
+			"key": "680fa28962650ef346a7edf23d63967b0fcf44958488d0d48f8539ece6e92eba"
 		}
 	},
 	"deployments": {
 		"emulator": {
-			"emulator-account": ["FlowTea"]
+			"emulator-account": ["TeaDonation", "TeaProfile"]
 		}
 	}
 }

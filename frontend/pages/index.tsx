@@ -1,13 +1,22 @@
 import type { NextPage } from 'next'
 import styled from "styled-components";
 import SearchInput from "../components/SearchInput";
+import { useState } from "react";
+import { useFlow } from "../flow/fcl";
 
 const Home: NextPage = () => {
+  const [username, setUsername] = useState('');
+  const flow = useFlow({});
+
+  function register() {
+    flow.tx.register(username).then(console.log).catch(console.error)
+  }
+
   return (
     <>
       <LandingSection>
         <h1>Let your appreciators buy you a Flow Tea (or a floatie)</h1>
-        <SearchInput />
+        <SearchInput onClick={register} onInput={e => setUsername(e.target.value)} />
       </LandingSection>
       <HelloSection>
         <div>

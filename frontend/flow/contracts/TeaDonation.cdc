@@ -1,6 +1,6 @@
 import FungibleToken from 0xee82856bf20e2aa6
 
-pub contract FlowTea {
+pub contract TeaDonation {
 
     // service fee, default 2%
     access(contract) let fee: UFix64

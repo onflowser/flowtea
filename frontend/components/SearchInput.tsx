@@ -1,11 +1,17 @@
 import styled from "styled-components";
+import { FormEventHandler, MouseEventHandler } from "react";
 
-export default function SearchInput() {
+type Props = {
+  onClick: MouseEventHandler<HTMLButtonElement>
+  onInput: FormEventHandler<HTMLInputElement>
+}
+
+export default function SearchInput({ onClick, onInput }: Props) {
   return (
     <Container>
       flowtea.com/
-      <Input placeholder="your username" />
-      <Button>Search</Button>
+      <Input placeholder="your username" onInput={onInput} />
+      <Button onClick={onClick}>Search</Button>
     </Container>
   )
 }

@@ -9,6 +9,8 @@ import * as t from "@onflow/types";
 import getFlowBalanceCode from "./scripts/get-flow-balance.cdc";
 // @ts-ignore
 import donateFlowCode from "./transactions/donate.cdc";
+// @ts-ignore
+import registerFlowCode from "./transactions/register.cdc";
 
 export function useFlow(config: any) {
   const [user, setUser] = useState({ loggedIn: null });
@@ -18,10 +20,12 @@ export function useFlow(config: any) {
   useEffect(() => {
     fcl.config({
       "env": "local",
-      "accessNode.api": "http://localhost:8080", // FIXME: works with :8080, but should work with :8888
+      "accessNode.api": "http://localhost:8080",
       "discovery.wallet": "http://localhost:8701/fcl/authn",
       "0xFLOWTOKENADDRESS": "0x0ae53cb6e3f42a79",
       "0xFUNGIBLETOKENADDRESS": "0xee82856bf20e2aa6",
+      "0xTEADONATIONADDRESS": "0xf8d6e0586b0a20c7",
+      "0xTEAPROFILEADDRESS": "0xf8d6e0586b0a20c7",
       ...config
     })
   }, [config])
@@ -34,6 +38,13 @@ export function useFlow(config: any) {
         fcl.arg(address, t.Address),
       ])
     ]).then(fcl.decode)
+  }
+
+  function register(name: string) {
+    return sendTransaction(registerFlowCode, [
+      fcl.arg(name, t.String),
+      fcl.arg(new Date().toISOString(), t.String)
+    ])
   }
 
   function donateFlow(amount: number, receiverAddress: string) {
@@ -86,7 +97,8 @@ export function useFlow(config: any) {
     isLoggedIn: user.loggedIn,
     tx: {
       donateFlow,
-      getFlowBalance
+      getFlowBalance,
+      register
     }
   };
 }
