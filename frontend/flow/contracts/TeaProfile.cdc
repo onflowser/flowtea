@@ -3,6 +3,8 @@ pub contract TeaProfile {
     pub let publicPath: PublicPath
     pub let storagePath: StoragePath
 
+    pub event Registration(name: String)
+
     pub resource interface Public {
         access(account) fun setName(value: String)
     }
@@ -33,6 +35,7 @@ pub contract TeaProfile {
     		name.length <= 64: "Name must be 64 or less characters"
     		createdAt.length <= 32: "createdAt must be 32 or less characters"
     	}
+    	emit Registration(name: name)
     	return <- create TeaProfile.Project(name: name, createdAt: createdAt)
     }
 
