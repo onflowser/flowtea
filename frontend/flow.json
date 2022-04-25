@@ -5,30 +5,7 @@
 			"serviceAccount": "emulator-account"
 		}
 	},
-	"contracts": {
-		"TeaDonation": {
-			"source": "./flow/contracts/TeaDonation.cdc",
-			"aliases": {
-				"emulator": "ee82856bf20e2aa6"
-			}
-		},
-		"TeaProfile": {
-			"source": "./flow/contracts/TeaProfile.cdc",
-			"aliases": {
-				"emulator": "ee82856bf20e2aa6"
-			}
-		},
-		"FungibleToken": {
-			"aliases": {
-				"emulator": "ee82856bf20e2aa6"
-			}
-		},
-		"FlowToken": {
-			"aliases": {
-				"emulator": "0ae53cb6e3f42a79"
-			}
-		}
-	},
+	"contracts": {},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
 		"mainnet": "access.mainnet.nodes.onflow.org:9000",
@@ -37,12 +14,8 @@
 	"accounts": {
 		"emulator-account": {
 			"address": "f8d6e0586b0a20c7",
-			"key": "680fa28962650ef346a7edf23d63967b0fcf44958488d0d48f8539ece6e92eba"
+			"key": "43109dc3cc77a631ae14ea6a62196ba3f4d81dd5ced074558e6bfc5ef206c765"
 		}
 	},
-	"deployments": {
-		"emulator": {
-			"emulator-account": ["TeaDonation", "TeaProfile"]
-		}
-	}
+	"deployments": {}
 }
