@@ -18,10 +18,15 @@ All Cadence related files (for Flow blockchain) are located under `flow` module.
 
 In development, first start your local emulator blockchain:
 ```shell
-flow emulator start --dev-wallet --contracts
+cadence emulator start --contracts
+```
+
+After that, start your local development wallet:
+```shell
+cadence dev-wallet
 ```
 
 Then you can deploy project contracts with:
 ```shell
-flow deploy
+cadence deploy
 ```

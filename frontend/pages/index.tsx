@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import styled from "styled-components";
 import SearchInput from "../components/SearchInput";
 import { useState } from "react";
-import { useFlow } from "../flow/fcl";
+import { useFlow } from "../cadence/fcl";
 
 const Home: NextPage = () => {
   const [username, setUsername] = useState('');
