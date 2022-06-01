@@ -7,9 +7,9 @@
 
 import FungibleToken from 0xee82856bf20e2aa6
 import FlowToken from 0x0ae53cb6e3f42a79
-import FlowTea from 0xf8d6e0586b0a20c7
+import TeaDonation from ./cadence/contracts/TeaDonation
 
-transaction(message: String, amount: UFix64, to: Address) {
+transaction(message: String, amount: UFix64, recurring: Bool, to: Address) {
 
     // The Vault resource that holds the tokens that are being transferred
     // let fromVault: @FungibleToken.Vault
@@ -26,6 +26,13 @@ transaction(message: String, amount: UFix64, to: Address) {
     }
 
     execute {
-        FlowTea.donate(vaultRef: self.vaultRef, amount: amount, fromAddress: self.fromAddress, toAddress: to, message: message, recurring: false)
+        TeaDonation.donate(
+            vaultRef: self.vaultRef,
+            amount: amount,
+            fromAddress: self.fromAddress,
+            toAddress: to,
+            message: message,
+            recurring: recurring
+        )
     }
 }

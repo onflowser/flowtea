@@ -8,9 +8,22 @@ pub contract TeaDonation {
     // service owner wallet, receives fee payments
     // access(contract) let ownerWallet: Capability<&{FungibleToken.Receiver}>
 
-    pub event Donation(from: Address, to: Address, amount: UFix64, message: String, recurring: Bool)
+    pub event Donation(
+        from: Address,
+        to: Address,
+        amount: UFix64,
+        message: String,
+        recurring: Bool
+    )
 
-    pub fun donate(vaultRef: &FungibleToken.Vault, amount: UFix64, fromAddress: Address, toAddress: Address, message: String, recurring: Bool) {
+    pub fun donate(
+        vaultRef: &FungibleToken.Vault,
+        amount: UFix64,
+        fromAddress: Address,
+        toAddress: Address,
+        message: String,
+        recurring: Bool
+    ) {
         // calculate fee amount - predefined percentage of the total amount
         let feeAmount = amount / self.fee
         // withdraw tokens to temporary vaults
@@ -28,7 +41,13 @@ pub contract TeaDonation {
         // deposit fee to the service owner wallet
         receiverRef.deposit(from: <-feeVault)
 
-        emit Donation(from: fromAddress, to: toAddress, amount: amount, message: message, recurring: recurring)
+        emit Donation(
+            from: fromAddress,
+            to: toAddress,
+            amount: amount,
+            message: message,
+            recurring: recurring
+        )
     }
 
     // TODO: add argument fee: UFix64
