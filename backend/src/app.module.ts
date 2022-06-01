@@ -4,9 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventService } from './event.service';
 import { FlowService } from './flow.service';
 import { EventEntity } from './event.entity';
+import { ProcessingService } from './processing.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mariadb',
       host: 'localhost',
@@ -21,6 +24,6 @@ import { EventEntity } from './event.entity';
     TypeOrmModule.forFeature([EventEntity]),
   ],
   controllers: [AppController],
-  providers: [EventService, FlowService],
+  providers: [EventService, FlowService, ProcessingService],
 })
 export class AppModule {}
