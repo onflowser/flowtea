@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { FlowScanner } from '@rayvin-flow/flow-scanner-lib';
 import { ConfigProvider } from '@rayvin-flow/flow-scanner-lib/lib/providers/config-provider';
 import { MemorySettingsService } from '@rayvin-flow/flow-scanner-lib/lib/settings/memory-settings-service';
-import { EventBroadcaster } from './EventBroadcaster';
+import { EventService } from './event.service';
 
 @Injectable()
 export class FlowService {
   private flowScanner: FlowScanner;
   private maxRetries = 100;
   private retries = 0;
+
+  constructor(private readonly eventService: EventService) {}
 
   init(monitorEvents = []) {
     console.log('Listening for events: ', monitorEvents);
@@ -21,15 +23,13 @@ export class FlowService {
 
     // create the service that will persist settings (in this case, it is just in-memory)
     const settingsService = new MemorySettingsService();
-    // the broadcaster that will send all monitored events (this one just outputs information the the console)
-    const eventBroadcaster = new EventBroadcaster();
     this.flowScanner = new FlowScanner(
       // event types to monitor
       monitorEvents,
       // pass in the configured providers
       {
         configProvider: configProvider,
-        eventBroadcasterProvider: async () => eventBroadcaster,
+        eventBroadcasterProvider: async () => this.eventService,
         settingsServiceProvider: async () => settingsService,
       },
     );
@@ -43,6 +43,7 @@ export class FlowService {
     try {
       await this.flowScanner.start();
     } catch (e) {
+      console.log('Scanner start error:', e.message);
       await this.stop();
       this.retries++;
       if (this.retries < this.maxRetries) {
@@ -56,9 +57,5 @@ export class FlowService {
     // when you are ready to stop the scanner, you can call the stop() method
     console.log('Stopping scanner');
     await this.flowScanner.stop();
-  }
-
-  getHello(): string {
-    return 'Hello World!';
   }
 }

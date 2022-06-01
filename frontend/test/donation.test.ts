@@ -25,12 +25,13 @@ describe("TeaDonation", () => {
 
   // Stop emulator, so it could be restarted
   afterEach(async () => {
-    return emulator.stop();
+    // return emulator.stop();
   });
 
   test("Profile registration", async () => {
     const Alice = await getAccountAddress("Alice");
     const Bob = await getAccountAddress("Bob");
+    console.log({ Alice, Bob });
 
     await mintFlow(Alice, "1.0");
 
