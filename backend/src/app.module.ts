@@ -1,10 +1,25 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { FlowService } from './flow.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventService } from './event.service';
+import { FlowService } from './flow.service';
+import { EventEntity } from './event.entity';
 
 @Module({
-  imports: [],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mariadb',
+      host: 'localhost',
+      port: 3306,
+      username: '',
+      password: '',
+      database: 'test',
+      entities: [],
+      autoLoadEntities: true,
+      synchronize: true, // TODO: remove this in production and write migrations instead
+    }),
+    TypeOrmModule.forFeature([EventEntity]),
+  ],
   controllers: [AppController],
   providers: [EventService, FlowService],
 })

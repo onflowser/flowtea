@@ -1,3 +1,4 @@
+// import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { FlowService } from './flow.service';
@@ -7,6 +8,7 @@ const { FLOWTEA_ACCOUNT_ADDRESS } = process.env;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({ origin: '*' });
   const flow = app.get(FlowService);
   flow.init([
     `A.${FLOWTEA_ACCOUNT_ADDRESS.replace('0x', '')}.TeaDonation.Donation`,
