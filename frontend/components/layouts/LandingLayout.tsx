@@ -4,11 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 // resources
-import bmft_logo from "../public/images/logo-BMFT-horizontal.svg";
-import bmft_logo_ver from "../public/images/logo-BMFT-vertical.svg";
+import bmft_logo from "../../public/images/logo-BMFT-horizontal.svg";
+import bmft_logo_ver from "../../public/images/logo-BMFT-vertical.svg";
 
 // components
-import RoundButton from "./RoundButton";
+import RoundButton from "../RoundButton";
 
 type Props = {
   children: ReactElement;
@@ -24,7 +24,7 @@ const LinkText = styled.a`
   line-height: 25px;
 `;
 
-export default function Layout({ children }: Props) {
+export default function LandingLayout({ children }: Props) {
   return (
     <>
       <Navigation>
@@ -36,10 +36,10 @@ export default function Layout({ children }: Props) {
                 HOW DOES IT WORK?
               </LinkText>
             </Link>
-            <Link href={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"} passHref>
+            <Link href="/login" passHref>
               <LinkText>Log in</LinkText>
             </Link>
-            <RoundButton href={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"}>
+            <RoundButton href="/signup">
               Sign up
             </RoundButton>
           </NavigationRightButtons>

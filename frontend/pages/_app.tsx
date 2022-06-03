@@ -1,23 +1,8 @@
 import type { AppProps } from "next/app";
 import React from "react";
-import { createGlobalStyle, ThemeProvider } from "styled-components";
-import Layout from "../components/Layout";
-
-const GlobalStyle = createGlobalStyle`
-  body {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-    background:#141C2D;
-    color:#141C2D;
-  }
-
-  a {
-    color:#fe6f6f;
-    text-decoration: none;
-  }
-`;
+import { ThemeProvider } from "styled-components";
+import DefaultLayout from "../components/layouts/LandingLayout";
+import { GlobalStyle } from "../components/GlobalStyles";
 
 const colors = {
   pink: "#db537d",
@@ -52,6 +37,10 @@ const theme = {
 };
 
 function App({ Component, pageProps }: AppProps) {
+
+  // @ts-ignore
+  const Layout = Component.Layout || DefaultLayout;
+
   return (
     <>
       <GlobalStyle />
