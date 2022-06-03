@@ -13,17 +13,27 @@ export class AppController {
     private userRepository: Repository<UserEntity>,
   ) {}
 
-  @Get('events/:address')
-  getEventsForAddress(@Param('address') address) {
-    return this.flowEventRepository.find({
-      where: {
-        to: address,
-      },
-    });
+  @Get('donations')
+  getAllDonations() {
+    return this.flowEventRepository.find();
   }
 
   @Get('users')
   getUsers() {
     return this.userRepository.find();
+  }
+
+  @Get('users/:address')
+  async getUser(@Param('address') address) {
+    const [user, from, to] = await Promise.all([
+      this.userRepository.findOneOrFail({ where: { address } }),
+      this.flowEventRepository.find({ where: { from: address } }),
+      this.flowEventRepository.find({ where: { to: address } }),
+    ]);
+    return {
+      user,
+      from,
+      to,
+    };
   }
 }
