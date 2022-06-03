@@ -22,7 +22,7 @@ export class FlowService {
     });
 
     // create the service that will persist settings (in this case, it is just in-memory)
-    const settingsService = new MemorySettingsService();
+    const settingsService = new MemorySettingsService(); // TODO: store settings in persistent storage
     this.flowScanner = new FlowScanner(
       // event types to monitor
       monitorEvents,

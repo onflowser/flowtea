@@ -6,7 +6,7 @@ import {
   sendTransaction,
   deployContractByName,
   getAccountAddress,
-// @ts-ignore
+  // @ts-ignore
 } from "flow-js-testing";
 import { afterEach } from "@jest/globals";
 
@@ -30,9 +30,11 @@ describe("TeaProfile", () => {
   test("Profile registration", async () => {
     const Alice = await getAccountAddress("Alice");
 
+    console.log({ Alice });
+
     const [deploymentResult, error] = await deployContractByName({
       to: Alice,
-      name: "TeaProfile"
+      name: "TeaProfile",
     });
     console.log(deploymentResult, error);
 
@@ -41,10 +43,10 @@ describe("TeaProfile", () => {
 
     const [tx, txError] = await sendTransaction({
       name: "register",
-      args: ["Alice", "2022"],
-      signers: [Alice]
+      args: ["Alice"],
+      signers: [Alice],
     });
-    console.log(tx, txError);
+    console.log(tx.events);
 
     expect(txError).toBeNull();
     expect(tx.events.length).toBe(1);
@@ -55,17 +57,17 @@ describe("TeaProfile", () => {
     const Alice = await getAccountAddress("Alice");
     await deployContractByName({
       to: Alice,
-      name: "TeaProfile"
+      name: "TeaProfile",
     });
     await sendTransaction({
       name: "register",
-      args: ["Alice1", "2022"],
-      signers: [Alice]
+      args: ["Alice1"],
+      signers: [Alice],
     });
     const [tx, error] = await sendTransaction({
       name: "register",
-      args: ["Alice2", "2022"],
-      signers: [Alice]
+      args: ["Alice2"],
+      signers: [Alice],
     });
     expect(error).toContain("Account is already registered");
   });

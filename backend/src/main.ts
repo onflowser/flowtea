@@ -10,8 +10,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({ origin: '*' });
   const flow = app.get(FlowService);
+  const address = FLOWTEA_ACCOUNT_ADDRESS.replace('0x', '');
   flow.init([
-    `A.${FLOWTEA_ACCOUNT_ADDRESS.replace('0x', '')}.TeaDonation.Donation`,
+    `A.${address}.TeaDonation.Donation`,
+    `A.${address}.TeaProfile.Registration`,
   ]);
   flow.start();
   await app.listen(3000);

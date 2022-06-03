@@ -6,6 +6,7 @@ import { FlowService } from './flow.service';
 import { EventEntity } from './event.entity';
 import { ProcessingService } from './processing.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { UserEntity } from './user.entity';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       autoLoadEntities: true,
       synchronize: true, // TODO: remove this in production and write migrations instead
     }),
-    TypeOrmModule.forFeature([EventEntity]),
+    TypeOrmModule.forFeature([EventEntity, UserEntity]),
   ],
   controllers: [AppController],
   providers: [EventService, FlowService, ProcessingService],
