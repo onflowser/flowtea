@@ -284,9 +284,9 @@ const Home: NextPage = () => {
               <TeaCupsWrapper>
                 <div>
                   {[...Array(5)].map((_, i) => (
-                    <TeaCupRow>
+                    <TeaCupRow key={`_tea_cup_row_${i}`}>
                       {[...Array(4)].map((__, j) => (
-                        <TeaCup>
+                        <TeaCup key={`_tea_cup_${i}${j}`}>
                           <Image src={teaCupImage} layout="fill" />
                         </TeaCup>
                       ))}
