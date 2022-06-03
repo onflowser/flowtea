@@ -17,7 +17,7 @@ import teaCupImage from "../public/images/flow-tea-cup.svg";
 const BigNameInputWrapper = styled.div`
   background: #ffffff 0% 0% no-repeat padding-box;
   border: 1px solid ${(props) => props.theme.colors.primary};
-  border-radius: 126px;
+  border-radius: 10rem;
   opacity: 1;
 
   display: flex;
@@ -36,8 +36,8 @@ const BigNameInputWrapper = styled.div`
 const BigInputText = styled.div`
   text-align: left;
   font-weight: bold;
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 1.3rem;
+  line-height: 2rem;
 
   letter-spacing: 0px;
   color: ${(props) => props.theme.colors.mainDark};
@@ -50,8 +50,8 @@ const BigInputText = styled.div`
 const BigInputInput = styled.input`
   color: ${(props) => props.theme.colors.mainDark};
   border: none;
-  font-size: 20px;
-  line-height: 30px;
+  font-size: 1.3rem;
+  line-height: 2rem;
   font-weight: bold;
   letter-spacing: 0px;
   padding: 0;
@@ -60,8 +60,8 @@ const BigInputInput = styled.input`
   padding: 0 0.5rem;
 
   &::placeholder {
-    font-size: 20px;
-    line-height: 30px;
+    font-size: 1.3rem;
+    line-height: 2rem;
     font-weight: bold;
 
     letter-spacing: 0px;
@@ -99,8 +99,7 @@ const BigInput = () => {
 /* BIG INPUT */
 
 const SmallText = styled.div`
-  font-size: 15px;
-  line-height: 23px;
+  font-size: 1rem;
   letter-spacing: 0px;
   opacity: 0.88;
   padding: 3rem;
@@ -114,21 +113,22 @@ const CenterTitleBox = styled.div`
   width: 100vw;
   @media only screen and (min-width: 850px) {
     width: 60vw;
+    max-width: calc(${(props) => props.theme.layout.max_width} - 10rem);
   }
   z-index: 2;
 `;
 
 const BigText = styled.div`
-  font-size: 76px;
-  line-height: 115px;
+  font-size: 4rem;
+  line-height: 6rem;
   font-weight: 800;
   opacity: 0.86;
   text-align: center;
   padding: 3rem;
 
   @media only screen and (max-width: 1300px) {
-    font-size: 50px;
-    line-height: 80px;
+    font-size: 3rem;
+    line-height: 5rem;
   }
 `;
 const LandingSection = styled.div`
@@ -186,7 +186,7 @@ const HeyYouBlobColumn = styled.div`
 
 const SmallRedText = styled.div`
   font-weight: 900;
-  font-size: 24px;
+  font-size: 1.5rem;
   line-height: 35px;
   padding-top: 2rem;
 
@@ -195,20 +195,20 @@ const SmallRedText = styled.div`
 
 const BigHeading = styled.div`
   font-weight: 900;
-  font-size: 88px;
-  line-height: 132px;
+  font-size: 6rem;
+  line-height: 9rem;
   padding-bottom: 3rem;
 `;
 
 const BoldNormal = styled.div`
-  font-size: 25px;
-  line-height: 35px;
+  font-size: 1.5rem;
+  line-height: 2rem;
   font-weight: bold;
   padding-bottom: 2rem;
 `;
 const NormalText = styled.div`
-  font-size: 25px;
-  line-height: 35px;
+  font-size: 1.5rem;
+  line-height: 2rem;
   padding-bottom: 2rem;
 `;
 const BlobImageWrapper = styled.div`
@@ -298,8 +298,28 @@ const Home: NextPage = () => {
           </HeyYouBlobColumn>
         </HeyYouSection>
       </HeyYouSectionContainer>
+      <UnderConstructionContainer>
+        <UnderConstruction>⚠️ Site is under construction ⚠️</UnderConstruction>
+      </UnderConstructionContainer>
     </>
   );
 };
+
+const UnderConstructionContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  width: 100vw;
+  background: ${(props) => props.theme.colors.yellow};
+`;
+
+const UnderConstruction = styled.div`
+  max-width: ${({ theme }) => theme.layout.max_width};
+  padding: 10rem ${({ theme }) => theme.layout.mobile_padding};
+
+  font-size: 3rem;
+`;
 
 export default Home;

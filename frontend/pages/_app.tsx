@@ -27,6 +27,7 @@ const colors = {
   darkBlue: "#131c2d",
   mainDark: "#141C2D",
   lightViolet: "#E8E5FC",
+  yellow: "#feff78",
 };
 
 const theme = {

@@ -12,7 +12,7 @@ type Props = {
 const RoundButtonLink = styled.a`
   background: ${(props) => props.theme.colors.primary} 0% 0% no-repeat
     padding-box;
-  border-radius: 30px;
+  border-radius: 10rem;
   opacity: 1;
 
   text-decoration: none;
@@ -27,7 +27,7 @@ const RoundButtonLink = styled.a`
 const RoundButtonElm = styled.div`
   background: ${(props) => props.theme.colors.primary} 0% 0% no-repeat
     padding-box;
-  border-radius: 30px;
+  border-radius: 10rem;
   opacity: 1;
   font-weight: bold;
   white-space: nowrap;
