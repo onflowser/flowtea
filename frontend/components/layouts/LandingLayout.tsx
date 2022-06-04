@@ -5,7 +5,7 @@ import Link from "next/link";
 
 // resources
 import bmft_logo from "../../public/images/logo-BMFT-horizontal.svg";
-import bmft_logo_ver from "../../public/images/logo-BMFT-vertical.svg";
+import bmft_logo_ver from "../../public/images/logo-BMFT-vertical-white.svg";
 
 // components
 import { PrimaryButton } from "../PrimaryButton";
@@ -18,11 +18,10 @@ type Props = {
 const LinkText = styled.a`
   text-decoration: none;
   color: ${(props) => props.theme.colors.mainDark};
-  padding: 0 1em;
+  padding: 0 1rem;
 
   font-weight: bold;
-  font-size: 16px;
-  line-height: 25px;
+  font-size: 1rem;
 `;
 
 export default function LandingLayout({ children }: Props) {
@@ -32,7 +31,11 @@ export default function LandingLayout({ children }: Props) {
     <>
       <Navigation>
         <NavInner>
-          <Image src={bmft_logo} />
+          <Link href={"/"}>
+            <a>
+              <Image src={bmft_logo} />
+            </a>
+          </Link>
           <NavigationRightButtons>
             <Link href={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"} passHref>
               <LinkText style={{ paddingRight: `2em` }}>
@@ -54,7 +57,7 @@ export default function LandingLayout({ children }: Props) {
       <Main>{children}</Main>
       <Footer>
         <FooterImageWrapper>
-          <Image src={bmft_logo_ver} />
+          <Image src={bmft_logo_ver} layout="fill" />
         </FooterImageWrapper>
         <FooterText>
           Buy me a FLOW tea is created and supported by{" "}
@@ -111,12 +114,17 @@ const Footer = styled.footer`
 
 const FooterImageWrapper = styled.div`
   margin-bottom: 2em;
+  height: 5rem;
+  width: 10rem;
+  position: relative;
 `;
 
 const FooterText = styled.a`
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.9rem;
   line-height: 21px;
+  padding: 2rem;
+  text-align: center;
 
   color: ${({ theme }) => theme.colors.white};
 `;

@@ -55,7 +55,7 @@ const BigInputInput = styled.input`
   padding: 0;
   flex-grow: 1;
 
-  padding: 0 0.5rem;
+  //padding: 0 0.5rem;
 
   &::placeholder {
     font-size: 1.3rem;
@@ -65,6 +65,7 @@ const BigInputInput = styled.input`
     letter-spacing: 0px;
     color: ${(props) => props.theme.colors.mainDark};
     opacity: 0.22;
+    padding: 0 0.5rem;
   }
 
   &:focus {
@@ -87,9 +88,7 @@ const BigInput = () => {
         onChange={(evt) => setName(evt.target.value)}
       />
       <BigInputButtonWrapper>
-        <RoundLink href={`/setup?name=${name}`}>
-          Create your page
-        </RoundLink>
+        <RoundLink href={`/setup?name=${name}`}>Create your page</RoundLink>
       </BigInputButtonWrapper>
     </BigNameInputWrapper>
   );
