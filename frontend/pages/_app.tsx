@@ -32,20 +32,19 @@ const theme = {
   },
   // maybe only for testing
   layout: {
-    navbar_height: "200px",
+    navbar_height: "13rem",
     max_width: "1200px",
     mobile_padding: "2rem",
   },
 };
 
 function App({ Component, pageProps }: AppProps) {
-
   // @ts-ignore
   const Layout = Component.Layout || DefaultLayout;
 
   return (
     <>
-      <Toaster/>
+      <Toaster />
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <FclProvider>
