@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 export default function Setup () {
+  const router = useRouter();
   const {register} = useFcl();
   const { query } = useRouter();
   const [name, setName] = useState('');
@@ -29,9 +30,9 @@ export default function Setup () {
       return;
     }
     try {
-      await register(name);
+      await register(name, description);
+      await router.replace("/profile")
       toast.success("Registered!")
-      // TODO: redirect to profile, other stuff
     } catch (e: any) {
       toast.error(e.toString())
     }

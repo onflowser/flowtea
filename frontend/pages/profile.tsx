@@ -1,39 +1,33 @@
 import ProfileLayout from "../components/layouts/ProfileLayout";
+import { useFcl } from "../common/FclContext";
 
 export default function Profile () {
+  const { info } = useFcl();
+
   return (
     <>
       <div className="dark-background-profile"></div>
 
       <div className="profile-photo-main-wrapper">
         <img src="/images/profile-photo-main.svg" alt=""/>
-        <h3 className="profile-name">Flowser team</h3>
+        <h3 className="profile-name">{info?.name}</h3>
       </div>
 
       <div className="profile-content-wrapper">
         <div className="bio-and-transactions">
           <div className="bio-profile">
-            <h5>About profile name</h5>
+            <h5>About {info?.name}</h5>
 
-            <p>Lorem LINK dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip
-              ex ea commodo consequat. 👋
-            </p>
-
-            <p>Lorem LINK dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip
-              ex ea commodo <a className="bio-link" href="">LINK</a>. 👋
+            <p>
+              {info?.description}
             </p>
 
           </div>
 
-          <Transaction teaCount={1} fromAddress="0x0f44940e7dd31e6b" />
-          <Transaction teaCount={5} fromAddress="0x0f44940e7dd31e6b" />
-          <Transaction teaCount={100} fromAddress="0x0f44940e7dd31e6b" />
+          {/* TODO: use real transactions */}
+          <Transaction teaCount={1} fromAddress="0x0f44940e7dd31e6b"/>
+          <Transaction teaCount={5} fromAddress="0x0f44940e7dd31e6b"/>
+          <Transaction teaCount={100} fromAddress="0x0f44940e7dd31e6b"/>
 
         </div>
 
@@ -46,7 +40,10 @@ export default function Profile () {
   )
 }
 
-function Transaction({ teaCount, fromAddress }: {teaCount: number, fromAddress: string}) {
+function Transaction ({
+  teaCount,
+  fromAddress
+}: { teaCount: number, fromAddress: string }) {
   return (
     <div className="transactions-profil-details">
       <div className="tea-count">

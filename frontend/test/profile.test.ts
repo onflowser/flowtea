@@ -6,6 +6,7 @@ import {
   sendTransaction,
   deployContractByName,
   getAccountAddress,
+  executeScript
   // @ts-ignore
 } from "flow-js-testing";
 import { afterEach } from "@jest/globals";
@@ -29,11 +30,19 @@ describe("TeaProfile", () => {
 
   test("Profile registration", async () => {
     const Alice = await getAccountAddress("Alice");
+    const Bob = await getAccountAddress("Alice");
 
     console.log({ Alice });
 
+    let isRegistered = await executeScript({
+      name: 'is-registered',
+      args: [Alice]
+    })
+    expect(isRegistered[0]).toBeNull()
+    console.log({ isRegistered })
+
     const [deploymentResult, error] = await deployContractByName({
-      to: Alice,
+      to: Bob,
       name: "TeaProfile",
     });
     console.log(deploymentResult, error);
@@ -43,10 +52,17 @@ describe("TeaProfile", () => {
 
     const [tx, txError] = await sendTransaction({
       name: "register",
-      args: ["Alice"],
+      args: ["Alice", "This is me!"],
       signers: [Alice],
     });
     console.log(tx.events);
+
+    isRegistered = await executeScript({
+      name: 'is-registered',
+      args: [Alice]
+    })
+    expect(isRegistered[0]).toBeTruthy()
+    console.log({ isRegistered })
 
     expect(txError).toBeNull();
     expect(tx.events.length).toBe(1);
@@ -61,12 +77,12 @@ describe("TeaProfile", () => {
     });
     await sendTransaction({
       name: "register",
-      args: ["Alice1"],
+      args: ["Alice1", "This is me!"],
       signers: [Alice],
     });
     const [tx, error] = await sendTransaction({
       name: "register",
-      args: ["Alice2"],
+      args: ["Alice2", "This is me!"],
       signers: [Alice],
     });
     expect(error).toContain("Account is already registered");

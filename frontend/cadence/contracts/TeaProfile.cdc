@@ -5,8 +5,19 @@ pub contract TeaProfile {
 
     pub event Registration(name: String, address: Address)
 
+    pub struct Info {
+        pub var name: String
+        pub var description: String
+
+        init(name: String, description: String) {
+          self.name = name
+          self.description = description
+        }
+    }
+
     pub resource interface Public {
         access(account) fun setName(value: String)
+        pub fun getInfo(): Info
     }
 
     pub resource Project: Public {
@@ -15,11 +26,15 @@ pub contract TeaProfile {
         access(self) var description: String
         access(self) var imageUrl: String
 
-        init(name: String, address: Address) {
+        init(name: String, description: String, address: Address) {
             self.name = name
             self.address = address
-            self.description = ""
+            self.description = description
             self.imageUrl = ""
+        }
+
+        pub fun getInfo(): Info {
+            return Info(name: self.name, description: self.description)
         }
 
         access(account) fun setName(value: String) {
@@ -44,12 +59,12 @@ pub contract TeaProfile {
         }
     }
 
-    pub fun createProject(name: String, address: Address) : @TeaProfile.Project {
+    pub fun createProject(name: String, description: String, address: Address) : @TeaProfile.Project {
     	pre {
     		name.length <= 64: "Name must be 64 or less characters"
     	}
     	emit Registration(name: name, address: address)
-    	return <- create TeaProfile.Project(name: name, address: address)
+    	return <- create TeaProfile.Project(name: name, description: description, address: address)
     }
 
     init() {

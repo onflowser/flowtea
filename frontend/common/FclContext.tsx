@@ -13,31 +13,56 @@ import * as t from "@onflow/types";
 // @ts-ignore
 import getFlowBalanceCode from "../cadence/scripts/get-flow-balance.cdc";
 // @ts-ignore
+import getIsRegisteredCode from "../cadence/scripts/is-registered.cdc";
+// @ts-ignore
+import getInfoCode from "../cadence/scripts/get-info.cdc";
+// @ts-ignore
 import donateFlowCode from "../cadence/transactions/donate.cdc";
 // @ts-ignore
 import registerFlowCode from "../cadence/transactions/register.cdc";
+import { useRouter } from "next/router";
+import { toast } from "react-hot-toast";
 
 type TxResult = { transactionId: string, status: any };
 
 type FclContextProps = {
-  user: null | any;
+  user: null | FlowUser;
+  info: null | FlowTeaInfo;
   isLoggingIn: boolean;
   isLoggingOut: boolean;
   isLoggedIn: boolean;
+  isRegistered: boolean;
   login: () => void;
   logout: () => void;
   donateFlow: (amount: number, receiverAddress: string) => Promise<TxResult>;
   getFlowBalance: (address: string) => Promise<number>
-  register: (name: string) => Promise<TxResult>
+  register: (name: string, description: string) => Promise<TxResult>
 }
 
 const defaultTxResult = { transactionId: '', status: '' };
 
+type FlowUser = {
+  addr: string
+  cid: string
+  expiresAt: null
+  f_type: "USER"
+  f_vsn: string
+  loggedIn: true
+  services: any[]
+}
+
+type FlowTeaInfo = {
+  name: string;
+  description: string;
+}
+
 const defaultValue: FclContextProps = {
   user: null,
+  info: null,
   isLoggingIn: false,
   isLoggingOut: false,
   isLoggedIn: false,
+  isRegistered: false,
   login: () => null,
   logout: () => null,
   donateFlow: () => Promise.resolve(defaultTxResult),
@@ -48,9 +73,12 @@ const defaultValue: FclContextProps = {
 const FclContext = React.createContext(defaultValue);
 
 export function FclProvider ({ config = {}, children } : {config?: object, children: ReactChild}) {
-  const [user, setUser] = useState({ loggedIn: null });
+  const router = useRouter();
+  const [user, setUser] = useState<FlowUser|null>(null);
+  const [info, setInfo] = useState<FlowTeaInfo|null>(null);
   const [isLoggingIn, setLoggingIn] = useState(false);
   const [isLoggingOut, setLoggingOut] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
     fcl.config({
@@ -64,7 +92,15 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       ...config
     })
   }, [config])
+
   useEffect(() => fcl.currentUser().subscribe(setUser), []);
+
+  useEffect(() => {
+    if (user?.addr) {
+      getIsRegistered(user.addr).then(setIsRegistered)
+      getInfo(user.addr).then(setInfo)
+    }
+  }, [user])
 
   async function getFlowBalance (address: string) {
     return fcl.send([
@@ -75,10 +111,34 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
     ]).then(fcl.decode)
   }
 
-  async function register (name: string) {
+  async function getIsRegistered (address: string) {
+    return fcl.send([
+      fcl.script(getIsRegisteredCode),
+      fcl.args([
+        fcl.arg(address, t.Address),
+      ])
+    ])
+      .then(fcl.decode)
+      .catch((e: any) => {
+        console.error(e);
+        return false
+      }) as Promise<boolean>
+  }
+
+  async function getInfo (address: string) {
+    return fcl.send([
+      fcl.script(getInfoCode),
+      fcl.args([
+        fcl.arg(address, t.Address),
+      ])
+    ])
+      .then(fcl.decode)
+  }
+
+  async function register (name: string, description: string) {
     return sendTransaction(registerFlowCode, [
       fcl.arg(name, t.String),
-      fcl.arg(new Date().toISOString(), t.String)
+      fcl.arg(description, t.String),
     ])
   }
 
@@ -131,6 +191,8 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       logout,
       register,
       user,
+      info,
+      isRegistered,
       isLoggedIn: Boolean(user?.loggedIn),
       isLoggingIn,
       isLoggingOut
