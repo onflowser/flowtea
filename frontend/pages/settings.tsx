@@ -6,18 +6,47 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-export default function Setup () {
+export default function Settings () {
   const router = useRouter();
-  const {register} = useFcl();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register, update, info, isRegistered } = useFcl();
   const { query } = useRouter();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    setName(query.name as string)
+    if (!isRegistered) {
+      setName(query.name as string)
+    }
   }, [query])
 
-  async function onSubmit() {
+  useEffect(() => {
+    if (info) {
+      setName(info.name)
+      setDescription(info.description);
+    }
+  }, [info])
+
+  async function onRegister() {
+    try {
+      await register(name, description);
+      await router.replace("/profile")
+      toast.success("Registered!")
+    } catch (e: any) {
+      toast.error(e.toString())
+    }
+  }
+
+  async function onUpdate() {
+    try {
+      await update(name, description);
+      toast.success("Info updated!")
+    } catch (e: any) {
+      toast.error(e.toString())
+    }
+  }
+
+  async function onSubmit () {
     let errors = [];
     if (!name) {
       errors.push("Name is missing!")
@@ -29,19 +58,22 @@ export default function Setup () {
       errors.forEach(error => toast.error(error))
       return;
     }
+    setIsSubmitting(true);
     try {
-      await register(name, description);
-      await router.replace("/profile")
-      toast.success("Registered!")
-    } catch (e: any) {
-      toast.error(e.toString())
+      if (isRegistered) {
+        await onUpdate();
+      } else {
+        await onRegister();
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
     <>
       <div className="profile-settings">
-        <h3>Complete your profile</h3>
+        {!isRegistered && <h3>Complete your profile</h3>}
 
         <img src="/images/add-profile-photo.svg" alt=""/>
 
@@ -66,13 +98,14 @@ export default function Setup () {
 
         <PrimaryButton
           style={{
-          marginTop: 50,
-          width: '100%',
-          maxWidth: 'unset'
-        }}
+            marginTop: 50,
+            width: '100%',
+            maxWidth: 'unset'
+          }}
+          isLoading={isSubmitting}
           onClick={onSubmit}
         >
-          Continue
+          {isRegistered ? 'Save' : 'Continue'}
         </PrimaryButton>
 
       </div>
@@ -80,4 +113,4 @@ export default function Setup () {
   )
 }
 
-Setup.Layout = LoginLayout;
+Settings.Layout = LoginLayout;

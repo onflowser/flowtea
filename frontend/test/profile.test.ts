@@ -32,14 +32,13 @@ describe("TeaProfile", () => {
     const Alice = await getAccountAddress("Alice");
     const Bob = await getAccountAddress("Alice");
 
-    console.log({ Alice });
+    console.log({ Alice, Bob });
 
     let isRegistered = await executeScript({
       name: 'is-registered',
       args: [Alice]
     })
     expect(isRegistered[0]).toBeNull()
-    console.log({ isRegistered })
 
     const [deploymentResult, error] = await deployContractByName({
       to: Bob,
@@ -50,23 +49,43 @@ describe("TeaProfile", () => {
     expect(deploymentResult.statusString).toEqual("SEALED");
     expect(error).toBeNull();
 
-    const [tx, txError] = await sendTransaction({
+    // Alice registers to FlowTea
+    const [tx1, txError1] = await sendTransaction({
       name: "register",
-      args: ["Alice", "This is me!"],
+      args: ["Alice", "My description"],
       signers: [Alice],
     });
-    console.log(tx.events);
+    expect(txError1).toBeNull();
+    expect(tx1.events.length).toBe(1);
+    expect(tx1.events[0].type).toContain("TeaProfile.Registration");
 
+    // check if Alice is registered
     isRegistered = await executeScript({
       name: 'is-registered',
       args: [Alice]
     })
     expect(isRegistered[0]).toBeTruthy()
-    console.log({ isRegistered })
 
-    expect(txError).toBeNull();
-    expect(tx.events.length).toBe(1);
-    expect(tx.events[0].type).toContain("TeaProfile.Registration");
+
+    const [info] = await executeScript({
+      name: 'get-info',
+      args: [Alice]
+    })
+    expect(info).toEqual({ name: "Alice", description: "My description" })
+
+    // Alice updates her own account's settings
+    const [tx2, txError2] = await sendTransaction({
+      name: "update",
+      args: ["Alice", "My new description"],
+      signers: [Alice],
+    });
+    console.log(tx2, txError2)
+
+    const [updatedInfo] = await executeScript({
+      name: 'get-info',
+      args: [Bob]
+    })
+    expect(updatedInfo).toEqual({ name: "Alice", description: "My new description" })
   });
 
   test("Duplicate profile on same account", async () => {

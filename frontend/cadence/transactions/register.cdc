@@ -17,6 +17,10 @@ transaction (name: String, description: String) {
                 TeaProfile.publicPath,
                 target: TeaProfile.storagePath
             )
+            signer.link<&TeaProfile.Project{TeaProfile.Private}>(
+                TeaProfile.privatePath,
+                target: TeaProfile.storagePath
+            )
         }
     }
 

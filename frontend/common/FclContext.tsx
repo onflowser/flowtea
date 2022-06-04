@@ -4,6 +4,9 @@ import React, {
   useEffect,
   useState
 } from "react";
+import { useRouter } from "next/router";
+
+
 // @ts-ignore
 import * as fcl from '@onflow/fcl';
 // @ts-ignore
@@ -20,8 +23,8 @@ import getInfoCode from "../cadence/scripts/get-info.cdc";
 import donateFlowCode from "../cadence/transactions/donate.cdc";
 // @ts-ignore
 import registerFlowCode from "../cadence/transactions/register.cdc";
-import { useRouter } from "next/router";
-import { toast } from "react-hot-toast";
+// @ts-ignore
+import updateFlowCode from "../cadence/transactions/update.cdc";
 
 type TxResult = { transactionId: string, status: any };
 
@@ -37,6 +40,7 @@ type FclContextProps = {
   donateFlow: (amount: number, receiverAddress: string) => Promise<TxResult>;
   getFlowBalance: (address: string) => Promise<number>
   register: (name: string, description: string) => Promise<TxResult>
+  update: (name: string, description: string) => Promise<TxResult>
 }
 
 const defaultTxResult = { transactionId: '', status: '' };
@@ -67,7 +71,8 @@ const defaultValue: FclContextProps = {
   logout: () => null,
   donateFlow: () => Promise.resolve(defaultTxResult),
   getFlowBalance: () => Promise.resolve(0),
-  register: () => Promise.resolve(defaultTxResult)
+  register: () => Promise.resolve(defaultTxResult),
+  update: () => Promise.resolve(defaultTxResult)
 }
 
 const FclContext = React.createContext(defaultValue);
@@ -133,10 +138,21 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       ])
     ])
       .then(fcl.decode)
+      .catch((e: any) => {
+        console.error(e)
+        return null;
+      }) as Promise<FlowTeaInfo|null>
   }
 
   async function register (name: string, description: string) {
     return sendTransaction(registerFlowCode, [
+      fcl.arg(name, t.String),
+      fcl.arg(description, t.String),
+    ])
+  }
+
+  async function update (name: string, description: string) {
+    return sendTransaction(updateFlowCode, [
       fcl.arg(name, t.String),
       fcl.arg(description, t.String),
     ])
@@ -189,6 +205,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       donateFlow,
       login,
       logout,
+      update,
       register,
       user,
       info,

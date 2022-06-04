@@ -12,6 +12,7 @@ async function bootstrap() {
   const flow = app.get(FlowService);
   const address = FLOWTEA_ACCOUNT_ADDRESS.replace('0x', '');
   flow.init([
+    // TODO: handle profile updates
     `A.${address}.TeaDonation.Donation`,
     `A.${address}.TeaProfile.Registration`,
   ]);

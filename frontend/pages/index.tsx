@@ -88,7 +88,7 @@ const BigInput = () => {
         onChange={(evt) => setName(evt.target.value)}
       />
       <BigInputButtonWrapper>
-        <RoundLink href={`/setup?name=${name}`}>Create your page</RoundLink>
+        <RoundLink href={`/settings?name=${name}`}>Create your page</RoundLink>
       </BigInputButtonWrapper>
     </BigNameInputWrapper>
   );
