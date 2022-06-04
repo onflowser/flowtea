@@ -14,7 +14,9 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Cadence
 
-All Cadence related files (for Flow blockchain) are located under `flow` module.
+**Requirement:** [Flow CLI](https://docs.onflow.org/flow-cli/install/)
+
+All Cadence related files (for Flow blockchain) are located under `cadence` directory.
 
 In development, first start your local emulator blockchain:
 ```shell
