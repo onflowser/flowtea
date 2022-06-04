@@ -1,7 +1,5 @@
 import Link from "next/link";
-import {
-  AnchorHTMLAttributes,
-} from "react";
+import { AnchorHTMLAttributes } from "react";
 import styled from "styled-components";
 
 type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
@@ -18,7 +16,7 @@ const RoundButtonLink = styled.a`
   color: ${(props) => props.theme.colors.white};
   display: block;
 
-  padding: 0.8em 1.8em;
+  padding: 0.8rem 1.8rem;
   font-weight: bold;
   white-space: nowrap;
 `;
@@ -29,5 +27,5 @@ export default function RoundLink({ href, ...props }: Props) {
     <Link href={href} passHref>
       <RoundButtonLink {...props} />
     </Link>
-  )
+  );
 }

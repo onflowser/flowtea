@@ -265,6 +265,14 @@ export const GlobalStyle = createGlobalStyle`
       max-width: 100px;
       width: 100%;
     }
+  }
 
+  html {
+    @media only screen and (max-width: 900px) {
+      font-size: 0.8rem;
+    }
+    @media only screen and (max-width: 500px) {
+      font-size: 0.6rem;
+    }
   }
 `;
