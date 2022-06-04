@@ -4,6 +4,7 @@ import { ThemeProvider } from "styled-components";
 import DefaultLayout from "../components/layouts/LandingLayout";
 import { GlobalStyle } from "../components/GlobalStyles";
 import { FclProvider } from "../common/FclContext";
+import { Toaster } from "react-hot-toast";
 
 const colors = {
   pink: "#db537d",
@@ -44,6 +45,7 @@ function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      <Toaster/>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <FclProvider>

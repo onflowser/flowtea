@@ -1,31 +1,48 @@
 import styled from "styled-components";
+import { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 type Props = {
   label: string;
   placeholder: string;
-  textarea?: boolean;
 }
 
-export function Input({ label, placeholder, textarea}: Props) {
+export function Input ({
+  label,
+  placeholder,
+  ...props
+}: InputHTMLAttributes<HTMLInputElement> & Props) {
 
   return (
     <Container>
       <h6>{label}</h6>
-      {textarea ? (
-        <textarea
-          className="white-field"
-          name={label}
-          rows={4}
-          placeholder={placeholder}/>
-      ) : (
-        <input
-          className="white-field"
-          name={label}
-          type="text"
-          placeholder={placeholder}
-        />
-      )}
-      </Container>
+      <input
+        className="white-field"
+        name={label}
+        type="text"
+        placeholder={placeholder}
+        {...props}
+      />
+    </Container>
+  )
+}
+
+export function TextArea ({
+  label,
+  placeholder,
+  ...props
+}: TextareaHTMLAttributes<HTMLTextAreaElement> & Props) {
+
+  return (
+    <Container>
+      <h6>{label}</h6>
+      <textarea
+        className="white-field"
+        name={label}
+        rows={4}
+        placeholder={placeholder}
+        {...props}
+      />
+    </Container>
   )
 }
 
@@ -33,7 +50,7 @@ const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  
+
   .white-field, .white-field-bottom, .white-field-100 {
     background-color: #fff;
     border: solid 1px #D9D9D9;
