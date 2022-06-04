@@ -102,59 +102,6 @@ export const GlobalStyle = createGlobalStyle`
     max-width: 450px;
   }
 
-  .violet-button {
-    background-color: var(--dark-violet-color);
-    max-width: 250px;
-    width: 100%;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    border-radius: 33px 33px 33px 33px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .violet-button a {
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 600;
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-  }
-
-  .violet-button:hover {
-    max-width: 270px;
-    padding-top: 16px;
-    padding-bottom: 16px;
-  }
-
-  .white-field, .white-field-bottom, .white-field-100 {
-    background-color: #fff;
-    border: solid 1px #D9D9D9;
-    border-radius: 10px 10px 10px 10px;
-    font-size: 16px;
-    color: var(--main-dark-color);
-    margin-bottom: 20px;
-    padding: 18px;
-  }
-
-  .white-field-100 {
-    width: 100%;
-  }
-
-  ::placeholder {
-    color: var(--placeholder-text-color);
-  }
-
-  .white-field h5, .white-field-bottom h5 {
-    font-weight: 400;
-  }
-
-  .white-field-bottom {
-    margin-bottom: 50px;
-  }
-
   .log-in-text a {
     color: var(--secondary-color);
     text-decoration: none;
@@ -199,20 +146,6 @@ export const GlobalStyle = createGlobalStyle`
   textarea:focus, input:focus {
     outline: solid 1px var(--dark-violet-color);
   }
-
-  .violet-button-margin-top {
-    margin-top: 50px;
-    max-width: 1000px;
-    width: 100%;
-  }
-
-  .violet-button-margin-top:hover {
-    max-width: 1000px;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    background-color: var(--main-dark-color);
-  }
-
 
   .nav-profile {
     background-color: #fff;

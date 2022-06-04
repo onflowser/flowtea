@@ -5,7 +5,10 @@
 			"serviceAccount": "emulator-account"
 		}
 	},
-	"contracts": {},
+	"contracts": {
+		"TeaDonation": "./cadence/contracts/TeaDonation.cdc",
+		"TeaProfile": "./cadence/contracts/TeaProfile.cdc"
+	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
 		"mainnet": "access.mainnet.nodes.onflow.org:9000",
@@ -17,5 +20,12 @@
 			"key": "43109dc3cc77a631ae14ea6a62196ba3f4d81dd5ced074558e6bfc5ef206c765"
 		}
 	},
-	"deployments": {}
+	"deployments": {
+		"emulator": {
+			"emulator-account": [
+				"TeaDonation",
+				"TeaProfile"
+			]
+		}
+	}
 }

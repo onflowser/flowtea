@@ -31,52 +31,31 @@ export default function Profile () {
 
           </div>
 
-          <div className="transactions-profil-details">
-
-            <div className="tea-count">
-              <img src="/images/flow-tea-cup.svg" alt=""/>
-              <h4>x</h4>
-              <h4 className="tea-count-number">01</h4>
-            </div>
-
-            <h6 className="address-id">Appreciated by 0x0f44940e7dd31e6b</h6>
-
-          </div>
-
-          <div className="transactions-profil-details">
-
-            <div className="tea-count">
-              <img src="/images/flow-tea-cup.svg" alt=""/>
-              <h4>x</h4>
-              <h4 className="tea-count-number">99</h4>
-            </div>
-
-            <h6 className="address-id">Appreciated by 0x0f44940e7dd31e6b</h6>
-
-          </div>
-
-          <div className="transactions-profil-details">
-
-            <div className="tea-count">
-              <img src="/images/flow-tea-cup.svg" alt=""/>
-              <h4>x</h4>
-              <h4 className="tea-count-number">100</h4>
-            </div>
-
-            <h6 className="address-id">Appreciated by 0x0f44940e7dd31e6b</h6>
-
-          </div>
+          <Transaction teaCount={1} fromAddress="0x0f44940e7dd31e6b" />
+          <Transaction teaCount={5} fromAddress="0x0f44940e7dd31e6b" />
+          <Transaction teaCount={100} fromAddress="0x0f44940e7dd31e6b" />
 
         </div>
 
         <div className="buy-flow-tea-form">
 
-
         </div>
-
 
       </div>
     </>
+  )
+}
+
+function Transaction({ teaCount, fromAddress }: {teaCount: number, fromAddress: string}) {
+  return (
+    <div className="transactions-profil-details">
+      <div className="tea-count">
+        <img src="/images/flow-tea-cup.svg" alt=""/>
+        <h4>x</h4>
+        <h4 className="tea-count-number">{teaCount}</h4>
+      </div>
+      <h6 className="address-id">Appreciated by {fromAddress}</h6>
+    </div>
   )
 }
 

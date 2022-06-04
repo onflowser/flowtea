@@ -3,6 +3,7 @@ import React from "react";
 import { ThemeProvider } from "styled-components";
 import DefaultLayout from "../components/layouts/LandingLayout";
 import { GlobalStyle } from "../components/GlobalStyles";
+import { FclProvider } from "../common/FclContext";
 
 const colors = {
   pink: "#db537d",
@@ -45,9 +46,11 @@ function App({ Component, pageProps }: AppProps) {
     <>
       <GlobalStyle />
       <ThemeProvider theme={theme}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <FclProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </FclProvider>
       </ThemeProvider>
     </>
   );

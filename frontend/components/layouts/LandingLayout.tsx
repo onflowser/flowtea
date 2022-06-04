@@ -8,7 +8,8 @@ import bmft_logo from "../../public/images/logo-BMFT-horizontal.svg";
 import bmft_logo_ver from "../../public/images/logo-BMFT-vertical.svg";
 
 // components
-import RoundButton from "../RoundButton";
+import { PrimaryButton } from "../PrimaryButton";
+import { useFcl } from "../../common/FclContext";
 
 type Props = {
   children: ReactElement;
@@ -25,6 +26,8 @@ const LinkText = styled.a`
 `;
 
 export default function LandingLayout({ children }: Props) {
+  const { login, logout, isLoggingIn, isLoggingOut, isLoggedIn } = useFcl();
+
   return (
     <>
       <Navigation>
@@ -36,12 +39,15 @@ export default function LandingLayout({ children }: Props) {
                 HOW DOES IT WORK?
               </LinkText>
             </Link>
-            <Link href="/login" passHref>
-              <LinkText>Log in</LinkText>
-            </Link>
-            <RoundButton href="/signup">
-              Sign up
-            </RoundButton>
+            {isLoggedIn ? (
+              <PrimaryButton isLoading={isLoggingOut} onClick={() => logout()}>
+                Logout
+              </PrimaryButton>
+            ) : (
+              <PrimaryButton isLoading={isLoggingIn} onClick={() => login()}>
+                Login with Wallet
+              </PrimaryButton>
+            )}
           </NavigationRightButtons>
         </NavInner>
       </Navigation>

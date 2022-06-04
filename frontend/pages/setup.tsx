@@ -1,9 +1,13 @@
 import LoginLayout from "../components/layouts/LoginLayout";
+import { PrimaryButton } from "../components/PrimaryButton";
+import { Input } from "../components/Input";
+import { useFcl } from "../common/FclContext";
 
 export default function Setup () {
+  const {} = useFcl();
+
   return (
     <>
-
       <div className="profile-settings">
         <h3>Complete your profile</h3>
 
@@ -11,29 +15,20 @@ export default function Setup () {
 
         <p>Drop image to change photo</p>
 
-
         <div className="profile-fields">
-          <h6>Name</h6>
-          <input className="white-field" type="text" name="name"
-                 placeholder="Name"/>
-          <h6>Buy me a FLOW tea link</h6>
-          <input className="white-field" type="text" name="name"
-                 placeholder="buymeaflowtea/name"/>
-          <h6>About</h6>
-          <textarea className="white-field" name="bio" rows={4}
-                    placeholder="Hello! I just created Buy me a Flow tea profile..."/>
-          <h6>FLOW Address</h6>
-          <input className="white-field" type="text" name="name"
-                 placeholder="0xdbe1acb46029e11a"/>
-
+          <Input label="Name" placeholder="Name" />
+          <Input label="About" placeholder="Hello! I just created Buy me a Flow tea profile..." textarea />
         </div>
 
-        <div className="violet-button violet-button-margin-top">
-          <a href="">Continue</a>
-        </div>
+        <PrimaryButton style={{
+          marginTop: 50,
+          width: '100%',
+          maxWidth: 'unset'
+        }}>
+          Continue
+        </PrimaryButton>
 
       </div>
-
     </>
   )
 }

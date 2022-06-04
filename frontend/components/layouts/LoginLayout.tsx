@@ -1,9 +1,11 @@
+import Link from "next/link";
+
 export default function LoginLayout({ children }: any) {
 
   return (
     <>
       <div className="nav-logo-only">
-        <a href="flowtea.me"><img src="./images/logo-BMFT-vertical.svg" alt=""/></a>
+        <Link href="/"><img src="./images/logo-BMFT-vertical.svg" alt=""/></Link>
       </div>
       {children}
     </>

@@ -1,12 +1,10 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import styled from "styled-components";
-import SearchInput from "../components/SearchInput";
 import { useState } from "react";
-import { useFlow } from "../cadence/fcl";
 
 // components
-import RoundButton from "../components/RoundButton";
+import RoundLink from "../components/RoundLink";
 
 // resources
 import blobImage from "../public/images/blob.svg";
@@ -89,9 +87,9 @@ const BigInput = () => {
         onChange={(evt) => setName(evt.target.value)}
       />
       <BigInputButtonWrapper>
-        <RoundButton href={`/register?name=${name}`}>
+        <RoundLink href={`/setup?name=${name}`}>
           Create your page
-        </RoundButton>
+        </RoundLink>
       </BigInputButtonWrapper>
     </BigNameInputWrapper>
   );
@@ -248,12 +246,6 @@ const TeaCup = styled.div`
 // --Hey--You--Section--
 
 const Home: NextPage = () => {
-  const flow = useFlow({});
-
-  function register() {
-    //flow.tx.register(username).then(console.log).catch(console.error);
-  }
-
   return (
     <>
       <LandingSection>
