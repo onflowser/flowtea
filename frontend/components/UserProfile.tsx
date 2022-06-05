@@ -57,21 +57,22 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
         <div className="bio-and-transactions">
           <div className="bio-profile">
             <h5>About {info?.name}</h5>
-
             <p>
               {info?.description}
             </p>
-
           </div>
 
-          {/* TODO: add types */}
-          {donations && donations.map((donation: any) => (
-            <Transaction
-              key={donation.id}
-              teaCount={donation.amount}
-              fromAddress={donation.from}
-            />
-          ))}
+          {donations.length > 0 ? (
+            donations.map((donation: any) => (
+              <Transaction
+                key={donation.id}
+                teaCount={donation.amount}
+                fromAddress={donation.from}
+              />
+            ))
+          ) : (
+            <div>No donations yet!</div>
+          )}
         </div>
         {!isSelf && (
           <div className="buy-flow-tea-form">

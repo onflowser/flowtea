@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 export function useUserInfo (address: undefined | string) {
   const { getInfo } = useFcl();
   const [info, setInfo] = useState<FlowTeaInfo | null>(null);
-  const [donations, setDonations] = useState(null);
+  const [donations, setDonations] = useState([]);
   const [error, setError] = useState(null);
 
   async function fetchUserInfo () {

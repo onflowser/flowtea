@@ -78,6 +78,75 @@ const defaultValue: FclContextProps = {
   update: () => Promise.resolve(defaultTxResult)
 }
 
+type Environment = 'development' | 'staging' | 'production';
+
+const env: Environment = process.env.NODE_ENV as Environment;
+
+function getAccessNodeApi(env: Environment) {
+  switch (env) {
+    case "production":
+      return "https://rest-mainnet.onflow.org/v1"
+    case "staging":
+      return "https://rest-testnet.onflow.org/v1"
+    case "development":
+      return "http://localhost:8080"
+  }
+}
+
+function getDiscoveryWallet(env: Environment) {
+  switch (env) {
+    case "production":
+    case "staging":
+      return "https://fcl-discovery.onflow.org/testnet/authn"
+    case "development":
+      return "http://localhost:8701/fcl/authn"
+  }
+}
+
+function getFungibleTokenAddress(env: Environment) {
+  // https://docs.onflow.org/core-contracts/fungible-token/
+  switch (env) {
+    case "production":
+      return "0xf233dcee88fe0abe"
+    case "staging":
+      return "0x9a0766d93b6608b7"
+    case "development":
+      return "0xee82856bf20e2aa6"
+  }
+}
+
+function getFlowTeaAddress(env: Environment) {
+  switch (env) {
+    case "production":
+    case "staging":
+    case "development":
+      return "0xee82856bf20e2aa6"
+  }
+}
+
+function getFlowEnv(env: Environment) {
+  switch (env) {
+    case "production":
+      return "mainnet"
+    case "staging":
+      return "testnet"
+    case "development":
+      return "local"
+  }
+}
+
+function getIconUrl(env: Environment) {
+  const path = "/images/logo-BMFT-no-text.svg";
+  const domain = window.location.host;
+  switch (env) {
+    case "production":
+    case "staging":
+      return `https://${domain}${path}`
+    case "development":
+      return `http://${domain}${path}`
+  }
+}
+
 const FclContext = React.createContext(defaultValue);
 
 export function FclProvider ({ config = {}, children } : {config?: object, children: ReactChild}) {
@@ -89,15 +158,15 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   const [isSendingDonation, setIsSendingDonation] = useState(false);
 
   useEffect(() => {
-    // TODO: add custom description + logo
     fcl.config({
-      "env": "local",
-      "accessNode.api": "http://localhost:8080",
-      "discovery.wallet": "http://localhost:8701/fcl/authn",
-      "0xFLOWTOKENADDRESS": "0x0ae53cb6e3f42a79",
-      "0xFUNGIBLETOKENADDRESS": "0xee82856bf20e2aa6",
-      "0xTEADONATIONADDRESS": "0xf8d6e0586b0a20c7",
-      "0xTEAPROFILEADDRESS": "0xf8d6e0586b0a20c7",
+      "app.detail.title": "FlowTea",
+      "env": getFlowEnv(env),
+      "app.detail.icon": getIconUrl(env),
+      "accessNode.api": getAccessNodeApi(env),
+      "discovery.wallet": getDiscoveryWallet(env),
+      "0xFUNGIBLETOKENADDRESS": getFungibleTokenAddress(env),
+      "0xTEADONATIONADDRESS": getFlowTeaAddress(env),
+      "0xTEAPROFILEADDRESS": getFlowTeaAddress(env),
       ...config
     })
   }, [config])
