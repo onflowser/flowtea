@@ -8,30 +8,35 @@ import { toast } from "react-hot-toast";
 import { useUserInfo } from "../common/use-user-info";
 
 export default function UserProfile ({ receiverAddress }: { receiverAddress: undefined | string }) {
-  const { user, donateFlow } = useFcl();
-  const {data: info, error} = useUserInfo(receiverAddress);
+  const { user, isSendingDonation, donateFlow } = useFcl();
+  const {info, donations, error} = useUserInfo(receiverAddress);
   const [recurring, setRecurring] = useState(false);
   const [flowAmount, setFlowAmount] = useState(0);
   const isSelf = receiverAddress === user?.addr;
 
-  function onSubmit () {
+  async function onSubmit () {
     if (!flowAmount) {
       toast.error("Select FLOW amount!")
       return;
     }
+    if (!receiverAddress) {
+      return;
+    }
     try {
-      // TODO: trigger donation
-      // await donateFlow(flowAmount)
+      // TODO: add support for message field
+      await donateFlow("", flowAmount, recurring, receiverAddress)
     } catch (e) {
-
+      console.error(e)
+      toast.error("Donation failed!")
     }
   }
 
   if (error) {
-    // TODO: display user friendly errors
     return (
       <Container>
         <div className="dark-background-profile" />
+        {/* TODO: display user friendly errors */}
+        {/* @ts-ignore */}
         <pre style={{margin: 20}}>{error.toString()}</pre>
       </Container>
     )
@@ -59,10 +64,14 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
 
           </div>
 
-          {/* TODO: use real transactions */}
-          <Transaction teaCount={1} fromAddress="0x0f44940e7dd31e6b"/>
-          <Transaction teaCount={5} fromAddress="0x0f44940e7dd31e6b"/>
-          <Transaction teaCount={100} fromAddress="0x0f44940e7dd31e6b"/>
+          {/* TODO: add types */}
+          {donations && donations.map((donation: any) => (
+            <Transaction
+              key={donation.id}
+              teaCount={donation.amount}
+              fromAddress={donation.from}
+            />
+          ))}
         </div>
         {!isSelf && (
           <div className="buy-flow-tea-form">
@@ -70,6 +79,7 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
             <ChooseFlowAmount onChange={setFlowAmount} value={flowAmount}/>
             <RepeatPaymentSwitch checked={recurring} onChange={setRecurring}/>
             <PrimaryButton
+              isLoading={isSendingDonation}
               onClick={onSubmit}
               style={{ width: '100%', maxWidth: 'unset' }}>
               Support {flowAmount || 'X'} FLOW

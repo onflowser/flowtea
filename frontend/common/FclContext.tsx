@@ -33,11 +33,12 @@ type FclContextProps = {
   isLoggingIn: boolean;
   isLoggingOut: boolean;
   isLoggedIn: boolean|undefined;
+  isSendingDonation: boolean;
   isRegistered: boolean;
   login: () => void;
   logout: () => void;
   getInfo: (address: string) => Promise<FlowTeaInfo|null>;
-  donateFlow: (amount: number, receiverAddress: string) => Promise<TxResult>;
+  donateFlow: (message: string, amount: number, recurring: boolean, receiverAddress: string) => Promise<TxResult>;
   getFlowBalance: (address: string) => Promise<number>
   register: (name: string, description: string) => Promise<TxResult>
   update: (name: string, description: string) => Promise<TxResult>
@@ -67,6 +68,7 @@ const defaultValue: FclContextProps = {
   isLoggingOut: false,
   isLoggedIn: false,
   isRegistered: false,
+  isSendingDonation: false,
   login: () => null,
   logout: () => null,
   getInfo: () => Promise.resolve(null),
@@ -84,6 +86,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   const [isLoggingIn, setLoggingIn] = useState(false);
   const [isLoggingOut, setLoggingOut] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [isSendingDonation, setIsSendingDonation] = useState(false);
 
   useEffect(() => {
     fcl.config({
@@ -157,11 +160,18 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
     ])
   }
 
-  function donateFlow (amount: number, receiverAddress: string) {
-    return sendTransaction(donateFlowCode, [
-      fcl.arg(amount, t.UFix64),
-      fcl.arg(receiverAddress, t.Address),
-    ])
+  async function donateFlow (message: string, amount: number, recurring: boolean, receiverAddress: string) {
+    try {
+      setIsSendingDonation(true);
+      return await sendTransaction(donateFlowCode, [
+        fcl.arg(message, t.String),
+        fcl.arg(`${Math.round(amount)}.0`, t.UFix64),
+        fcl.arg(recurring, t.Bool),
+        fcl.arg(receiverAddress, t.Address),
+      ])
+    } finally {
+      setIsSendingDonation(false);
+    }
   }
 
   async function sendTransaction (cadence: string, args: any[]) {
@@ -171,7 +181,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       payer: fcl.authz,
       proposer: fcl.authz,
       authorizations: [fcl.authz],
-      limit: 50,
+      limit: 100,
     });
 
     return {
@@ -209,6 +219,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       getInfo,
       user,
       info,
+      isSendingDonation,
       isRegistered,
       isLoggedIn: user?.loggedIn,
       isLoggingIn,

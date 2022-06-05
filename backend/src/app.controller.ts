@@ -36,4 +36,16 @@ export class AppController {
       to,
     };
   }
+
+  @Get('users/:address/donations')
+  async getUserDonations(@Param('address') address) {
+    const [from, to] = await Promise.all([
+      this.flowEventRepository.find({ where: { from: address } }),
+      this.flowEventRepository.find({ where: { to: address } }),
+    ]);
+    return {
+      from,
+      to,
+    };
+  }
 }

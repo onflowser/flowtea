@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 
 export default function Profile () {
   const router = useRouter();
-  const { user, isLoggedIn } = useFcl();
+  const { user, isLoggedIn, isRegistered } = useFcl();
 
   useEffect(() => {
     if (isLoggedIn !== undefined && !isLoggedIn) {
@@ -17,6 +17,15 @@ export default function Profile () {
         })
     }
   }, [isLoggedIn])
+
+  useEffect(() => {
+    if (isLoggedIn && !isRegistered) {
+      router.replace("/settings")
+        .then(() => {
+          toast.error("You need to register first!")
+        })
+    }
+  }, [isLoggedIn, isRegistered])
 
   return <UserProfile receiverAddress={user?.addr}/>
 }

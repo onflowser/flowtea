@@ -2,15 +2,17 @@ import { FlowTeaInfo, useFcl } from "./FclContext";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
+
 export function useUserInfo (address: undefined | string) {
   const { getInfo } = useFcl();
-  const [data, setData] = useState<FlowTeaInfo | null>(null);
+  const [info, setInfo] = useState<FlowTeaInfo | null>(null);
+  const [donations, setDonations] = useState(null);
   const [error, setError] = useState(null);
 
-  async function fetch () {
+  async function fetchUserInfo () {
     if (!address) return;
     try {
-      setData(await getInfo(address));
+      setInfo(await getInfo(address));
     } catch (e: any) {
       console.error(e)
       toast.error("Couldn't retrieve user info!");
@@ -18,10 +20,29 @@ export function useUserInfo (address: undefined | string) {
     }
   }
 
+  async function fetchUserDonations() {
+    if (!address) return;
+    try {
+      const host = process.env.NEXT_PUBLIC_API_HOST || 'http://localhost:3000';
+      const response = await fetch(`${host}/users/${address}/donations`);
+      const data = await response.json();
+      // @ts-ignore
+      // TODO: also show transactions that the user donated to other people ?
+      setDonations(data.to);
+    } catch (e: any) {
+      console.error(e)
+      toast.error("Couldn't retrieve user donations!");
+      setError(e);
+    }
+  }
+
   useEffect(() => {
-    fetch()
+    Promise.allSettled([[
+      fetchUserInfo(),
+      fetchUserDonations()
+  ]])
   }, [address])
 
 
-  return { data, error, fetch }
+  return { info, donations, error, fetchUserInfo, fetchUserDonations }
 }

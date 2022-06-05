@@ -30,7 +30,6 @@ export default function Settings () {
   async function onRegister() {
     try {
       await register(name, description);
-      await router.replace("/profile")
       toast.success("Registered!")
     } catch (e: any) {
       toast.error(e.toString())
@@ -75,9 +74,9 @@ export default function Settings () {
       <div className="profile-settings">
         {!isRegistered && <h3>Complete your profile</h3>}
 
-        <img src="/images/add-profile-photo.svg" alt=""/>
-
-        <p>Drop image to change photo</p>
+        {/* TODO: add profile photo functionality */}
+        {/*<img src="/images/add-profile-photo.svg" alt=""/>*/}
+        {/*<p>Drop image to change photo</p>*/}
 
         <div className="profile-fields">
           <Input
