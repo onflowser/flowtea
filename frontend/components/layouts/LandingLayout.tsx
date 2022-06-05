@@ -10,6 +10,7 @@ import bmft_logo_ver from "../../public/images/logo-BMFT-vertical-white.svg";
 // components
 import { PrimaryButton } from "../PrimaryButton";
 import { useFcl } from "../../common/FclContext";
+import { ProfileDropdown } from "../ProfileDropdown";
 
 type Props = {
   children: ReactElement;
@@ -37,19 +38,24 @@ export default function LandingLayout({ children }: Props) {
             </a>
           </Link>
           <NavigationRightButtons>
-            <Link href={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"} passHref>
-              <LinkText style={{ paddingRight: `2em` }}>
-                HOW DOES IT WORK?
-              </LinkText>
-            </Link>
             {isLoggedIn ? (
-              <PrimaryButton isLoading={isLoggingOut} onClick={() => logout()}>
-                Logout
-              </PrimaryButton>
+              <>
+                <ProfileDropdown style={{marginRight: 20}} />
+                <PrimaryButton isLoading={isLoggingOut} onClick={() => logout()}>
+                  Logout
+                </PrimaryButton>
+              </>
             ) : (
-              <PrimaryButton isLoading={isLoggingIn} onClick={() => login()}>
-                Login with Wallet
-              </PrimaryButton>
+              <>
+                <Link href={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"} passHref>
+                  <LinkText style={{ paddingRight: `2em` }}>
+                    HOW DOES IT WORK?
+                  </LinkText>
+                </Link>
+                <PrimaryButton isLoading={isLoggingIn} onClick={() => login()}>
+                  Login with Wallet
+                </PrimaryButton>
+              </>
             )}
           </NavigationRightButtons>
         </NavInner>
@@ -74,7 +80,7 @@ const Navigation = styled.nav`
   position: absolute;
   width: 100vw;
   top: 0;
-
+  z-index: 100;
   display: flex;
   justify-content: center;
 `;

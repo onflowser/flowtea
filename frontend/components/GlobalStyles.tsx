@@ -50,19 +50,6 @@ export const GlobalStyle = createGlobalStyle`
     line-height: 1.2em;
   }
 
-  .nav-logo-only {
-    background-color: #fff;
-    height: 120px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .nav-logo-only img {
-    max-width: 150px;
-    width: 100%;
-  }
-
   .nav-profile {
     padding: 0px 20px 0px 20px;
   }
@@ -72,15 +59,6 @@ export const GlobalStyle = createGlobalStyle`
     width: 99%;
     margin: 0 auto;
     height: 100px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .nav-profile-content-left {
-    max-width: 80px;
-    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
