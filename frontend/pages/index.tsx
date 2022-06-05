@@ -9,6 +9,7 @@ import RoundLink from "../components/RoundLink";
 // resources
 import blobImage from "../public/images/blob.svg";
 import teaCupImage from "../public/images/flow-tea-cup.svg";
+import { useFcl } from "../common/FclContext";
 
 // --LANDING--SECTION--
 /* BIG INPUT */
@@ -27,6 +28,7 @@ const BigNameInputWrapper = styled.div`
   &:focus-within {
     outline: auto;
   }
+
   max-width: 96vw;
 
   box-sizing: border-box;
@@ -75,20 +77,31 @@ const BigInputInput = styled.input`
 const BigInputButtonWrapper = styled.div`
   align-self: end;
 `;
-const BigInput = () => {
-  const [name, setName] = useState("");
+const BigInput = ({
+  placeholder,
+  linkHref,
+  linkTitle,
+  value,
+  onChange
+}: {
+  placeholder: string,
+  linkHref: string,
+  linkTitle: string,
+  value: string,
+  onChange: (value: string) => void
+}) => {
 
   return (
     <BigNameInputWrapper>
       <BigInputText>buymeaflowtea.com/</BigInputText>
       <BigInputInput
         type="text"
-        placeholder="your name"
-        value={name}
-        onChange={(evt) => setName(evt.target.value)}
+        placeholder={placeholder}
+        value={value}
+        onChange={(evt) => onChange(evt.target.value)}
       />
       <BigInputButtonWrapper>
-        <RoundLink href={`/settings?name=${name}`}>Create your page</RoundLink>
+        <RoundLink href={linkHref}>{linkTitle}</RoundLink>
       </BigInputButtonWrapper>
     </BigNameInputWrapper>
   );
@@ -130,12 +143,10 @@ const BigText = styled.div`
 `;
 const LandingSection = styled.div`
   background-color: #e5e5f7;
-  background-image: repeating-radial-gradient(
-      circle at 0 0,
-      transparent 0,
-      #e5e5f7 30px
-    ),
-    repeating-linear-gradient(#aca3f855, #aca3f8);
+  background-image: repeating-radial-gradient(circle at 0 0,
+  transparent 0,
+  #e5e5f7 30px),
+  repeating-linear-gradient(#aca3f855, #aca3f8);
 
   height: 100vh;
   box-sizing: border-box;
@@ -245,12 +256,22 @@ const TeaCup = styled.div`
 // --Hey--You--Section--
 
 const Home: NextPage = () => {
+  const [value, setValue] = useState('');
+  const {isLoggedIn, isRegistered} = useFcl();
+  const isExistingUser = isLoggedIn && isRegistered;
+
   return (
     <>
       <LandingSection>
         <CenterTitleBox>
           <BigText>Let your appreciators buy you a Flow tea.</BigText>
-          <BigInput />
+          <BigInput
+            value={value}
+            onChange={setValue}
+            placeholder={isExistingUser ? 'FLOW address' : 'your name'}
+            linkTitle={isExistingUser ? 'Search' : 'Create your page'}
+            linkHref={isExistingUser ? `/profile/${value}` : `/settings?name=${value}`}
+          />
           <SmallText>It is free and quick!</SmallText>
         </CenterTitleBox>
       </LandingSection>
@@ -271,14 +292,14 @@ const Home: NextPage = () => {
           </HeyYouColumn>
           <HeyYouBlobColumn>
             <BlobImageWrapper>
-              <Image src={blobImage} layout="fill" />
+              <Image src={blobImage} layout="fill"/>
               <TeaCupsWrapper>
                 <div>
                   {[...Array(5)].map((_, i) => (
                     <TeaCupRow key={`_tea_cup_row_${i}`}>
                       {[...Array(4)].map((__, j) => (
                         <TeaCup key={`_tea_cup_${i}${j}`}>
-                          <Image src={teaCupImage} layout="fill" />
+                          <Image src={teaCupImage} layout="fill"/>
                         </TeaCup>
                       ))}
                     </TeaCupRow>
