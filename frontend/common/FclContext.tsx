@@ -4,7 +4,6 @@ import React, {
   useEffect,
   useState
 } from "react";
-import { useRouter } from "next/router";
 
 
 // @ts-ignore
@@ -33,10 +32,11 @@ type FclContextProps = {
   info: null | FlowTeaInfo;
   isLoggingIn: boolean;
   isLoggingOut: boolean;
-  isLoggedIn: boolean;
+  isLoggedIn: boolean|undefined;
   isRegistered: boolean;
   login: () => void;
   logout: () => void;
+  getInfo: (address: string) => Promise<FlowTeaInfo|null>;
   donateFlow: (amount: number, receiverAddress: string) => Promise<TxResult>;
   getFlowBalance: (address: string) => Promise<number>
   register: (name: string, description: string) => Promise<TxResult>
@@ -45,7 +45,7 @@ type FclContextProps = {
 
 const defaultTxResult = { transactionId: '', status: '' };
 
-type FlowUser = {
+export type FlowUser = {
   addr: string
   cid: string
   expiresAt: null
@@ -55,7 +55,7 @@ type FlowUser = {
   services: any[]
 }
 
-type FlowTeaInfo = {
+export type FlowTeaInfo = {
   name: string;
   description: string;
 }
@@ -69,6 +69,7 @@ const defaultValue: FclContextProps = {
   isRegistered: false,
   login: () => null,
   logout: () => null,
+  getInfo: () => Promise.resolve(null),
   donateFlow: () => Promise.resolve(defaultTxResult),
   getFlowBalance: () => Promise.resolve(0),
   register: () => Promise.resolve(defaultTxResult),
@@ -78,7 +79,6 @@ const defaultValue: FclContextProps = {
 const FclContext = React.createContext(defaultValue);
 
 export function FclProvider ({ config = {}, children } : {config?: object, children: ReactChild}) {
-  const router = useRouter();
   const [user, setUser] = useState<FlowUser|null>(null);
   const [info, setInfo] = useState<FlowTeaInfo|null>(null);
   const [isLoggingIn, setLoggingIn] = useState(false);
@@ -103,7 +103,10 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   useEffect(() => {
     if (user?.addr) {
       getIsRegistered(user.addr).then(setIsRegistered)
-      getInfo(user.addr).then(setInfo)
+      getInfo(user.addr).then(setInfo).catch((e: any) => {
+        console.error(e)
+        return null;
+      })
     }
   }, [user])
 
@@ -137,11 +140,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
         fcl.arg(address, t.Address),
       ])
     ])
-      .then(fcl.decode)
-      .catch((e: any) => {
-        console.error(e)
-        return null;
-      }) as Promise<FlowTeaInfo|null>
+      .then(fcl.decode) as Promise<FlowTeaInfo|null>
   }
 
   async function register (name: string, description: string) {
@@ -184,7 +183,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   async function logout () {
     setLoggingOut(true);
     try {
-      return fcl.unauthenticate();
+      return await fcl.unauthenticate();
     } finally {
       setLoggingOut(false);
     }
@@ -193,7 +192,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   async function login () {
     setLoggingIn(true);
     try {
-      return fcl.authenticate();
+      return await fcl.authenticate();
     } finally {
       setLoggingIn(false);
     }
@@ -207,10 +206,11 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       logout,
       update,
       register,
+      getInfo,
       user,
       info,
       isRegistered,
-      isLoggedIn: Boolean(user?.loggedIn),
+      isLoggedIn: user?.loggedIn,
       isLoggingIn,
       isLoggingOut
     }}>

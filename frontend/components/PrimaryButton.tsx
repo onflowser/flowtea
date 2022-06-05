@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, ReactChildren } from "react";
 import styled from "styled-components";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: ReactChildren | string;
+  children: ReactChildren | string | (string|number)[];
   isLoading?: boolean;
 };
 

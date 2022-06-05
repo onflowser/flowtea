@@ -134,19 +134,6 @@ export const GlobalStyle = createGlobalStyle`
     height: 200px;
   }
 
-  .profile-photo-main-wrapper {
-    margin: 0 auto;
-    text-align: center;
-    margin-top: -80px;
-    margin-bottom: 120px;
-  }
-
-  .profile-photo-main-wrapper img {
-    max-width: 150px;
-    width: 100%;
-    margin-bottom: 20px;
-  }
-
 
   /* =============================================== mobile */
 
