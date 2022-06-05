@@ -2,8 +2,8 @@ import styled from "styled-components";
 import { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 type Props = {
-  label: string;
-  placeholder: string;
+  label?: string;
+  placeholder?: string;
 }
 
 export function Input ({
@@ -14,7 +14,7 @@ export function Input ({
 
   return (
     <Container>
-      <h6>{label}</h6>
+      {label && <h6>{label}</h6>}
       <input
         className="white-field"
         name={label}

@@ -2,8 +2,10 @@ import styled from "styled-components";
 import { createRef, HTMLAttributes, useState } from "react";
 import { useClickOutside } from "../common/use-click-outside";
 import { useRouter } from "next/router";
+import { LinkGeneratorModal } from "./LinkGeneratorModal";
 
 export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
+  const [modalIsOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const menuRef = createRef<HTMLDivElement>();
   const photoRef = createRef<HTMLImageElement>();
@@ -14,31 +16,44 @@ export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
     }
   })
 
-  async function navigate(path: string) {
+  async function navigate (path: string) {
     await router.push(path);
     setIsOpen(false);
   }
 
   return (
-    <Container {...props}>
-      <Photo
-        ref={photoRef}
-        onClick={() => setIsOpen(!isOpen)}
-        className="profile-photo-small"
-        src="/images/profile-photo-small.svg"
-        alt=""
-      />
-      {isOpen && (
-        <Dropdown ref={menuRef}>
-          <DropdownItem onClick={() => navigate("/profile")}>
-            My profile
-          </DropdownItem>
-          <DropdownItem onClick={() => navigate("/settings")}>
-            Settings
-          </DropdownItem>
-        </Dropdown>
+    <>
+      {modalIsOpen && (
+        <LinkGeneratorModal
+          isOpen={true}
+          shouldCloseOnOverlayClick
+          onRequestClose={() => setIsModalOpen(false)}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
-    </Container>
+      <Container {...props}>
+        <Photo
+          ref={photoRef}
+          onClick={() => setIsOpen(!isOpen)}
+          className="profile-photo-small"
+          src="/images/profile-photo-small.svg"
+          alt=""
+        />
+        {isOpen && (
+          <Dropdown ref={menuRef}>
+            <DropdownItem onClick={() => navigate("/profile")}>
+              My profile
+            </DropdownItem>
+            <DropdownItem onClick={() => navigate("/settings")}>
+              Settings
+            </DropdownItem>
+            <DropdownItem onClick={() => setIsModalOpen(true)}>
+              Get my widget
+            </DropdownItem>
+          </Dropdown>
+        )}
+      </Container>
+    </>
   )
 }
 

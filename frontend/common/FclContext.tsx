@@ -89,6 +89,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   const [isSendingDonation, setIsSendingDonation] = useState(false);
 
   useEffect(() => {
+    // TODO: add custom description + logo
     fcl.config({
       "env": "local",
       "accessNode.api": "http://localhost:8080",
