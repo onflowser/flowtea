@@ -6,23 +6,32 @@ import { GlobalStyle } from "../components/GlobalStyles";
 import { FclProvider } from "../common/FclContext";
 import { Toaster } from "react-hot-toast";
 import { theme } from "../common/theme";
+import { SWRConfig } from "swr";
 
 
-
-function App({ Component, pageProps }: AppProps) {
+function App ({ Component, pageProps }: AppProps) {
   // @ts-ignore
   const Layout = Component.Layout || DefaultLayout;
 
   return (
     <>
-      <Toaster />
-      <GlobalStyle />
+      <Toaster/>
+      <GlobalStyle/>
       <ThemeProvider theme={theme}>
-        <FclProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </FclProvider>
+        <SWRConfig
+          value={{
+            refreshInterval: 3000,
+            fetcher: (resource, init) =>
+              fetch(process.env.NEXT_PUBLIC_API_HOST + resource, init)
+                .then(res => res.json())
+          }}
+        >
+          <FclProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </FclProvider>
+        </SWRConfig>
       </ThemeProvider>
     </>
   );

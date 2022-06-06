@@ -6,10 +6,11 @@ import { colors } from "../common/theme";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useUserInfo } from "../common/use-user-info";
+import Link from "next/link";
 
 export default function UserProfile ({ receiverAddress }: { receiverAddress: undefined | string }) {
   const { user, isSendingDonation, donateFlow } = useFcl();
-  const {info, donations, error} = useUserInfo(receiverAddress);
+  const {info, infoError, donations, donationsError} = useUserInfo(receiverAddress);
   const [recurring, setRecurring] = useState(false);
   const [flowAmount, setFlowAmount] = useState(0);
   const isSelf = receiverAddress === user?.addr;
@@ -31,7 +32,7 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
     }
   }
 
-  if (error) {
+  if (infoError) {
     return (
       <Container>
         <div className="dark-background-profile" />
@@ -62,7 +63,7 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
             </p>
           </div>
 
-          {donations.length > 0 ? (
+          {donations?.length > 0 ? (
             donations.map((donation: any) => (
               <Transaction
                 key={donation.id}
@@ -70,6 +71,8 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
                 fromAddress={donation.from}
               />
             ))
+          ) : donationsError ? (
+            <div>Could not retrieve user donations.</div>
           ) : (
             <div>No donations yet!</div>
           )}
@@ -242,7 +245,10 @@ function Transaction ({
         <h4>x</h4>
         <h4 className="tea-count-number">{teaCount}</h4>
       </div>
-      <h6 className="address-id">Appreciated by {fromAddress}</h6>
+      <h6 className="address-id">
+        Appreciated by {` `}
+        <Link href={`/profile/${fromAddress}`}>{fromAddress}</Link>
+      </h6>
     </div>
   )
 }

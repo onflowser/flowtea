@@ -23,9 +23,9 @@ export function LinkGeneratorModal ({ isOpen, onClose, ...props }: Props) {
   const [selected, setSelected] = useState(-1);
   const [showSelection, setShowSelection] = useState(true);
   const widgets = widgetVariants.map(name => `/images/widgets/button-${name}.svg`);
-  const domain = `http://${window.location.hostname}`;
+  const domain = `http://${window.location.host}`;
   const generatedCode = `
-    <a href="${domain}/profile/${user?.addr}">
+    <a href="${domain}/profile/${user?.addr}" target="_blank">
       <img alt="FlowTea" src="${domain}${widgets[selected]}" />
     </a>
   `.trim();
