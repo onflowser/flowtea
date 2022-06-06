@@ -15,8 +15,6 @@ import * as t from "@onflow/types";
 // @ts-ignore
 import getFlowBalanceCode from "../cadence/scripts/get-flow-balance.cdc";
 // @ts-ignore
-import getIsRegisteredCode from "../cadence/scripts/is-registered.cdc";
-// @ts-ignore
 import getInfoCode from "../cadence/scripts/get-info.cdc";
 // @ts-ignore
 import donateFlowCode from "../cadence/transactions/donate.cdc";
@@ -35,8 +33,9 @@ type FclContextProps = {
   isLoggedIn: boolean|undefined;
   isSendingDonation: boolean;
   isRegistered: boolean;
-  login: () => void;
-  logout: () => void;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  fetchCurrentUserInfo: () => Promise<FlowTeaInfo|null>;
   getInfo: (address: string) => Promise<FlowTeaInfo|null>;
   donateFlow: (message: string, amount: number, recurring: boolean, receiverAddress: string) => Promise<TxResult>;
   getFlowBalance: (address: string) => Promise<number>
@@ -69,8 +68,9 @@ const defaultValue: FclContextProps = {
   isLoggedIn: false,
   isRegistered: false,
   isSendingDonation: false,
-  login: () => null,
-  logout: () => null,
+  login: () => Promise.resolve(),
+  logout: () => Promise.resolve(),
+  fetchCurrentUserInfo: () => Promise.resolve(null),
   getInfo: () => Promise.resolve(null),
   donateFlow: () => Promise.resolve(defaultTxResult),
   getFlowBalance: () => Promise.resolve(0),
@@ -154,7 +154,6 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   const [info, setInfo] = useState<FlowTeaInfo|null>(null);
   const [isLoggingIn, setLoggingIn] = useState(false);
   const [isLoggingOut, setLoggingOut] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
   const [isSendingDonation, setIsSendingDonation] = useState(false);
 
   useEffect(() => {
@@ -175,11 +174,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
 
   useEffect(() => {
     if (user?.addr) {
-      getIsRegistered(user.addr).then(setIsRegistered)
-      getInfo(user.addr).then(setInfo).catch((e: any) => {
-        console.error(e)
-        return null;
-      })
+      fetchCurrentUserInfo();
     }
   }, [user])
 
@@ -190,20 +185,6 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
         fcl.arg(address, t.Address),
       ])
     ]).then(fcl.decode)
-  }
-
-  async function getIsRegistered (address: string) {
-    return fcl.send([
-      fcl.script(getIsRegisteredCode),
-      fcl.args([
-        fcl.arg(address, t.Address),
-      ])
-    ])
-      .then(fcl.decode)
-      .catch((e: any) => {
-        console.error(e);
-        return false
-      }) as Promise<boolean>
   }
 
   async function getInfo (address: string) {
@@ -263,7 +244,8 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
   async function logout () {
     setLoggingOut(true);
     try {
-      return await fcl.unauthenticate();
+      await fcl.unauthenticate();
+      setInfo(null);
     } finally {
       setLoggingOut(false);
     }
@@ -278,6 +260,18 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
     }
   }
 
+  async function fetchCurrentUserInfo() {
+    if (!user) return null;
+    try {
+      const info = await getInfo(user.addr);
+      setInfo(info);
+      return info;
+    } catch (e) {
+      console.error(e)
+      return null;
+    }
+  }
+
   return (
     <FclContext.Provider value={{
       getFlowBalance,
@@ -287,10 +281,11 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       update,
       register,
       getInfo,
+      fetchCurrentUserInfo,
       user,
       info,
       isSendingDonation,
-      isRegistered,
+      isRegistered: Boolean(info),
       isLoggedIn: user?.loggedIn,
       isLoggingIn,
       isLoggingOut

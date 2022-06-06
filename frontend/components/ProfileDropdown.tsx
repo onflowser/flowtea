@@ -3,8 +3,10 @@ import { createRef, HTMLAttributes, useState } from "react";
 import { useClickOutside } from "../common/use-click-outside";
 import { useRouter } from "next/router";
 import { LinkGeneratorModal } from "./LinkGeneratorModal";
+import { useFcl } from "../common/FclContext";
 
 export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
+  const { isRegistered, isLoggedIn, logout } = useFcl();
   const [modalIsOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const menuRef = createRef<HTMLDivElement>();
@@ -41,15 +43,24 @@ export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
         />
         {isOpen && (
           <Dropdown ref={menuRef}>
-            <DropdownItem onClick={() => navigate("/profile")}>
-              My profile
-            </DropdownItem>
+            {isRegistered && (
+              <>
+                <DropdownItem onClick={() => navigate("/profile")}>
+                  My profile
+                </DropdownItem>
+                <DropdownItem onClick={() => setIsModalOpen(true)}>
+                  Get my widget
+                </DropdownItem>
+              </>
+            )}
             <DropdownItem onClick={() => navigate("/settings")}>
-              Settings
+              {isRegistered ? 'Profile settings' : 'Create profile'}
             </DropdownItem>
-            <DropdownItem onClick={() => setIsModalOpen(true)}>
-              Get my widget
-            </DropdownItem>
+            {isLoggedIn && (
+              <DropdownItem onClick={() => navigate("/").then(logout)}>
+                Logout
+              </DropdownItem>
+            )}
           </Dropdown>
         )}
       </Container>

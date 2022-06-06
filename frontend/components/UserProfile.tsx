@@ -3,16 +3,23 @@ import styled, { css } from "styled-components";
 import { PrimaryButton } from "./PrimaryButton";
 import Switch from "react-switch";
 import { colors } from "../common/theme";
-import { useState } from "react";
+import { HTMLAttributes, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useUserInfo } from "../common/use-user-info";
 import Link from "next/link";
+import { TextArea } from "./Input";
 
 export default function UserProfile ({ receiverAddress }: { receiverAddress: undefined | string }) {
   const { user, isSendingDonation, donateFlow } = useFcl();
-  const {info, infoError, donations, donationsError} = useUserInfo(receiverAddress);
+  const {
+    info,
+    infoError,
+    donations,
+    donationsError
+  } = useUserInfo(receiverAddress);
   const [recurring, setRecurring] = useState(false);
   const [flowAmount, setFlowAmount] = useState(0);
+  const [message, setMessage] = useState('');
   const isSelf = receiverAddress === user?.addr;
 
   async function onSubmit () {
@@ -24,8 +31,7 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
       return;
     }
     try {
-      // TODO: add support for message field
-      await donateFlow("", flowAmount, recurring, receiverAddress)
+      await donateFlow(message, flowAmount, recurring, receiverAddress)
     } catch (e) {
       console.error(e)
       toast.error("Donation failed!")
@@ -38,7 +44,7 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
         <div className="dark-background-profile" />
         {/* TODO: display user friendly errors */}
         {/* @ts-ignore */}
-        <pre style={{margin: 20}}>{error.toString()}</pre>
+        <pre style={{margin: 20}}>{infoError.toString()}</pre>
       </Container>
     )
   }
@@ -50,6 +56,12 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
       <div className="profile-photo-main-wrapper">
         <img src="/images/profile-photo-main.svg" alt=""/>
         <h3 className="profile-name">{info?.name}</h3>
+        <a
+          target="_blank"
+          href={`https://flowscan.org/account/${receiverAddress}`}
+          rel="noreferrer">
+          {receiverAddress}
+        </a>
       </div>
 
       <div
@@ -81,7 +93,15 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
           <div className="buy-flow-tea-form">
             <h5>Buy {info?.name} a FLOW Tea</h5>
             <ChooseFlowAmount onChange={setFlowAmount} value={flowAmount}/>
-            <RepeatPaymentSwitch checked={recurring} onChange={setRecurring}/>
+            <RepeatPaymentSwitch
+              style={{ marginTop: 50 }}
+              checked={recurring}
+              onChange={checked => setRecurring(!!checked)}
+            />
+            <TextArea
+              placeholder="Enter your message ..."
+              onInput={e => setMessage(e.currentTarget.value)}
+            />
             <PrimaryButton
               isLoading={isSendingDonation}
               onClick={onSubmit}
@@ -97,15 +117,16 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
 
 function RepeatPaymentSwitch ({
   onChange,
-  checked
-}: { onChange: (checked: boolean) => void, checked: boolean }) {
+  checked,
+  style,
+  ...props
+}: { onChange: (checked: boolean) => void, checked: boolean } & HTMLAttributes<HTMLDivElement>) {
   return (
     <div style={{
       display: 'flex',
       flexDirection: 'row',
-      marginBottom: 50,
-      marginTop: 50
-    }}>
+      ...style
+    }} {...props}>
       <div>
         <b style={{ margin: 0 }}>
           Repeat this payment every month

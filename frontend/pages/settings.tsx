@@ -5,11 +5,11 @@ import { useFcl } from "../common/FclContext";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
+import { wait } from "../common/utils";
 
 export default function Settings () {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, update, info, isRegistered } = useFcl();
+  const { register, update, fetchCurrentUserInfo, info, isRegistered } = useFcl();
   const { query } = useRouter();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -18,7 +18,7 @@ export default function Settings () {
     if (!isRegistered) {
       setName(query.name as string)
     }
-  }, [query])
+  }, [isRegistered, query])
 
   useEffect(() => {
     if (info) {
@@ -30,6 +30,14 @@ export default function Settings () {
   async function onRegister() {
     try {
       await register(name, description);
+      while (true) {
+        console.log("fetching")
+        await wait(500);
+        if (await fetchCurrentUserInfo()) {
+          console.log('stopping')
+          break;
+        }
+      }
       toast.success("Registered!")
     } catch (e: any) {
       toast.error(e.toString())
@@ -72,7 +80,7 @@ export default function Settings () {
   return (
     <>
       <div className="profile-settings">
-        {!isRegistered && <h3>Complete your profile</h3>}
+        {!isRegistered && <h3>Create your profile</h3>}
 
         {/* TODO: add profile photo functionality */}
         {/*<img src="/images/add-profile-photo.svg" alt=""/>*/}
@@ -83,15 +91,13 @@ export default function Settings () {
             label="Name"
             placeholder="Name"
             value={name}
-            /* @ts-ignore */
-            onInput={e => setName(e.target.value)}
+            onInput={e => setName(e.currentTarget.value)}
           />
           <TextArea
             label="About"
             placeholder="Hello! I just created Buy me a Flow tea profile..."
             value={description}
-            /* @ts-ignore */
-            onInput={e => setDescription(e.target.value)}
+            onInput={e => setDescription(e.currentTarget.value)}
           />
         </div>
 

@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEntity } from './event.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOptionsOrder, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Controller()
@@ -14,8 +14,11 @@ export class AppController {
   ) {}
 
   @Get('donations')
-  getAllDonations() {
-    return this.flowEventRepository.find();
+  async getDonations() {
+    const [donations, total] = await this.flowEventRepository.findAndCount({
+      order: { blockTimestamp: 'desc' },
+    });
+    return { total, donations };
   }
 
   @Get('users')
@@ -25,10 +28,17 @@ export class AppController {
 
   @Get('users/:address')
   async getUser(@Param('address') address) {
+    const order: FindOptionsOrder<EventEntity> = { blockTimestamp: 'desc' };
     const [user, from, to] = await Promise.all([
       this.userRepository.findOneOrFail({ where: { address } }),
-      this.flowEventRepository.find({ where: { from: address } }),
-      this.flowEventRepository.find({ where: { to: address } }),
+      this.flowEventRepository.find({
+        where: { from: address },
+        order,
+      }),
+      this.flowEventRepository.find({
+        where: { to: address },
+        order,
+      }),
     ]);
     return {
       user,
@@ -39,9 +49,13 @@ export class AppController {
 
   @Get('users/:address/donations')
   async getUserDonations(@Param('address') address) {
+    const opts: FindManyOptions = {
+      where: { to: address },
+      order: { blockTimestamp: 'desc' },
+    };
     const [from, to] = await Promise.all([
-      this.flowEventRepository.find({ where: { from: address } }),
-      this.flowEventRepository.find({ where: { to: address } }),
+      this.flowEventRepository.find(opts),
+      this.flowEventRepository.find(opts),
     ]);
     return {
       from,
