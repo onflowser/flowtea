@@ -7,23 +7,27 @@ import { FclProvider } from "../common/FclContext";
 import { Toaster } from "react-hot-toast";
 import { theme } from "../common/theme";
 import { SWRConfig } from "swr";
+import Head from "next/head";
 
-
-function App ({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   // @ts-ignore
   const Layout = Component.Layout || DefaultLayout;
 
   return (
     <>
-      <Toaster/>
-      <GlobalStyle/>
+      <Head>
+        <title>Buy me a Flow tea</title>
+      </Head>
+      <Toaster />
+      <GlobalStyle />
       <ThemeProvider theme={theme}>
         <SWRConfig
           value={{
             refreshInterval: 3000,
             fetcher: (resource, init) =>
-              fetch(process.env.NEXT_PUBLIC_API_HOST + resource, init)
-                .then(res => res.json())
+              fetch(process.env.NEXT_PUBLIC_API_HOST + resource, init).then(
+                (res) => res.json()
+              ),
           }}
         >
           <FclProvider>
