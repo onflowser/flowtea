@@ -40,18 +40,21 @@ export default function LandingLayout({ children }: Props) {
           <NavigationRightButtons>
             {isLoggedIn ? (
               <>
-                <ProfileDropdown style={{marginRight: 20}} />
-                <PrimaryButton isLoading={isLoggingOut} onClick={() => logout()}>
+                <ProfileDropdown style={{ marginRight: 20 }} />
+                <PrimaryButton
+                  isLoading={isLoggingOut}
+                  onClick={() => logout()}
+                >
                   Logout
                 </PrimaryButton>
               </>
             ) : (
               <>
-                <Link href={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"} passHref>
+                {/*<Link href={"https://www.youtube.com/watch?v=dQw4w9WgXcQ"} passHref>
                   <LinkText style={{ paddingRight: `2em` }}>
                     HOW DOES IT WORK?
-                  </LinkText>
-                </Link>
+            </LinkText>
+                </Link>*/}
                 <PrimaryButton isLoading={isLoggingIn} onClick={() => login()}>
                   Login with Wallet
                 </PrimaryButton>

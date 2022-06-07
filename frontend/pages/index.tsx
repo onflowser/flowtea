@@ -156,7 +156,7 @@ const LandingSection = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
 
-  height: calc(95vh - 1rem);
+  height: 100vh;
   box-sizing: border-box;
   position: relative;
 
@@ -260,10 +260,11 @@ const SmallRedText = styled.div`
   color: ${(props) => props.theme.colors.primary};
 `;
 
-const BigHeading = styled.div`
+const BigHeading = styled.h1`
   font-weight: 900;
   font-size: 4rem;
   line-height: 84px;
+  margin: 0;
 
   @media only screen and (max-width: 500px) {
     line-height: 5rem;
