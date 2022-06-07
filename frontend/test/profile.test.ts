@@ -89,7 +89,7 @@ describe("TeaProfile", () => {
     expect(error).toContain("Account is already registered");
   });
 
-  test("Duplicate profile slug", async () => {
+  test("Duplicate profile handle", async () => {
     const Owner = await getAccountAddress("Owner");
     const Alice = await getAccountAddress("Alice");
     const Bob = await getAccountAddress("Bob");
@@ -99,7 +99,7 @@ describe("TeaProfile", () => {
       name: "TeaProfile",
     });
 
-    // Alice registers and reserves usage of her project slug
+    // Alice registers and reserves usage of her project handle
     const [tx1, err1] = await sendTransaction({
       name: "register",
       args: ["alice", "Alice", "This is Alice!"],
@@ -107,13 +107,13 @@ describe("TeaProfile", () => {
     });
     expect(err1).toBeNull();
 
-    // Bob tries to register under the same slug
+    // Bob tries to register under the same handle
     const [tx2, err2] = await sendTransaction({
       name: "register",
-      args: ["alice", "Bob", "This is Bob, but with Alice's slug!"],
+      args: ["alice", "Bob", "This is Bob, but with Alice's handle!"],
       signers: [Bob],
     });
 
-    expect(err2).toContain("Domain name is already taken")
+    expect(err2).toContain("Handle is already taken")
   });
 });

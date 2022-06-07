@@ -17,7 +17,7 @@ import getFlowBalanceCode from "../cadence/scripts/get-flow-balance.cdc";
 // @ts-ignore
 import getAddressCode from "../cadence/scripts/get-address.cdc";
 // @ts-ignore
-import getSlugCode from "../cadence/scripts/get-slug.cdc";
+import getHandleCode from "../cadence/scripts/get-handle.cdc";
 // @ts-ignore
 import getInfoCode from "../cadence/scripts/get-info.cdc";
 // @ts-ignore
@@ -40,14 +40,14 @@ type FclContextProps = {
   isRegistered: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
-  getAddress: (slug: string) => Promise<null | string>,
-  getSlug: (address: string) => Promise<null | string>,
-  isSlugAvailable: (slug: string) => Promise<boolean>,
+  getAddress: (handle: string) => Promise<null | string>,
+  getHandle: (address: string) => Promise<null | string>,
+  isHandleAvailable: (handle: string) => Promise<boolean>,
   fetchCurrentUserInfo: () => Promise<FlowTeaInfo | null>;
   getInfo: (address: string) => Promise<FlowTeaInfo | null>;
   donateFlow: (message: string, amount: number, recurring: boolean, receiverAddress: string) => Promise<TxResult>;
   getFlowBalance: (address: string) => Promise<number>
-  register: (slug: string, name: string, description: string) => Promise<TxResult>
+  register: (handle: string, name: string, description: string) => Promise<TxResult>
   update: (name: string, description: string) => Promise<TxResult>
 }
 
@@ -79,8 +79,8 @@ const defaultValue: FclContextProps = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   getAddress: () => Promise.resolve(null),
-  getSlug: () => Promise.resolve(null),
-  isSlugAvailable: () => Promise.resolve(false),
+  getHandle: () => Promise.resolve(null),
+  isHandleAvailable: () => Promise.resolve(false),
   fetchCurrentUserInfo: () => Promise.resolve(null),
   getInfo: () => Promise.resolve(null),
   donateFlow: () => Promise.resolve(defaultTxResult),
@@ -196,28 +196,28 @@ export function FclProvider ({
     }
   }, [user])
 
-  async function getAddress (slug: string) {
+  async function getAddress (handle: string) {
     return fcl.send([
       fcl.script(getAddressCode),
       fcl.args([
-        fcl.arg(slug, t.String),
+        fcl.arg(handle, t.String),
       ])
     ]).then(fcl.decode) as Promise<string | null>
   }
 
-  async function getSlug (address: string) {
+  async function getHandle (address: string) {
     return fcl.send([
-      fcl.script(getSlugCode),
+      fcl.script(getHandleCode),
       fcl.args([
         fcl.arg(address, t.Address),
       ])
     ]).then(fcl.decode) as Promise<string | null>
   }
 
-  async function isSlugAvailable (slug: string) {
-    return getAddress(slug)
+  async function isHandleAvailable (handle: string) {
+    return getAddress(handle)
       .then(() => false)
-      .catch(e => e.toString().match("Slug not found") ? true : Promise.reject(e))
+      .catch(e => e.toString().match("Handle not found") ? true : Promise.reject(e))
   }
 
   async function getFlowBalance (address: string) {
@@ -239,9 +239,9 @@ export function FclProvider ({
       .then(fcl.decode) as Promise<FlowTeaInfo | null>
   }
 
-  async function register (slug: string, name: string, description: string) {
+  async function register (handle: string, name: string, description: string) {
     return sendTransaction(registerFlowCode, [
-      fcl.arg(slug, t.String),
+      fcl.arg(handle, t.String),
       fcl.arg(name, t.String),
       fcl.arg(description, t.String),
     ])
@@ -325,8 +325,8 @@ export function FclProvider ({
       register,
       getInfo,
       getAddress,
-      getSlug,
-      isSlugAvailable,
+      getHandle,
+      isHandleAvailable,
       fetchCurrentUserInfo,
       user,
       info,

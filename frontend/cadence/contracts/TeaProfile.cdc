@@ -3,10 +3,10 @@ pub contract TeaProfile {
     pub let publicPath: PublicPath
     pub let storagePath: StoragePath
     pub let privatePath: PrivatePath
-    access(self) let slugMap: {String: Address};
-    access(self) let reverseSlugMap: {Address: String};
+    access(self) let handleMap: {String: Address};
+    access(self) let reverseHandleMap: {Address: String};
 
-    pub event Registration(slug: String, name: String, address: Address)
+    pub event Registration(handle: String, name: String, address: Address)
 
     pub struct Info {
         pub var name: String
@@ -53,26 +53,27 @@ pub contract TeaProfile {
 
     }
 
-    pub fun lookupAddress(slug: String): Address? {
-        assert(self.slugMap.containsKey(slug), message: "Slug not found")
-        return self.slugMap[slug]
+    pub fun lookupAddress(handle: String): Address? {
+        assert(self.handleMap.containsKey(handle), message: "Handle not found")
+        return self.handleMap[handle]
     }
 
-    pub fun lookupSlug(address: Address): String? {
-        assert(self.reverseSlugMap.containsKey(address), message: "Address not found")
-        return self.reverseSlugMap[address]
+    pub fun lookupHandle(address: Address): String? {
+        assert(self.reverseHandleMap.containsKey(address), message: "Address not found")
+        return self.reverseHandleMap[address]
     }
 
-    pub fun createProject(slug: String, name: String, description: String, address: Address) : @TeaProfile.Project {
+    pub fun createProject(handle: String, name: String, description: String, address: Address) : @TeaProfile.Project {
     	pre {
+            handle.length <= 32: "Handle must be 32 or less characters"
     		name.length <= 64: "Name must be 64 or less characters"
     	}
         // project names must be unique
-        assert(!self.slugMap.containsKey(slug), message: "Domain name is already taken")
-        self.slugMap.insert(key: slug, address)
-        self.reverseSlugMap.insert(key: address, slug)
+        assert(!self.handleMap.containsKey(handle), message: "Handle is already taken")
+        self.handleMap.insert(key: handle, address)
+        self.reverseHandleMap.insert(key: address, handle)
 
-    	emit Registration(slug: slug, name: name, address: address)
+    	emit Registration(handle: handle, name: name, address: address)
     	return <- create TeaProfile.Project(name: name, description: description, address: address)
     }
 
@@ -80,7 +81,7 @@ pub contract TeaProfile {
 		self.publicPath = /public/teaProfile
 		self.storagePath = /storage/teaProfile
 		self.privatePath = /private/teaProfile
-        self.slugMap = {}
-        self.reverseSlugMap = {}
+        self.handleMap = {}
+        self.reverseHandleMap = {}
 	}
 }

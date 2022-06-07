@@ -1,6 +1,6 @@
 import TeaProfile from 0xTeaProfile
 
-transaction (slug: String, name: String, description: String) {
+transaction (handle: String, name: String, description: String) {
 
     prepare(signer: AuthAccount) {
         let existing = signer.getCapability<&{TeaProfile.Public}>(TeaProfile.publicPath)
@@ -8,7 +8,7 @@ transaction (slug: String, name: String, description: String) {
             panic("Account is already registered")
         } else {
             let profile <-TeaProfile.createProject(
-                slug: slug,
+                handle: handle,
                 name: name,
                 description: description,
                 address: signer.address

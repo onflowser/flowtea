@@ -6,7 +6,7 @@ import UserProfile from "../components/UserProfile";
 export default function OtherUserProfile() {
   const router = useRouter();
 
-  return <UserProfile userId={router.query.slug as string} />
+  return <UserProfile userId={router.query.handle as string} />
 }
 
 Profile.Layout = ProfileLayout;

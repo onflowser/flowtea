@@ -10,7 +10,7 @@ import Link from "next/link";
 import { TextArea } from "./Input";
 
 /**
- * @param userId Can either be a slug or account address.
+ * @param userId Can either be a handle or account address.
  */
 export default function UserProfile ({ userId }: { userId: string|undefined }) {
   const { isSendingDonation, donateFlow } = useFcl();

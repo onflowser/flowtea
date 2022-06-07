@@ -12,15 +12,15 @@ export default function Settings () {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, update, user, isRegistered } = useFcl();
-  const {info, slug: liveSlug, refetchInfo} = useUserInfo(user?.addr)
+  const {info, handle: liveHandle, refetchInfo} = useUserInfo(user?.addr)
   const { query } = useRouter();
-  const [slug, setSlug] = useState('');
+  const [handle, setHandle] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (!isRegistered) {
-      setSlug(query.slug as string)
+      setHandle(query.handle as string)
     }
   }, [isRegistered, query])
 
@@ -29,18 +29,18 @@ export default function Settings () {
       setName(info.name)
       setDescription(info.description);
     }
-    if (liveSlug) {
-      setSlug(liveSlug)
+    if (liveHandle) {
+      setHandle(liveHandle)
     }
-  }, [liveSlug, info])
+  }, [liveHandle, info])
 
   async function onRegister() {
-    if (!slug) {
-      toast.error("Please enter your identifier!")
+    if (!handle) {
+      toast.error("Please enter your handle!")
       return;
     }
     try {
-      await register(slug, name, description);
+      await register(handle, name, description);
       while (true) {
         await wait(500);
         if (await refetchInfo()) {
@@ -107,11 +107,11 @@ export default function Settings () {
             />
           )}
           <Input
-            label="Identifier"
-            placeholder="Identifier"
-            value={slug || '-'}
+            label="Handle"
+            placeholder="flowtea.me/your-handle"
+            value={handle}
             disabled={isRegistered}
-            onInput={e => setSlug(e.currentTarget.value)}
+            onInput={e => setHandle(e.currentTarget.value)}
           />
           <Input
             label="Name"

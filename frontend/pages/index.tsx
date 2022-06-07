@@ -495,31 +495,30 @@ const HWorkRightColumn = styled(Column)`
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [slug, setSlug] = useState("");
-  const { isLoggedIn, isRegistered, isSlugAvailable } = useFcl();
+  const [handle, setHandle] = useState("");
+  const { isLoggedIn, isRegistered, isHandleAvailable } = useFcl();
   const isExistingUser = isLoggedIn && isRegistered;
 
   async function onGoToProfile() {
-    const slugAvailable = await isSlugAvailable(slug).catch((e) => {
+    const handleAvailable = await isHandleAvailable(handle).catch((e) => {
       toast.error("Failed to fetch project info!");
     });
     if (isExistingUser) {
-      // slug is taken -> project with that slug exists
-      if (!slugAvailable) {
-        await router.push(`/${slug}`);
+      if (!handleAvailable) {
+        await router.push(`/${handle}`);
       } else {
-        toast.error("Project not found, try a different name!");
+        toast.error("Project not found, try a different handle!");
       }
       return;
     }
-    if (!slug) {
-      toast.error("Please enter a name!");
+    if (!handle) {
+      toast.error("Please enter a handle!");
       return;
     }
-    if (slugAvailable) {
-      return router.push(`/settings?slug=${slug}`);
+    if (handleAvailable) {
+      return router.push(`/settings?handle=${handle}`);
     } else {
-      toast.error("This name is already taken!");
+      toast.error("This handle is already taken!");
     }
   }
 
@@ -529,9 +528,9 @@ const Home: NextPage = () => {
         <CenterTitleBox>
           <BigText>Let your appreciators buy you a Flow tea.</BigText>
           <BigInput
-            value={slug}
-            onChange={setSlug}
-            placeholder={isExistingUser ? "project name" : "your unique name"}
+            value={handle}
+            onChange={setHandle}
+            placeholder={isExistingUser ? "project handle" : "your unique handle"}
             linkTitle={isExistingUser ? "Search" : "Create your page"}
             linkHref=""
             onClick={onGoToProfile}

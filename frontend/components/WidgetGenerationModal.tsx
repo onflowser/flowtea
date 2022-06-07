@@ -22,12 +22,12 @@ const widgetVariants = [
 
 export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
   const {user} = useFcl();
-  const {slug} = useUserInfo(user?.addr)
+  const {handle} = useUserInfo(user?.addr)
   const [selected, setSelected] = useState(-1);
   const [showSelection, setShowSelection] = useState(true);
   const widgets = widgetVariants.map(name => `/images/widgets/button-${name}.svg`);
   const generatedCode = `
-    <a href="${getDomain()}/${slug}" target="_blank">
+    <a href="${getDomain()}/${handle}" target="_blank">
       <img alt="FlowTea" src="${getDomain()}${widgets[selected]}" />
     </a>
   `.trim();
