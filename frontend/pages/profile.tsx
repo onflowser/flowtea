@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ProfileLayout from "../components/layouts/ProfileLayout";
 import { toast } from "react-hot-toast";
+import MetaTags from "../components/MetaTags";
 
 export default function Profile () {
   const router = useRouter();
@@ -27,7 +28,12 @@ export default function Profile () {
     }
   }, [isLoggedIn, isRegistered])
 
-  return <UserProfile userId={user?.addr}/>
+  return (
+      <>
+        <MetaTags title="Your FlowTea profile" />
+        <UserProfile userId={user?.addr}/>
+      </>
+    )
 }
 
 Profile.Layout = ProfileLayout;

@@ -20,6 +20,7 @@ import freeIcon from "../public/images/free.svg";
 import flowIcon from "../public/images/flow.svg";
 import recurringPaymentIcon from "../public/images/recurring-payment.svg";
 import teaImage from "../public/images/big-cup.svg";
+import MetaTags from "../components/MetaTags";
 
 // --LANDING--SECTION--
 /* BIG INPUT */
@@ -524,6 +525,7 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <MetaTags title="FlowTea ☕️" />
       <LandingSection>
         <CenterTitleBox>
           <BigText>Let your appreciators buy you a Flow tea.</BigText>

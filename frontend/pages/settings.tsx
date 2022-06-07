@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { wait } from "../common/utils";
 import { useUserInfo } from "../common/use-user-info";
+import MetaTags from "../components/MetaTags";
 
 export default function Settings () {
   const router = useRouter();
@@ -89,6 +90,7 @@ export default function Settings () {
 
   return (
     <>
+      <MetaTags title="Profile settings" />
       <div className="profile-settings">
         {!isRegistered && <h3>Create your profile</h3>}
 

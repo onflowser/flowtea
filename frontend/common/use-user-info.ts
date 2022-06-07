@@ -1,5 +1,6 @@
-import { FlowTeaInfo, useFcl } from "./FclContext";
+import { useFcl } from "./FclContext";
 import useSWR from "swr";
+import { FlowTeaInfo, isUserIdAddress } from "./fcl-service";
 
 
 /**
@@ -7,7 +8,7 @@ import useSWR from "swr";
  */
 export function useUserInfo (userId: string | undefined) {
   const { user } = useFcl();
-  const isAddress = userId?.startsWith("0x");
+  const isAddress = isUserIdAddress(userId);
   const { getInfo, getAddress, getHandle } = useFcl();
   const {
     data: address,
