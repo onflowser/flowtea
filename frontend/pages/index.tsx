@@ -4,6 +4,8 @@ import styled, { css } from "styled-components";
 import { Children, useState } from "react";
 import { theme } from "../common/theme";
 import { useFcl } from "../common/FclContext";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 // components
 import RoundLink from "../components/RoundLink";
@@ -11,9 +13,6 @@ import RoundLink from "../components/RoundLink";
 // resources
 import blobImage from "../public/images/blob.svg";
 import teaCupImage from "../public/images/flow-tea-cup.svg";
-import { useFcl } from "../common/FclContext";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
 import heartImage from "../public/images/heart.svg";
 import bgImage from "../public/images/bg.png";
 import clapHands from "../public/images/clap-hands.svg";
@@ -96,12 +95,12 @@ const BigInput = ({
   onChange,
   onClick,
 }: {
-  placeholder: string,
-  linkHref: string,
-  linkTitle: string,
-  value: string,
-  onChange: (value: string) => void
-  onClick: () => void
+  placeholder: string;
+  linkHref: string;
+  linkTitle: string;
+  value: string;
+  onChange: (value: string) => void;
+  onClick: () => void;
 }) => {
   return (
     <BigNameInputWrapper>
@@ -113,7 +112,9 @@ const BigInput = ({
         onChange={(evt) => onChange(evt.target.value)}
       />
       <BigInputButtonWrapper>
-        <RoundLink onClick={onClick} href={linkHref}>{linkTitle}</RoundLink>
+        <RoundLink onClick={onClick} href={linkHref}>
+          {linkTitle}
+        </RoundLink>
       </BigInputButtonWrapper>
     </BigNameInputWrapper>
   );
@@ -494,31 +495,31 @@ const HWorkRightColumn = styled(Column)`
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const [slug, setSlug] = useState('');
-  const {isLoggedIn, isRegistered, isSlugAvailable} = useFcl();
+  const [slug, setSlug] = useState("");
+  const { isLoggedIn, isRegistered, isSlugAvailable } = useFcl();
   const isExistingUser = isLoggedIn && isRegistered;
 
   async function onGoToProfile() {
-    const slugAvailable = await isSlugAvailable(slug).catch(e => {
-      toast.error("Failed to fetch project info!")
+    const slugAvailable = await isSlugAvailable(slug).catch((e) => {
+      toast.error("Failed to fetch project info!");
     });
     if (isExistingUser) {
       // slug is taken -> project with that slug exists
       if (!slugAvailable) {
-        await router.push(`/${slug}`)
+        await router.push(`/${slug}`);
       } else {
-        toast.error("Project not found, try a different name!")
+        toast.error("Project not found, try a different name!");
       }
       return;
     }
     if (!slug) {
-      toast.error("Please enter a name!")
+      toast.error("Please enter a name!");
       return;
     }
     if (slugAvailable) {
-      return router.push(`/settings?slug=${slug}`)
+      return router.push(`/settings?slug=${slug}`);
     } else {
-      toast.error("This name is already taken!")
+      toast.error("This name is already taken!");
     }
   }
 
@@ -530,8 +531,8 @@ const Home: NextPage = () => {
           <BigInput
             value={slug}
             onChange={setSlug}
-            placeholder={isExistingUser ? 'project name' : 'your unique name'}
-            linkTitle={isExistingUser ? 'Search' : 'Create your page'}
+            placeholder={isExistingUser ? "project name" : "your unique name"}
+            linkTitle={isExistingUser ? "Search" : "Create your page"}
             linkHref=""
             onClick={onGoToProfile}
           />
