@@ -3,8 +3,8 @@ pub contract TeaProfile {
     pub let publicPath: PublicPath
     pub let storagePath: StoragePath
     pub let privatePath: PrivatePath
-    // TODO: add reverse lookup map
     access(self) let slugMap: {String: Address};
+    access(self) let reverseSlugMap: {Address: String};
 
     pub event Registration(slug: String, name: String, address: Address)
 
@@ -58,6 +58,11 @@ pub contract TeaProfile {
         return self.slugMap[slug]
     }
 
+    pub fun lookupSlug(address: Address): String? {
+        assert(self.reverseSlugMap.containsKey(address), message: "Address not found")
+        return self.reverseSlugMap[address]
+    }
+
     pub fun createProject(slug: String, name: String, description: String, address: Address) : @TeaProfile.Project {
     	pre {
     		name.length <= 64: "Name must be 64 or less characters"
@@ -65,6 +70,7 @@ pub contract TeaProfile {
         // project names must be unique
         assert(!self.slugMap.containsKey(slug), message: "Domain name is already taken")
         self.slugMap.insert(key: slug, address)
+        self.reverseSlugMap.insert(key: address, slug)
 
     	emit Registration(slug: slug, name: name, address: address)
     	return <- create TeaProfile.Project(name: name, description: description, address: address)
@@ -75,5 +81,6 @@ pub contract TeaProfile {
 		self.storagePath = /storage/teaProfile
 		self.privatePath = /private/teaProfile
         self.slugMap = {}
+        self.reverseSlugMap = {}
 	}
 }

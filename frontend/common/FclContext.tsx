@@ -17,6 +17,8 @@ import getFlowBalanceCode from "../cadence/scripts/get-flow-balance.cdc";
 // @ts-ignore
 import getAddressCode from "../cadence/scripts/get-address.cdc";
 // @ts-ignore
+import getSlugCode from "../cadence/scripts/get-slug.cdc";
+// @ts-ignore
 import getInfoCode from "../cadence/scripts/get-info.cdc";
 // @ts-ignore
 import donateFlowCode from "../cadence/transactions/donate.cdc";
@@ -24,6 +26,7 @@ import donateFlowCode from "../cadence/transactions/donate.cdc";
 import registerFlowCode from "../cadence/transactions/register.cdc";
 // @ts-ignore
 import updateFlowCode from "../cadence/transactions/update.cdc";
+import { env, Environment, getDomain } from "./utils";
 
 type TxResult = { transactionId: string, status: any };
 
@@ -38,6 +41,7 @@ type FclContextProps = {
   login: () => Promise<void>;
   logout: () => Promise<void>;
   getAddress: (slug: string) => Promise<null | string>,
+  getSlug: (address: string) => Promise<null | string>,
   isSlugAvailable: (slug: string) => Promise<boolean>,
   fetchCurrentUserInfo: () => Promise<FlowTeaInfo | null>;
   getInfo: (address: string) => Promise<FlowTeaInfo | null>;
@@ -75,6 +79,7 @@ const defaultValue: FclContextProps = {
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
   getAddress: () => Promise.resolve(null),
+  getSlug: () => Promise.resolve(null),
   isSlugAvailable: () => Promise.resolve(false),
   fetchCurrentUserInfo: () => Promise.resolve(null),
   getInfo: () => Promise.resolve(null),
@@ -84,9 +89,7 @@ const defaultValue: FclContextProps = {
   update: () => Promise.resolve(defaultTxResult)
 }
 
-type Environment = 'development' | 'staging' | 'production';
 
-const env: Environment = (process.env.NODE_ENV || 'development') as Environment;
 
 function getAccessNodeApi (env: Environment) {
   switch (env) {
@@ -153,16 +156,9 @@ function getFlowEnv (env: Environment) {
   }
 }
 
-function getIconUrl (env: Environment) {
+function getIconUrl () {
   const path = "/images/logo-BMFT-no-text.svg";
-  const domain = window.location.host;
-  switch (env) {
-    case "production":
-    case "staging":
-      return `https://${domain}${path}`
-    case "development":
-      return `http://${domain}${path}`
-  }
+  return getDomain() + path;
 }
 
 const FclContext = React.createContext(defaultValue);
@@ -181,7 +177,7 @@ export function FclProvider ({
     fcl.config({
       "app.detail.title": "FlowTea",
       "env": getFlowEnv(env),
-      "app.detail.icon": getIconUrl(env),
+      "app.detail.icon": getIconUrl(),
       "accessNode.api": getAccessNodeApi(env),
       "discovery.wallet": getDiscoveryWallet(env),
       "0xFungibleToken": getFungibleTokenAddress(env),
@@ -205,6 +201,15 @@ export function FclProvider ({
       fcl.script(getAddressCode),
       fcl.args([
         fcl.arg(slug, t.String),
+      ])
+    ]).then(fcl.decode) as Promise<string | null>
+  }
+
+  async function getSlug (address: string) {
+    return fcl.send([
+      fcl.script(getSlugCode),
+      fcl.args([
+        fcl.arg(address, t.Address),
       ])
     ]).then(fcl.decode) as Promise<string | null>
   }
@@ -320,6 +325,7 @@ export function FclProvider ({
       register,
       getInfo,
       getAddress,
+      getSlug,
       isSlugAvailable,
       fetchCurrentUserInfo,
       user,

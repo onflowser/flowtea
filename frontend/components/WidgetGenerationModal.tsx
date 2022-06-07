@@ -6,6 +6,8 @@ import { PrimaryButton } from "./PrimaryButton";
 import { TextArea } from "./Input";
 import { toast } from "react-hot-toast";
 import { useFcl } from "../common/FclContext";
+import { useUserInfo } from "../common/use-user-info";
+import { getDomain } from "../common/utils";
 
 type Props = ReactModal.Props & {
   onClose: () => void;
@@ -20,14 +22,13 @@ const widgetVariants = [
 
 export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
   const {user} = useFcl();
+  const {slug} = useUserInfo(user?.addr)
   const [selected, setSelected] = useState(-1);
   const [showSelection, setShowSelection] = useState(true);
   const widgets = widgetVariants.map(name => `/images/widgets/button-${name}.svg`);
-  const domain = `http://${window.location.host}`;
-  // TODO: add reverse lookup logic (address -> name) and fix generated code accordingly
   const generatedCode = `
-    <a href="${domain}/profile/${user?.addr}" target="_blank">
-      <img alt="FlowTea" src="${domain}${widgets[selected]}" />
+    <a href="${getDomain()}/${slug}" target="_blank">
+      <img alt="FlowTea" src="${getDomain()}${widgets[selected]}" />
     </a>
   `.trim();
 

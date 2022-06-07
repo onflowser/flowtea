@@ -12,9 +12,10 @@ import { TextArea } from "./Input";
 /**
  * @param userId Can either be a slug or account address.
  */
-export default function UserProfile ({ userId }: { userId: string }) {
+export default function UserProfile ({ userId }: { userId: string|undefined }) {
   const { isSendingDonation, donateFlow } = useFcl();
   const {
+    address,
     isSelf,
     info,
     infoError,
@@ -61,9 +62,9 @@ export default function UserProfile ({ userId }: { userId: string }) {
         <h3 className="profile-name">{info?.name}</h3>
         <a
           target="_blank"
-          href={`https://flowscan.org/account/${userId}`}
+          href={`https://flowscan.org/account/${address}`}
           rel="noreferrer">
-          {userId}
+          {address || '-'}
         </a>
       </div>
 
@@ -271,7 +272,7 @@ function Transaction ({
       </div>
       <h6 className="address-id">
         Appreciated by {` `}
-        <Link href={`/profile/${fromAddress}`}>{fromAddress}</Link>
+        <Link href={`/${fromAddress}`}>{fromAddress}</Link>
       </h6>
     </div>
   )

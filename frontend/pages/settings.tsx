@@ -6,11 +6,13 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { wait } from "../common/utils";
+import { useUserInfo } from "../common/use-user-info";
 
 export default function Settings () {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, update, fetchCurrentUserInfo, info, isRegistered } = useFcl();
+  const { register, update, user, isRegistered } = useFcl();
+  const {info, slug: liveSlug, refetchInfo} = useUserInfo(user?.addr)
   const { query } = useRouter();
   const [slug, setSlug] = useState('');
   const [name, setName] = useState('');
@@ -27,7 +29,10 @@ export default function Settings () {
       setName(info.name)
       setDescription(info.description);
     }
-  }, [info])
+    if (liveSlug) {
+      setSlug(liveSlug)
+    }
+  }, [liveSlug, info])
 
   async function onRegister() {
     if (!slug) {
@@ -37,10 +42,8 @@ export default function Settings () {
     try {
       await register(slug, name, description);
       while (true) {
-        console.log("fetching")
         await wait(500);
-        if (await fetchCurrentUserInfo()) {
-          console.log('stopping')
+        if (await refetchInfo()) {
           break;
         }
       }
@@ -94,10 +97,19 @@ export default function Settings () {
         {/*<p>Drop image to change photo</p>*/}
 
         <div className="profile-fields">
+          {/* Hide the input if user is not signed in. */}
+          {user?.addr && (
+            <Input
+              label="Address"
+              placeholder="Address"
+              value={user?.addr}
+              disabled
+            />
+          )}
           <Input
             label="Identifier"
             placeholder="Identifier"
-            value={slug}
+            value={slug || '-'}
             disabled={isRegistered}
             onInput={e => setSlug(e.currentTarget.value)}
           />
