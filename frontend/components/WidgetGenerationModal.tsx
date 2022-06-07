@@ -18,12 +18,13 @@ const widgetVariants = [
   "violet"
 ]
 
-export function LinkGeneratorModal ({ isOpen, onClose, ...props }: Props) {
+export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
   const {user} = useFcl();
   const [selected, setSelected] = useState(-1);
   const [showSelection, setShowSelection] = useState(true);
   const widgets = widgetVariants.map(name => `/images/widgets/button-${name}.svg`);
   const domain = `http://${window.location.host}`;
+  // TODO: add reverse lookup logic (address -> name) and fix generated code accordingly
   const generatedCode = `
     <a href="${domain}/profile/${user?.addr}" target="_blank">
       <img alt="FlowTea" src="${domain}${widgets[selected]}" />

@@ -8,15 +8,17 @@ import { toast } from "react-hot-toast";
 import { wait } from "../common/utils";
 
 export default function Settings () {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { register, update, fetchCurrentUserInfo, info, isRegistered } = useFcl();
   const { query } = useRouter();
+  const [slug, setSlug] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (!isRegistered) {
-      setName(query.name as string)
+      setSlug(query.slug as string)
     }
   }, [isRegistered, query])
 
@@ -28,8 +30,12 @@ export default function Settings () {
   }, [info])
 
   async function onRegister() {
+    if (!slug) {
+      toast.error("Please enter your identifier!")
+      return;
+    }
     try {
-      await register(name, description);
+      await register(slug, name, description);
       while (true) {
         console.log("fetching")
         await wait(500);
@@ -38,6 +44,7 @@ export default function Settings () {
           break;
         }
       }
+      await router.replace("/settings")
       toast.success("Registered!")
     } catch (e: any) {
       toast.error(e.toString())
@@ -87,6 +94,13 @@ export default function Settings () {
         {/*<p>Drop image to change photo</p>*/}
 
         <div className="profile-fields">
+          <Input
+            label="Identifier"
+            placeholder="Identifier"
+            value={slug}
+            disabled={isRegistered}
+            onInput={e => setSlug(e.currentTarget.value)}
+          />
           <Input
             label="Name"
             placeholder="Name"

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { createRef, HTMLAttributes, useState } from "react";
 import { useClickOutside } from "../common/use-click-outside";
 import { useRouter } from "next/router";
-import { LinkGeneratorModal } from "./LinkGeneratorModal";
+import { WidgetGenerationModal } from "./WidgetGenerationModal";
 import { useFcl } from "../common/FclContext";
 
 export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
@@ -26,7 +26,7 @@ export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
   return (
     <>
       {modalIsOpen && (
-        <LinkGeneratorModal
+        <WidgetGenerationModal
           isOpen={true}
           shouldCloseOnOverlayClick
           onRequestClose={() => setIsModalOpen(false)}
