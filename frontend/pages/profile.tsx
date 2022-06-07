@@ -1,8 +1,8 @@
-import UserProfile from "../../components/UserProfile";
-import { useFcl } from "../../common/FclContext";
+import UserProfile from "../components/UserProfile";
+import { useFcl } from "../common/FclContext";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import ProfileLayout from "../../components/layouts/ProfileLayout";
+import ProfileLayout from "../components/layouts/ProfileLayout";
 import { toast } from "react-hot-toast";
 
 export default function Profile () {
@@ -27,7 +27,7 @@ export default function Profile () {
     }
   }, [isLoggedIn, isRegistered])
 
-  return <UserProfile receiverAddress={user?.addr}/>
+  return <UserProfile userId={user?.addr}/>
 }
 
 Profile.Layout = ProfileLayout;

@@ -9,29 +9,32 @@ import { useUserInfo } from "../common/use-user-info";
 import Link from "next/link";
 import { TextArea } from "./Input";
 
-export default function UserProfile ({ receiverAddress }: { receiverAddress: undefined | string }) {
-  const { user, isSendingDonation, donateFlow } = useFcl();
+/**
+ * @param userId Can either be a slug or account address.
+ */
+export default function UserProfile ({ userId }: { userId: string }) {
+  const { isSendingDonation, donateFlow } = useFcl();
   const {
+    isSelf,
     info,
     infoError,
     donations,
     donationsError
-  } = useUserInfo(receiverAddress);
+  } = useUserInfo(userId);
   const [recurring, setRecurring] = useState(false);
   const [flowAmount, setFlowAmount] = useState(0);
   const [message, setMessage] = useState('');
-  const isSelf = receiverAddress === user?.addr;
 
   async function onSubmit () {
     if (!flowAmount) {
       toast.error("Select FLOW amount!")
       return;
     }
-    if (!receiverAddress) {
+    if (!userId) {
       return;
     }
     try {
-      await donateFlow(message, flowAmount, recurring, receiverAddress)
+      await donateFlow(message, flowAmount, recurring, userId)
     } catch (e) {
       console.error(e)
       toast.error("Donation failed!")
@@ -58,9 +61,9 @@ export default function UserProfile ({ receiverAddress }: { receiverAddress: und
         <h3 className="profile-name">{info?.name}</h3>
         <a
           target="_blank"
-          href={`https://flowscan.org/account/${receiverAddress}`}
+          href={`https://flowscan.org/account/${userId}`}
           rel="noreferrer">
-          {receiverAddress}
+          {userId}
         </a>
       </div>
 

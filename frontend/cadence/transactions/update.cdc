@@ -1,4 +1,4 @@
-import TeaProfile from 0xf8d6e0586b0a20c7
+import TeaProfile from 0xTeaProfile
 
 transaction (name: String, description: String) {
 

@@ -15,6 +15,8 @@ import * as t from "@onflow/types";
 // @ts-ignore
 import getFlowBalanceCode from "../cadence/scripts/get-flow-balance.cdc";
 // @ts-ignore
+import getAddressCode from "../cadence/scripts/get-address.cdc";
+// @ts-ignore
 import getInfoCode from "../cadence/scripts/get-info.cdc";
 // @ts-ignore
 import donateFlowCode from "../cadence/transactions/donate.cdc";
@@ -30,16 +32,18 @@ type FclContextProps = {
   info: null | FlowTeaInfo;
   isLoggingIn: boolean;
   isLoggingOut: boolean;
-  isLoggedIn: boolean|undefined;
+  isLoggedIn: boolean | undefined;
   isSendingDonation: boolean;
   isRegistered: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
-  fetchCurrentUserInfo: () => Promise<FlowTeaInfo|null>;
-  getInfo: (address: string) => Promise<FlowTeaInfo|null>;
+  getAddress: (slug: string) => Promise<null | string>,
+  isSlugAvailable: (slug: string) => Promise<boolean>,
+  fetchCurrentUserInfo: () => Promise<FlowTeaInfo | null>;
+  getInfo: (address: string) => Promise<FlowTeaInfo | null>;
   donateFlow: (message: string, amount: number, recurring: boolean, receiverAddress: string) => Promise<TxResult>;
   getFlowBalance: (address: string) => Promise<number>
-  register: (name: string, description: string) => Promise<TxResult>
+  register: (slug: string, name: string, description: string) => Promise<TxResult>
   update: (name: string, description: string) => Promise<TxResult>
 }
 
@@ -70,6 +74,8 @@ const defaultValue: FclContextProps = {
   isSendingDonation: false,
   login: () => Promise.resolve(),
   logout: () => Promise.resolve(),
+  getAddress: () => Promise.resolve(null),
+  isSlugAvailable: () => Promise.resolve(false),
   fetchCurrentUserInfo: () => Promise.resolve(null),
   getInfo: () => Promise.resolve(null),
   donateFlow: () => Promise.resolve(defaultTxResult),
@@ -80,9 +86,9 @@ const defaultValue: FclContextProps = {
 
 type Environment = 'development' | 'staging' | 'production';
 
-const env: Environment = process.env.NODE_ENV as Environment;
+const env: Environment = (process.env.NODE_ENV || 'development') as Environment;
 
-function getAccessNodeApi(env: Environment) {
+function getAccessNodeApi (env: Environment) {
   switch (env) {
     case "production":
       return "https://rest-mainnet.onflow.org/v1"
@@ -93,7 +99,7 @@ function getAccessNodeApi(env: Environment) {
   }
 }
 
-function getDiscoveryWallet(env: Environment) {
+function getDiscoveryWallet (env: Environment) {
   switch (env) {
     case "production":
     case "staging":
@@ -103,7 +109,7 @@ function getDiscoveryWallet(env: Environment) {
   }
 }
 
-function getFungibleTokenAddress(env: Environment) {
+function getFungibleTokenAddress (env: Environment) {
   // https://docs.onflow.org/core-contracts/fungible-token/
   switch (env) {
     case "production":
@@ -115,16 +121,28 @@ function getFungibleTokenAddress(env: Environment) {
   }
 }
 
-function getFlowTeaAddress(env: Environment) {
+function getFlowTokenAddress (env: Environment) {
+  // https://docs.onflow.org/core-contracts/flow-token/
+  switch (env) {
+    case "production":
+      return "0x1654653399040a61"
+    case "staging":
+      return "0x7e60df042a9c0868"
+    case "development":
+      return "0x0ae53cb6e3f42a79"
+  }
+}
+
+function getFlowTeaAddress (env: Environment) {
   switch (env) {
     case "production":
     case "staging":
     case "development":
-      return "0xee82856bf20e2aa6"
+      return "0xf8d6e0586b0a20c7"
   }
 }
 
-function getFlowEnv(env: Environment) {
+function getFlowEnv (env: Environment) {
   switch (env) {
     case "production":
       return "mainnet"
@@ -135,7 +153,7 @@ function getFlowEnv(env: Environment) {
   }
 }
 
-function getIconUrl(env: Environment) {
+function getIconUrl (env: Environment) {
   const path = "/images/logo-BMFT-no-text.svg";
   const domain = window.location.host;
   switch (env) {
@@ -149,9 +167,12 @@ function getIconUrl(env: Environment) {
 
 const FclContext = React.createContext(defaultValue);
 
-export function FclProvider ({ config = {}, children } : {config?: object, children: ReactChild}) {
-  const [user, setUser] = useState<FlowUser|null>(null);
-  const [info, setInfo] = useState<FlowTeaInfo|null>(null);
+export function FclProvider ({
+  config = {},
+  children
+}: { config?: object, children: ReactChild }) {
+  const [user, setUser] = useState<FlowUser | null>(null);
+  const [info, setInfo] = useState<FlowTeaInfo | null>(null);
   const [isLoggingIn, setLoggingIn] = useState(false);
   const [isLoggingOut, setLoggingOut] = useState(false);
   const [isSendingDonation, setIsSendingDonation] = useState(false);
@@ -163,9 +184,10 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       "app.detail.icon": getIconUrl(env),
       "accessNode.api": getAccessNodeApi(env),
       "discovery.wallet": getDiscoveryWallet(env),
-      "0xFUNGIBLETOKENADDRESS": getFungibleTokenAddress(env),
-      "0xTEADONATIONADDRESS": getFlowTeaAddress(env),
-      "0xTEAPROFILEADDRESS": getFlowTeaAddress(env),
+      "0xFungibleToken": getFungibleTokenAddress(env),
+      "0xFlowToken": getFlowTokenAddress(env),
+      "0xTeaDonation": getFlowTeaAddress(env),
+      "0xTeaProfile": getFlowTeaAddress(env),
       ...config
     })
   }, [config])
@@ -177,6 +199,21 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       fetchCurrentUserInfo();
     }
   }, [user])
+
+  async function getAddress (slug: string) {
+    return fcl.send([
+      fcl.script(getAddressCode),
+      fcl.args([
+        fcl.arg(slug, t.String),
+      ])
+    ]).then(fcl.decode) as Promise<string | null>
+  }
+
+  async function isSlugAvailable (slug: string) {
+    return getAddress(slug)
+      .then(() => false)
+      .catch(e => e.toString().match("Slug not found") ? true : Promise.reject(e))
+  }
 
   async function getFlowBalance (address: string) {
     return fcl.send([
@@ -194,11 +231,12 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
         fcl.arg(address, t.Address),
       ])
     ])
-      .then(fcl.decode) as Promise<FlowTeaInfo|null>
+      .then(fcl.decode) as Promise<FlowTeaInfo | null>
   }
 
-  async function register (name: string, description: string) {
+  async function register (slug: string, name: string, description: string) {
     return sendTransaction(registerFlowCode, [
+      fcl.arg(slug, t.String),
       fcl.arg(name, t.String),
       fcl.arg(description, t.String),
     ])
@@ -260,7 +298,7 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
     }
   }
 
-  async function fetchCurrentUserInfo() {
+  async function fetchCurrentUserInfo () {
     if (!user) return null;
     try {
       const info = await getInfo(user.addr);
@@ -281,6 +319,8 @@ export function FclProvider ({ config = {}, children } : {config?: object, child
       update,
       register,
       getInfo,
+      getAddress,
+      isSlugAvailable,
       fetchCurrentUserInfo,
       user,
       info,

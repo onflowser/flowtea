@@ -32,40 +32,22 @@ describe("TeaProfile", () => {
     const Alice = await getAccountAddress("Alice");
     const Bob = await getAccountAddress("Alice");
 
-    console.log({ Alice, Bob });
-
-    let isRegistered = await executeScript({
-      name: 'is-registered',
-      args: [Alice]
-    })
-    expect(isRegistered[0]).toBeNull()
-
     const [deploymentResult, error] = await deployContractByName({
       to: Bob,
       name: "TeaProfile",
     });
-    console.log(deploymentResult, error);
-
     expect(deploymentResult.statusString).toEqual("SEALED");
     expect(error).toBeNull();
 
     // Alice registers to FlowTea
     const [tx1, txError1] = await sendTransaction({
       name: "register",
-      args: ["Alice", "My description"],
+      args: ["alice", "Alice", "My description"],
       signers: [Alice],
     });
     expect(txError1).toBeNull();
     expect(tx1.events.length).toBe(1);
     expect(tx1.events[0].type).toContain("TeaProfile.Registration");
-
-    // check if Alice is registered
-    isRegistered = await executeScript({
-      name: 'is-registered',
-      args: [Alice]
-    })
-    expect(isRegistered[0]).toBeTruthy()
-
 
     const [info] = await executeScript({
       name: 'get-info',
@@ -79,7 +61,7 @@ describe("TeaProfile", () => {
       args: ["Alice", "My new description"],
       signers: [Alice],
     });
-    console.log(tx2, txError2)
+    expect(txError2).toBeNull()
 
     const [updatedInfo] = await executeScript({
       name: 'get-info',
@@ -96,14 +78,42 @@ describe("TeaProfile", () => {
     });
     await sendTransaction({
       name: "register",
-      args: ["Alice1", "This is me!"],
+      args: ["alice1", "Alice1", "This is me!"],
       signers: [Alice],
     });
     const [tx, error] = await sendTransaction({
       name: "register",
-      args: ["Alice2", "This is me!"],
+      args: ["alice2", "Alice2", "This is me!"],
       signers: [Alice],
     });
     expect(error).toContain("Account is already registered");
+  });
+
+  test("Duplicate profile slug", async () => {
+    const Owner = await getAccountAddress("Owner");
+    const Alice = await getAccountAddress("Alice");
+    const Bob = await getAccountAddress("Bob");
+
+    await deployContractByName({
+      to: Owner,
+      name: "TeaProfile",
+    });
+
+    // Alice registers and reserves usage of her project slug
+    const [tx1, err1] = await sendTransaction({
+      name: "register",
+      args: ["alice", "Alice", "This is Alice!"],
+      signers: [Alice],
+    });
+    expect(err1).toBeNull();
+
+    // Bob tries to register under the same slug
+    const [tx2, err2] = await sendTransaction({
+      name: "register",
+      args: ["alice", "Bob", "This is Bob, but with Alice's slug!"],
+      signers: [Bob],
+    });
+
+    expect(err2).toContain("Domain name is already taken")
   });
 });

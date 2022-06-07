@@ -10,6 +10,8 @@ import RoundLink from "../components/RoundLink";
 import blobImage from "../public/images/blob.svg";
 import teaCupImage from "../public/images/flow-tea-cup.svg";
 import { useFcl } from "../common/FclContext";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 // --LANDING--SECTION--
 /* BIG INPUT */
@@ -82,13 +84,15 @@ const BigInput = ({
   linkHref,
   linkTitle,
   value,
-  onChange
+  onChange,
+  onClick,
 }: {
   placeholder: string,
   linkHref: string,
   linkTitle: string,
   value: string,
   onChange: (value: string) => void
+  onClick: () => void
 }) => {
 
   return (
@@ -101,7 +105,7 @@ const BigInput = ({
         onChange={(evt) => onChange(evt.target.value)}
       />
       <BigInputButtonWrapper>
-        <RoundLink href={linkHref}>{linkTitle}</RoundLink>
+        <RoundLink onClick={onClick} href={linkHref}>{linkTitle}</RoundLink>
       </BigInputButtonWrapper>
     </BigNameInputWrapper>
   );
@@ -256,9 +260,34 @@ const TeaCup = styled.div`
 // --Hey--You--Section--
 
 const Home: NextPage = () => {
-  const [value, setValue] = useState('');
-  const {isLoggedIn, isRegistered} = useFcl();
+  const router = useRouter();
+  const [slug, setSlug] = useState('');
+  const {isLoggedIn, isRegistered, isSlugAvailable} = useFcl();
   const isExistingUser = isLoggedIn && isRegistered;
+
+  async function onGoToProfile() {
+    const slugAvailable = await isSlugAvailable(slug).catch(e => {
+      toast.error("Failed to fetch project info!")
+    });
+    if (isExistingUser) {
+      // slug is taken -> project with that slug exists
+      if (!slugAvailable) {
+        await router.push(`/${slug}`)
+      } else {
+        toast.error("Project not found, try a different name!")
+      }
+      return;
+    }
+    if (!slug) {
+      toast.error("Please enter a name!")
+      return;
+    }
+    if (slugAvailable) {
+      return router.push(`/settings?slug=${slug}`)
+    } else {
+      toast.error("This name is already taken!")
+    }
+  }
 
   return (
     <>
@@ -266,11 +295,12 @@ const Home: NextPage = () => {
         <CenterTitleBox>
           <BigText>Let your appreciators buy you a Flow tea.</BigText>
           <BigInput
-            value={value}
-            onChange={setValue}
-            placeholder={isExistingUser ? 'FLOW address' : 'your name'}
+            value={slug}
+            onChange={setSlug}
+            placeholder={isExistingUser ? 'project name' : 'your unique name'}
             linkTitle={isExistingUser ? 'Search' : 'Create your page'}
-            linkHref={isExistingUser ? `/profile/${value}` : `/settings?name=${value}`}
+            linkHref=""
+            onClick={onGoToProfile}
           />
           <SmallText>It is free and quick!</SmallText>
         </CenterTitleBox>
