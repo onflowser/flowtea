@@ -3,10 +3,10 @@ export const colors = {
   orange: "#fe6f6f",
   white: "#fff",
   grey: "#f3f3f3",
-  darkBlue: "#131c2d",
+  darkBlue: "#294269",
   mainDark: "#141C2D",
   lightViolet: "#E8E5FC",
-  darkViolet: '#9E94F7',
+  darkViolet: "#9E94F7",
   yellow: "#feff78",
 };
 
@@ -20,7 +20,7 @@ export const theme = {
   },
   colors: {
     primary: colors.orange,
-    secondary: colors.darkBlue,
+    secondary: colors.mainDark,
     ...colors,
   },
   // maybe only for testing

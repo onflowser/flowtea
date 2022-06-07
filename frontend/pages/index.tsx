@@ -2,7 +2,8 @@ import type { NextPage } from "next";
 import Image from "next/image";
 import styled, { css } from "styled-components";
 import { Children, useState } from "react";
-import { colors } from "../common/theme";
+import { theme } from "../common/theme";
+import { useFcl } from "../common/FclContext";
 
 // components
 import RoundLink from "../components/RoundLink";
@@ -11,12 +12,12 @@ import RoundLink from "../components/RoundLink";
 import blobImage from "../public/images/blob.svg";
 import teaCupImage from "../public/images/flow-tea-cup.svg";
 import heartImage from "../public/images/heart.svg";
-import { useFcl } from "../common/FclContext";
 import bgImage from "../public/images/bg.png";
 import clapHands from "../public/images/clap-hands.svg";
 import freeIcon from "../public/images/free.svg";
 import flowIcon from "../public/images/flow.svg";
 import recurringPaymentIcon from "../public/images/recurring-payment.svg";
+import teaImage from "../public/images/big-cup.svg";
 
 // --LANDING--SECTION--
 /* BIG INPUT */
@@ -134,13 +135,14 @@ const CenterTitleBox = styled.div`
   z-index: 2;
 `;
 
-const BigText = styled.div`
+const BigText = styled.h1`
   font-size: 4rem;
   line-height: 6rem;
   font-weight: 800;
   opacity: 0.86;
   text-align: center;
   padding: 3rem;
+  margin: 0;
 
   @media only screen and (max-width: 1300px) {
     font-size: 3rem;
@@ -210,6 +212,7 @@ const SectionInner = styled.div`
 
   @media only screen and (max-width: 1200px) {
     flex-direction: column;
+    align-items: center;
   }
 `;
 
@@ -261,6 +264,10 @@ const BigHeading = styled.div`
   font-weight: 900;
   font-size: 4rem;
   line-height: 84px;
+
+  @media only screen and (max-width: 500px) {
+    line-height: 5rem;
+  }
 `;
 
 const BoldNormal = styled.div`
@@ -323,8 +330,8 @@ const HeartImage = styled.div`
 const SmallSquare = styled.div`
   width: 5rem;
   height: 0.9rem;
-  margin: 1rem 0 3rem 0;
-  background-color: ${(props) => props.theme.colors.primary};
+  margin: 1rem 0 2rem 0;
+  background-color: ${(props) => props.color};
 `;
 const BenefitIcon = styled.div`
   margin: 0.25rem 1.1rem;
@@ -332,6 +339,12 @@ const BenefitIcon = styled.div`
   width: 1.5rem;
   height: 1.5rem;
   flex-shrink: 0;
+
+  @media only screen and (max-width: 900px) {
+    margin: 0 1.1rem;
+    width: 2rem;
+    height: 2rem;
+  }
 `;
 const BenefitTitle = styled.div`
   font-size: 1.5rem;
@@ -399,6 +412,80 @@ const BenefitCard = ({ icon, title, body }: BenefitProps) => (
 );
 // --Benefits--
 
+// --How--does--it--work--section--
+const StepCard = styled.div`
+  display: flex;
+  flex-direction: row;
+  background: ${(props) => props.theme.colors.darkViolet};
+  padding: 1rem 1rem 1rem 0;
+  align-items: center;
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 9px 12px 1px rgba(0, 0, 0, 0.14),
+    0 3px 16px 2px rgba(0, 0, 0, 0.12), 0 5px 6px -3px rgba(0, 0, 0, 0.2);
+  width: 18rem;
+  z-index: 2;
+`;
+const StepNum = styled.div`
+  font-size: 2.5rem;
+  line-height: 4rem;
+  width: 5rem;
+  height: 4rem;
+  text-align: center;
+  flex-shrink: 0;
+  font-weight: 600;
+`;
+
+const StepText = styled.div`
+  flex-grow: 1;
+  font-weight: bold;
+`;
+const Step = ({ num, text }: any) => {
+  return (
+    <StepCard>
+      <StepNum>{num}</StepNum>
+      <StepText>{text}</StepText>
+    </StepCard>
+  );
+};
+const StepsWrapper = styled.div`
+  position: relative;
+  height: 30rem;
+  width: 100%;
+`;
+const Steps = styled.div`
+  z-index: 2;
+  position: absolute;
+`;
+const TeaImage = styled.div`
+  position: relative;
+  height: 100%;
+  width: 100%;
+`;
+const TeaImageWrapper = styled.div`
+  position: absolute;
+  height: 25rem;
+  width: 18.02rem;
+  bottom: -2.2rem;
+  right: 0;
+`;
+const HWorkLeftColumn = styled(Column)`
+  flex: 1;
+  padding-right: 10rem;
+  box-sizing: border-box;
+  @media only screen and (max-width: 1200px) {
+    padding-right: 0;
+  }
+`;
+const HWorkRightColumn = styled(Column)`
+  flex: 1;
+  @media only screen and (max-width: 1200px) {
+    padding-top: 3rem;
+    width: 30rem;
+  }
+`;
+// --How--does--it--work--section--
+
 const Home: NextPage = () => {
   const [value, setValue] = useState("");
   const { isLoggedIn, isRegistered } = useFcl();
@@ -421,7 +508,10 @@ const Home: NextPage = () => {
           <SmallText>It is free and quick!</SmallText>
         </CenterTitleBox>
       </LandingSection>
-      <Section bgcolor={colors.lightViolet} color={colors.darkBlue}>
+      <Section
+        bgcolor={theme.colors.lightViolet}
+        color={theme.colors.secondary}
+      >
         <Column>
           <SmallRedText>WHAT IS FlowTea?</SmallRedText>
           <BigHeading>HEY YOU!</BigHeading>
@@ -460,11 +550,11 @@ const Home: NextPage = () => {
           </BlobImageWrapper>
         </HeyYouBlobColumn>
       </Section>
-      <Section bgcolor={colors.darkBlue} color={colors.white}>
+      <Section bgcolor={theme.colors.secondary} color={theme.colors.white}>
         <BenefitLeftColumn>
           <SmallRedText>BUY ME A FLOW TEA.</SmallRedText>
           <BigHeading>AMAZING BENEFITS</BigHeading>
-          <SmallSquare />
+          <SmallSquare color={theme.colors.primary} />
           <NormalText>
             You are working hard, and you have a passion for what you do.
             Wouldn’t it be nice to get some appreciation and even Flow tokens
@@ -506,10 +596,40 @@ const Home: NextPage = () => {
           </BenefitRightColumn>
         </ColumnCenterWrapper>
       </Section>
-      <Section color={colors.darkViolet}>a</Section>
-      <UnderConstructionContainer>
+      <Section color={theme.colors.white} bgcolor={theme.colors.darkViolet}>
+        <HWorkLeftColumn>
+          <SmallRedText style={{ color: theme.colors.white }}>
+            4 SIMPLE STEPS.
+          </SmallRedText>
+          <BigHeading style={{ color: theme.colors.darkBlue }}>
+            HOW DOES IT WORK?
+          </BigHeading>
+          <SmallSquare color={theme.colors.darkBlue} />
+          <NormalText>
+            It could not be easier! Create your profile, add your FLOW address
+            and share your link or the widget. When you will get the support
+            from your appreciator, the amount will be send on your FLOW address.
+          </NormalText>
+        </HWorkLeftColumn>
+        <HWorkRightColumn>
+          <StepsWrapper>
+            <Steps>
+              <Step num={1} text={"Create your page"} />
+              <Step num={2} text={"Connect your wallet"} />
+              <Step num={3} text={"Share your link"} />
+              <Step num={4} text={"Get your FLOW tokens"} />
+            </Steps>
+            <TeaImageWrapper>
+              <TeaImage>
+                <Image src={teaImage} layout="fill" />
+              </TeaImage>
+            </TeaImageWrapper>
+          </StepsWrapper>
+        </HWorkRightColumn>
+      </Section>
+      {/*<UnderConstructionContainer>
         <UnderConstruction>⚠️ Site is under construction ⚠️</UnderConstruction>
-      </UnderConstructionContainer>
+            </UnderConstructionContainer>*/}
     </>
   );
 };
