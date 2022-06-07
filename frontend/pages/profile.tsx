@@ -27,6 +27,11 @@ export default function Profile () {
     }
   }, [isLoggedIn, isRegistered])
 
+  // TODO: find a better way to solve possibly undefined value for user
+  if (!user?.addr) {
+    return "Loading ...";
+  }
+
   return <UserProfile userId={user?.addr}/>
 }
 
