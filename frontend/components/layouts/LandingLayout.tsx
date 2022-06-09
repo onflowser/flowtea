@@ -15,16 +15,6 @@ import { ProfileDropdown } from "../ProfileDropdown";
 type Props = {
   children: ReactElement;
 };
-
-const LinkText = styled.a`
-  text-decoration: none;
-  color: ${(props) => props.theme.colors.mainDark};
-  padding: 0 1rem;
-
-  font-weight: bold;
-  font-size: 1rem;
-`;
-
 export default function LandingLayout({ children }: Props) {
   const { login, logout, isLoggingIn, isLoggingOut, isLoggedIn } = useFcl();
 
@@ -70,7 +60,7 @@ export default function LandingLayout({ children }: Props) {
         </FooterImageWrapper>
         <FooterText>
           Buy me a FLOW tea is created and supported by{" "}
-          <Link href={"https://github.com/onflowser"}>
+          <Link href={"https://github.com/onflowser"} passHref>
             <a target="_blank">Flowser team</a>
           </Link>
         </FooterText>
@@ -128,7 +118,7 @@ const FooterImageWrapper = styled.div`
   position: relative;
 `;
 
-const FooterText = styled.a`
+const FooterText = styled.div`
   font-weight: 600;
   font-size: 0.9rem;
   line-height: 21px;

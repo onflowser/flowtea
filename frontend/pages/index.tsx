@@ -12,13 +12,13 @@ import RoundLink from "../components/RoundLink";
 
 // resources
 import blobImage from "../public/images/blob.svg";
-import teaCupImage from "../public/images/flow-tea-cup.svg";
-import heartImage from "../public/images/heart.svg";
-import bgImage from "../public/images/bg.png";
-import clapHands from "../public/images/clap-hands.svg";
-import freeIcon from "../public/images/free.svg";
-import flowIcon from "../public/images/flow.svg";
-import recurringPaymentIcon from "../public/images/recurring-payment.svg";
+import teaCupImage from "../public/images/flow-tea-cup.png";
+import heartImage from "../public/images/heart.png";
+import bgImage from "../public/images/webp/bg.webp";
+import clapHands from "../public/images/clap-hands.png";
+import freeIcon from "../public/images/free.png";
+import flowIcon from "../public/images/flow.png";
+import recurringPaymentIcon from "../public/images/recurring-payment.png";
 import teaImage from "../public/images/big-cup.svg";
 import MetaTags from "../components/MetaTags";
 
@@ -158,7 +158,7 @@ const BigText = styled.h1`
 `;
 const LandingSection = styled.div`
   background-color: #e5e5f7;
-  background-image: url("/images/bg.png");
+  background-image: url("/images/bg.webp");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -403,7 +403,7 @@ const BenefitLeftColumn = styled(Column)`
 `;
 
 type BenefitProps = {
-  icon: string;
+  icon: StaticImageData | any;
   title: string;
   body: string;
 };
@@ -532,7 +532,9 @@ const Home: NextPage = () => {
           <BigInput
             value={handle}
             onChange={setHandle}
-            placeholder={isExistingUser ? "project handle" : "your unique handle"}
+            placeholder={
+              isExistingUser ? "project handle" : "your unique handle"
+            }
             linkTitle={isExistingUser ? "Search" : "Create your page"}
             linkHref=""
             onClick={onGoToProfile}
