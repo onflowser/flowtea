@@ -1,13 +1,7 @@
-import React, {
-  ReactChild,
-  useContext,
-  useEffect,
-  useState
-} from "react";
-
+import React, { ReactChild, useContext, useEffect, useState } from "react";
 
 // @ts-ignore
-import * as fcl from '@onflow/fcl';
+import * as fcl from "@onflow/fcl";
 // @ts-ignore
 import * as t from "@onflow/types";
 
@@ -30,11 +24,12 @@ import { configureFcl } from "./fcl-config";
 import {
   FlowTeaInfo,
   getAddress,
-  getFlowBalance, getHandle,
-  getInfo
+  getFlowBalance,
+  getHandle,
+  getInfo,
 } from "./fcl-service";
 
-type TxResult = { transactionId: string, status: any };
+type TxResult = { transactionId: string; status: any };
 
 type FclContextProps = {
   user: null | FlowUser;
@@ -46,28 +41,42 @@ type FclContextProps = {
   isRegistered: boolean;
   login: () => Promise<void>;
   logout: () => Promise<void>;
-  getAddress: (handle: string) => Promise<null | string>,
-  getHandle: (address: string) => Promise<null | string>,
-  isHandleAvailable: (handle: string) => Promise<boolean>,
+  getAddress: (handle: string) => Promise<null | string>;
+  getHandle: (address: string) => Promise<null | string>;
+  isHandleAvailable: (handle: string) => Promise<boolean>;
   fetchCurrentUserInfo: () => Promise<FlowTeaInfo | null>;
   getInfo: (address: string) => Promise<FlowTeaInfo | null>;
-  donateFlow: (message: string, amount: number, recurring: boolean, receiverAddress: string) => Promise<TxResult>;
-  getFlowBalance: (address: string) => Promise<number>
-  register: (handle: string, name: string, description: string) => Promise<TxResult>
-  update: (name: string, description: string) => Promise<TxResult>
-}
+  donateFlow: (
+    message: string,
+    amount: number,
+    recurring: boolean,
+    receiverAddress: string
+  ) => Promise<TxResult>;
+  getFlowBalance: (address: string) => Promise<number>;
+  register: (
+    handle: string,
+    name: string,
+    websiteUrl: string,
+    description: string
+  ) => Promise<TxResult>;
+  update: (
+    name: string,
+    websiteUrl: string,
+    description: string
+  ) => Promise<TxResult>;
+};
 
-const defaultTxResult = { transactionId: '', status: '' };
+const defaultTxResult = { transactionId: "", status: "" };
 
 export type FlowUser = {
-  addr: string
-  cid: string
-  expiresAt: null
-  f_type: "USER"
-  f_vsn: string
-  loggedIn: true
-  services: any[]
-}
+  addr: string;
+  cid: string;
+  expiresAt: null;
+  f_type: "USER";
+  f_vsn: string;
+  loggedIn: true;
+  services: any[];
+};
 
 const defaultValue: FclContextProps = {
   user: null,
@@ -87,15 +96,18 @@ const defaultValue: FclContextProps = {
   donateFlow: () => Promise.resolve(defaultTxResult),
   getFlowBalance: () => Promise.resolve(0),
   register: () => Promise.resolve(defaultTxResult),
-  update: () => Promise.resolve(defaultTxResult)
-}
+  update: () => Promise.resolve(defaultTxResult),
+};
 
 const FclContext = React.createContext(defaultValue);
 
-export function FclProvider ({
+export function FclProvider({
   config = {},
-  children
-}: { config?: object, children: ReactChild }) {
+  children,
+}: {
+  config?: object;
+  children: ReactChild;
+}) {
   const [user, setUser] = useState<FlowUser | null>(null);
   const [info, setInfo] = useState<FlowTeaInfo | null>(null);
   const [isLoggingIn, setLoggingIn] = useState(false);
@@ -103,8 +115,8 @@ export function FclProvider ({
   const [isSendingDonation, setIsSendingDonation] = useState(false);
 
   useEffect(() => {
-    configureFcl(config)
-  }, [config])
+    configureFcl(config);
+  }, [config]);
 
   useEffect(() => fcl.currentUser().subscribe(setUser), []);
 
@@ -112,30 +124,44 @@ export function FclProvider ({
     if (user?.addr) {
       fetchCurrentUserInfo();
     }
-  }, [user])
+  }, [user]);
 
-  async function isHandleAvailable (handle: string) {
+  async function isHandleAvailable(handle: string) {
     return getAddress(handle)
       .then(() => false)
-      .catch(e => e.toString().match("Handle not found") ? true : Promise.reject(e))
+      .catch((e) =>
+        e.toString().match("Handle not found") ? true : Promise.reject(e)
+      );
   }
 
-  async function register (handle: string, name: string, description: string) {
+  async function register(
+    handle: string,
+    name: string,
+    websiteUrl: string,
+    description: string
+  ) {
     return sendTransaction(registerFlowCode, [
       fcl.arg(handle, t.String),
       fcl.arg(name, t.String),
+      fcl.arg(websiteUrl, t.String),
       fcl.arg(description, t.String),
-    ])
+    ]);
   }
 
-  async function update (name: string, description: string) {
+  async function update(name: string, websiteUrl: string, description: string) {
     return sendTransaction(updateFlowCode, [
       fcl.arg(name, t.String),
+      fcl.arg(websiteUrl, t.String),
       fcl.arg(description, t.String),
-    ])
+    ]);
   }
 
-  async function donateFlow (message: string, amount: number, recurring: boolean, receiverAddress: string) {
+  async function donateFlow(
+    message: string,
+    amount: number,
+    recurring: boolean,
+    receiverAddress: string
+  ) {
     try {
       setIsSendingDonation(true);
       return await sendTransaction(donateFlowCode, [
@@ -143,13 +169,13 @@ export function FclProvider ({
         fcl.arg(`${Math.round(amount)}.0`, t.UFix64),
         fcl.arg(recurring, t.Bool),
         fcl.arg(receiverAddress, t.Address),
-      ])
+      ]);
     } finally {
       setIsSendingDonation(false);
     }
   }
 
-  async function sendTransaction (cadence: string, args: any[]) {
+  async function sendTransaction(cadence: string, args: any[]) {
     const transactionId = await fcl.mutate({
       cadence,
       args: () => args,
@@ -165,7 +191,7 @@ export function FclProvider ({
     };
   }
 
-  async function logout () {
+  async function logout() {
     setLoggingOut(true);
     try {
       await fcl.unauthenticate();
@@ -175,7 +201,7 @@ export function FclProvider ({
     }
   }
 
-  async function login () {
+  async function login() {
     setLoggingIn(true);
     try {
       return await fcl.authenticate();
@@ -184,44 +210,46 @@ export function FclProvider ({
     }
   }
 
-  async function fetchCurrentUserInfo () {
+  async function fetchCurrentUserInfo() {
     if (!user) return null;
     try {
       const info = await getInfo(user.addr);
       setInfo(info);
       return info;
     } catch (e) {
-      console.error(e)
+      console.error(e);
       return null;
     }
   }
 
   return (
-    <FclContext.Provider value={{
-      getFlowBalance,
-      donateFlow,
-      login,
-      logout,
-      update,
-      register,
-      getInfo,
-      getAddress,
-      getHandle,
-      isHandleAvailable,
-      fetchCurrentUserInfo,
-      user,
-      info,
-      isSendingDonation,
-      isRegistered: Boolean(info),
-      isLoggedIn: user?.loggedIn,
-      isLoggingIn,
-      isLoggingOut
-    }}>
+    <FclContext.Provider
+      value={{
+        getFlowBalance,
+        donateFlow,
+        login,
+        logout,
+        update,
+        register,
+        getInfo,
+        getAddress,
+        getHandle,
+        isHandleAvailable,
+        fetchCurrentUserInfo,
+        user,
+        info,
+        isSendingDonation,
+        isRegistered: Boolean(info),
+        isLoggedIn: user?.loggedIn,
+        isLoggingIn,
+        isLoggingOut,
+      }}
+    >
       {children}
     </FclContext.Provider>
-  )
+  );
 }
 
-export function useFcl () {
+export function useFcl() {
   return useContext(FclContext);
 }

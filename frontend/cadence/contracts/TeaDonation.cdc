@@ -31,7 +31,7 @@ pub contract TeaDonation {
         let feeVault <- vaultRef.withdraw(amount: feeAmount)
 
         // get a reference to the recipient's Receiver
-        let receiverRef =  getAccount(toAddress)
+        let receiverRef = getAccount(toAddress)
             .getCapability(/public/flowTokenReceiver)
             .borrow<&{FungibleToken.Receiver}>()
                ?? panic("Could not borrow receiver reference to the recipient's Vault")

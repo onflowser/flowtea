@@ -11,9 +11,11 @@ pub contract TeaProfile {
     pub struct Info {
         pub var name: String
         pub var description: String
+        pub var websiteUrl: String
 
-        init(name: String, description: String) {
+        init(name: String, websiteUrl: String, description: String) {
           self.name = name
+          self.websiteUrl = websiteUrl
           self.description = description
         }
     }
@@ -29,25 +31,29 @@ pub contract TeaProfile {
     pub resource Project: Public, Private {
         access(self) var name: String
         access(self) var address: Address
+        access(self) var websiteUrl: String
         access(self) var description: String
 
-        init(name: String, description: String, address: Address) {
+        init(name: String, websiteUrl: String, description: String, address: Address) {
             self.name = name
             self.address = address
+            self.websiteUrl = websiteUrl
             self.description = description
         }
 
         pub fun getInfo(): Info {
-            return Info(name: self.name, description: self.description)
+            return Info(name: self.name, websiteUrl: self.websiteUrl, description: self.description)
         }
 
         pub fun setInfo(info: Info) {
             // TODO: emit event and add indexing to the backend
             pre {
                 info.name.length <= 64: "Name must be 64 or less characters"
+                info.websiteUrl.length <= 64: "Website URL must be 64 or less characters"
                 info.description.length <= 500: "Description must be 500 or less characters"
             }
             self.name = info.name
+            self.websiteUrl = info.websiteUrl
             self.description = info.description
         }
 
@@ -63,9 +69,10 @@ pub contract TeaProfile {
         return self.reverseHandleMap[address]
     }
 
-    pub fun createProject(handle: String, name: String, description: String, address: Address) : @TeaProfile.Project {
+    pub fun createProject(handle: String, name: String, websiteUrl: String, description: String, address: Address) : @TeaProfile.Project {
     	pre {
             handle.length <= 32: "Handle must be 32 or less characters"
+            websiteUrl.length <= 64: "Website URL must be 64 or less characters"
     		name.length <= 64: "Name must be 64 or less characters"
     	}
         // project names must be unique
@@ -74,7 +81,7 @@ pub contract TeaProfile {
         self.reverseHandleMap.insert(key: address, handle)
 
     	emit Registration(handle: handle, name: name, address: address)
-    	return <- create TeaProfile.Project(name: name, description: description, address: address)
+    	return <- create TeaProfile.Project(name: name, websiteUrl: websiteUrl, description: description, address: address)
     }
 
     init() {

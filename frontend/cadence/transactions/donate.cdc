@@ -12,6 +12,7 @@ import TeaDonation from 0xTeaDonation
 transaction(message: String, amount: UFix64, recurring: Bool, to: Address) {
 
     // The Vault resource that holds the tokens that are being transferred
+    // https://github.com/onflow/flow-core-contracts/blob/master/contracts/FlowToken.cdc#L60
     // let fromVault: @FungibleToken.Vault
     let fromAddress: Address
     let vaultRef: &FungibleToken.Vault

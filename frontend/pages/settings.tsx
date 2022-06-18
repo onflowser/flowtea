@@ -5,75 +5,84 @@ import { useFcl } from "../common/FclContext";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { wait } from "../common/utils";
+import { isValidWebsiteUrl, wait } from "../common/utils";
 import { useUserInfo } from "../common/use-user-info";
 import MetaTags from "../components/MetaTags";
 
-export default function Settings () {
+export default function Settings() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, update, user, isRegistered } = useFcl();
-  const {info, handle: liveHandle, refetchInfo} = useUserInfo(user?.addr)
+  const { register, update, user, isRegistered, info, fetchCurrentUserInfo } =
+    useFcl();
+  const { handle: liveHandle } = useUserInfo(user?.addr);
   const { query } = useRouter();
-  const [handle, setHandle] = useState('');
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [handle, setHandle] = useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [websiteUrl, setWebsiteUrl] = useState("");
 
   useEffect(() => {
     if (!isRegistered) {
-      setHandle(query.handle as string)
+      setHandle(query.handle as string);
     }
-  }, [isRegistered, query])
+  }, [isRegistered, query]);
 
   useEffect(() => {
     if (info) {
-      setName(info.name)
+      setName(info.name);
+      setWebsiteUrl(info.websiteUrl);
       setDescription(info.description);
     }
     if (liveHandle) {
-      setHandle(liveHandle)
+      setHandle(liveHandle);
     }
-  }, [liveHandle, info])
+  }, [liveHandle, info]);
 
   async function onRegister() {
     if (!handle) {
-      toast.error("Please enter your handle!")
+      toast.error("Please enter your handle!");
       return;
     }
     try {
-      await register(handle, name, description);
+      await register(handle, name, websiteUrl, description);
       while (true) {
         await wait(500);
-        if (await refetchInfo()) {
+        if (await fetchCurrentUserInfo()) {
           break;
         }
       }
-      await router.replace("/settings")
-      toast.success("Registered!")
+      await router.replace("/settings");
+      toast.success("Registered!");
     } catch (e: any) {
-      toast.error(e.toString())
+      toast.error(e.toString());
     }
   }
 
   async function onUpdate() {
     try {
-      await update(name, description);
-      toast.success("Info updated!")
+      await update(name, websiteUrl, description);
+      toast.success("Info updated!");
     } catch (e: any) {
-      toast.error(e.toString())
+      toast.error(e.toString());
     }
   }
 
-  async function onSubmit () {
+  async function onSubmit() {
     let errors = [];
     if (!name) {
-      errors.push("Name is missing!")
+      errors.push("Name is missing!");
     }
     if (!description) {
-      errors.push("About is missing!")
+      errors.push("About is missing!");
+    }
+    if (websiteUrl && !isValidWebsiteUrl(websiteUrl)) {
+      toast.error(
+        "Please enter a valid website URL! (e.g. https://your-domain.com)"
+      );
+      return;
     }
     if (errors.length > 0) {
-      errors.forEach(error => toast.error(error))
+      errors.forEach((error) => toast.error(error));
       return;
     }
     setIsSubmitting(true);
@@ -85,6 +94,12 @@ export default function Settings () {
       }
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  function onFormatWebsiteUrl() {
+    if (websiteUrl && !websiteUrl.startsWith("http")) {
+      setWebsiteUrl(`https://${websiteUrl}`);
     }
   }
 
@@ -113,37 +128,44 @@ export default function Settings () {
             placeholder="flowtea.me/your-handle"
             value={handle}
             disabled={isRegistered}
-            onInput={e => setHandle(e.currentTarget.value)}
+            onInput={(e) => setHandle(e.currentTarget.value)}
           />
           <Input
             label="Name"
             placeholder="Name"
             value={name}
-            onInput={e => setName(e.currentTarget.value)}
+            onInput={(e) => setName(e.currentTarget.value)}
+          />
+          <Input
+            label="Website"
+            placeholder="Your website URL"
+            type="url"
+            value={websiteUrl}
+            onInput={(e) => setWebsiteUrl(e.currentTarget.value)}
+            onBlur={onFormatWebsiteUrl}
           />
           <TextArea
             label="About"
             placeholder="Hello! I just created Buy me a Flow tea profile..."
             value={description}
-            onInput={e => setDescription(e.currentTarget.value)}
+            onInput={(e) => setDescription(e.currentTarget.value)}
           />
         </div>
 
         <PrimaryButton
           style={{
             marginTop: 50,
-            width: '100%',
-            maxWidth: 'unset'
+            width: "100%",
+            maxWidth: "unset",
           }}
           isLoading={isSubmitting}
           onClick={onSubmit}
         >
-          {isRegistered ? 'Save' : 'Continue'}
+          {isRegistered ? "Save" : "Continue"}
         </PrimaryButton>
-
       </div>
     </>
-  )
+  );
 }
 
 Settings.Layout = LoginLayout;

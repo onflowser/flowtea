@@ -12,33 +12,31 @@ import { TextArea } from "./Input";
 /**
  * @param userId Can either be a handle or account address.
  */
-export default function UserProfile ({ userId }: { userId: string|undefined }) {
+export default function UserProfile({
+  userId,
+}: {
+  userId: string | undefined;
+}) {
   const { isSendingDonation, donateFlow } = useFcl();
-  const {
-    address,
-    isSelf,
-    info,
-    infoError,
-    donations,
-    donationsError
-  } = useUserInfo(userId);
+  const { address, isSelf, info, infoError, donations, donationsError } =
+    useUserInfo(userId);
   const [recurring, setRecurring] = useState(false);
   const [flowAmount, setFlowAmount] = useState(0);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
-  async function onSubmit () {
+  async function onSubmit() {
     if (!flowAmount) {
-      toast.error("Select FLOW amount!")
+      toast.error("Select FLOW amount!");
       return;
     }
     if (!userId) {
       return;
     }
     try {
-      await donateFlow(message, flowAmount, recurring, userId)
+      await donateFlow(message, flowAmount, recurring, userId);
     } catch (e) {
-      console.error(e)
-      toast.error("Donation failed!")
+      console.error(e);
+      toast.error("Donation failed!");
     }
   }
 
@@ -48,35 +46,40 @@ export default function UserProfile ({ userId }: { userId: string|undefined }) {
         <div className="dark-background-profile" />
         {/* TODO: display user friendly errors */}
         {/* @ts-ignore */}
-        <pre style={{margin: 20}}>{infoError.toString()}</pre>
+        <pre style={{ margin: 20 }}>{infoError.toString()}</pre>
       </Container>
-    )
+    );
   }
 
   return (
     <Container>
-      <div className="dark-background-profile"/>
+      <div className="dark-background-profile" />
 
       <div className="profile-photo-main-wrapper">
-        <img src="/images/profile-photo-main.svg" alt=""/>
+        <img src="/images/profile-photo-main.svg" alt="" />
         <h3 className="profile-name">{info?.name}</h3>
         <a
           target="_blank"
           href={`https://flowscan.org/account/${address}`}
-          rel="noreferrer">
-          {address || '-'}
+          rel="noreferrer"
+        >
+          {address || "-"}
         </a>
+        {info?.websiteUrl && (
+          <a target="_blank" href={info?.websiteUrl} rel="noreferrer">
+            {formatWebsiteUrl(info?.websiteUrl)}
+          </a>
+        )}
       </div>
 
       <div
         className="profile-content-wrapper"
-        style={{ maxWidth: isSelf ? 800 : 1200 }}>
+        style={{ maxWidth: isSelf ? 800 : 1200 }}
+      >
         <div className="bio-and-transactions">
           <div className="bio-profile">
             <h5>About {info?.name}</h5>
-            <p>
-              {info?.description}
-            </p>
+            <p>{info?.description}</p>
           </div>
 
           {donations?.length > 0 ? (
@@ -96,56 +99,62 @@ export default function UserProfile ({ userId }: { userId: string|undefined }) {
         {!isSelf && (
           <div className="buy-flow-tea-form">
             <h5>Buy {info?.name} a FLOW Tea</h5>
-            <ChooseFlowAmount onChange={setFlowAmount} value={flowAmount}/>
+            <ChooseFlowAmount onChange={setFlowAmount} value={flowAmount} />
             <RepeatPaymentSwitch
               style={{ marginTop: 50 }}
               checked={recurring}
-              onChange={checked => setRecurring(!!checked)}
+              onChange={(checked) => setRecurring(!!checked)}
             />
             <TextArea
               placeholder="Enter your message ..."
-              onInput={e => setMessage(e.currentTarget.value)}
+              onInput={(e) => setMessage(e.currentTarget.value)}
             />
             <PrimaryButton
               isLoading={isSendingDonation}
               onClick={onSubmit}
-              style={{ width: '100%', maxWidth: 'unset' }}>
-              Support {flowAmount || 'X'} FLOW
+              style={{ width: "100%", maxWidth: "unset" }}
+            >
+              Support {flowAmount || "X"} FLOW
             </PrimaryButton>
           </div>
         )}
       </div>
     </Container>
-  )
+  );
 }
 
-function RepeatPaymentSwitch ({
+function RepeatPaymentSwitch({
   onChange,
   checked,
   style,
   ...props
-}: { onChange: (checked: boolean) => void, checked: boolean } & HTMLAttributes<HTMLDivElement>) {
+}: {
+  onChange: (checked: boolean) => void;
+  checked: boolean;
+} & HTMLAttributes<HTMLDivElement>) {
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'row',
-      ...style
-    }} {...props}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        ...style,
+      }}
+      {...props}
+    >
       <div>
-        <b style={{ margin: 0 }}>
-          Repeat this payment every month
-        </b>
+        <b style={{ margin: 0 }}>Repeat this payment every month</b>
         <p style={{ fontSize: 12, margin: 0 }}>
-          Don&apos;t worry, you will get an
-          email to confirm it every month.
+          Don&apos;t worry, you will get an email to confirm it every month.
         </p>
       </div>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-end',
-        flex: 1
-      }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          flex: 1,
+        }}
+      >
         <Switch
           uncheckedIcon={false}
           checkedIcon={false}
@@ -153,39 +162,52 @@ function RepeatPaymentSwitch ({
           onColor={colors.pink}
           onHandleColor={colors.white}
           offColor="#dfdfe1"
-          onChange={onChange}/>
+          onChange={onChange}
+        />
       </div>
     </div>
-  )
+  );
 }
 
-function ChooseFlowAmount ({
+function formatWebsiteUrl(value: string) {
+  return value.replace(/https?:\/\//, "");
+}
+
+function ChooseFlowAmount({
   onChange,
   value,
-  amounts = [1, 3, 10]
-}: { onChange: (value: number) => void, value: number, amounts?: number[] }) {
+  amounts = [1, 3, 10],
+}: {
+  onChange: (value: number) => void;
+  value: number;
+  amounts?: number[];
+}) {
   const [isCustom, setIsCustom] = useState(false);
   return (
-    <div style={{ display: 'flex' }}>
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-evenly'
-      }}>
-        <img src="/images/flow-tea-cup.svg" alt=""/>
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-evenly",
+        }}
+      >
+        <img src="/images/flow-tea-cup.svg" alt="" />
         <X>X</X>
       </div>
       <div
-        style={{ flex: 3, display: 'flex', justifyContent: 'space-between' }}>
-        {amounts.map(flowAmount => (
+        style={{ flex: 3, display: "flex", justifyContent: "space-between" }}
+      >
+        {amounts.map((flowAmount) => (
           <FlowAmountButton
             key={flowAmount}
             active={!isCustom && flowAmount === value}
             onClick={() => {
               onChange(flowAmount);
               setIsCustom(false);
-            }}>
+            }}
+          >
             {flowAmount}
           </FlowAmountButton>
         ))}
@@ -198,7 +220,7 @@ function ChooseFlowAmount ({
         />
       </div>
     </div>
-  )
+  );
 }
 
 const X = styled.span`
@@ -219,10 +241,13 @@ const Button = css`
 `;
 
 const FlowAmountButton = styled.button<{ active: boolean }>`
-  ${({ active, theme }) => active ? `
+  ${({ active, theme }) =>
+    active
+      ? `
       background: ${theme.colors.darkViolet};
       color: white;
-  ` : `
+  `
+      : `
       background: white;
       color: ${theme.colors.darkViolet};
   `}
@@ -230,13 +255,16 @@ const FlowAmountButton = styled.button<{ active: boolean }>`
 `;
 
 const CustomFlowAmountInput = styled.input<{ active: boolean }>`
-  ${({ active, theme }) => active ? `
+  ${({ active, theme }) =>
+    active
+      ? `
       background: ${theme.colors.darkViolet};
       color: white;
       ::placeholder {
         color: white;
       }
-  ` : `
+  `
+      : `
       background: white;
       color: ${theme.colors.darkViolet};
   `}
@@ -254,19 +282,22 @@ const CustomFlowAmountInput = styled.input<{ active: boolean }>`
     margin: 0;
   }
 
-  &[type=number] {
+  &[type="number"] {
     -moz-appearance: textfield;
   }
 `;
 
-function Transaction ({
+function Transaction({
   teaCount,
-  fromAddress
-}: { teaCount: number, fromAddress: string }) {
+  fromAddress,
+}: {
+  teaCount: number;
+  fromAddress: string;
+}) {
   return (
     <div className="transactions-profil-details">
       <div className="tea-count">
-        <img src="/images/flow-tea-cup.svg" alt=""/>
+        <img src="/images/flow-tea-cup.svg" alt="" />
         <h4>x</h4>
         <h4 className="tea-count-number">{teaCount}</h4>
       </div>
@@ -275,13 +306,17 @@ function Transaction ({
         <Link href={`/${fromAddress}`}>{fromAddress}</Link>
       </h6>
     </div>
-  )
+  );
 }
 
 const Container = styled.div`
   .profile-photo-main-wrapper h3 {
     margin-top: 0px;
     margin-bottom: 0px;
+  }
+
+  .profile-photo-main-wrapper a {
+    display: block;
   }
 
   .profile-content-wrapper {
@@ -311,7 +346,7 @@ const Container = styled.div`
 
   .bio-profile {
     padding: 50px 30px 50px 30px;
-    border: solid 2px #D9D9D9;
+    border: solid 2px #d9d9d9;
     margin-bottom: 50px;
     border-radius: 1%;
   }
@@ -336,7 +371,7 @@ const Container = styled.div`
     justify-content: space-between;
     padding-left: 20px;
     padding-right: 20px;
-    border: solid 2px #D9D9D9;
+    border: solid 2px #d9d9d9;
     margin-bottom: 20px;
     border-radius: 1%;
   }
@@ -363,9 +398,8 @@ const Container = styled.div`
     margin-left: 20px;
   }
 
-
   .buy-flow-tea-form {
-    border: solid 2px #D9D9D9;
+    border: solid 2px #d9d9d9;
     padding: 50px 30px 50px 30px;
     // TODO: use dark background ?
     // background-color: var(--main-dark-color);

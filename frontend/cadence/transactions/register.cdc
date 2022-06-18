@@ -1,6 +1,6 @@
 import TeaProfile from 0xTeaProfile
 
-transaction (handle: String, name: String, description: String) {
+transaction (handle: String, name: String, websiteUrl: String, description: String) {
 
     prepare(signer: AuthAccount) {
         let existing = signer.getCapability<&{TeaProfile.Public}>(TeaProfile.publicPath)
@@ -10,6 +10,7 @@ transaction (handle: String, name: String, description: String) {
             let profile <-TeaProfile.createProject(
                 handle: handle,
                 name: name,
+                websiteUrl: websiteUrl,
                 description: description,
                 address: signer.address
             )
