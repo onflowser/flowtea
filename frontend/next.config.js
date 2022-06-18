@@ -4,10 +4,10 @@ const nextConfig = {
   webpack: (config, options) => {
     config.module.rules.push({
       test: /\.cdc/,
-      use: 'raw-loader'
-    })
-    return config
+      use: "raw-loader",
+    });
+    return config;
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

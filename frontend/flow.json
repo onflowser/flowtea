@@ -1,31 +1,28 @@
 {
-	"emulators": {
-		"default": {
-			"port": 3569,
-			"serviceAccount": "emulator-account"
-		}
-	},
-	"contracts": {
-		"TeaDonation": "./cadence/contracts/TeaDonation.cdc",
-		"TeaProfile": "./cadence/contracts/TeaProfile.cdc"
-	},
-	"networks": {
-		"emulator": "127.0.0.1:3569",
-		"mainnet": "access.mainnet.nodes.onflow.org:9000",
-		"testnet": "access.devnet.nodes.onflow.org:9000"
-	},
-	"accounts": {
-		"emulator-account": {
-			"address": "f8d6e0586b0a20c7",
-			"key": "43109dc3cc77a631ae14ea6a62196ba3f4d81dd5ced074558e6bfc5ef206c765"
-		}
-	},
-	"deployments": {
-		"emulator": {
-			"emulator-account": [
-				"TeaDonation",
-				"TeaProfile"
-			]
-		}
-	}
+  "emulators": {
+    "default": {
+      "port": 3569,
+      "serviceAccount": "emulator-account"
+    }
+  },
+  "contracts": {
+    "TeaDonation": "./cadence/contracts/TeaDonation.cdc",
+    "TeaProfile": "./cadence/contracts/TeaProfile.cdc"
+  },
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000",
+    "testnet": "access.devnet.nodes.onflow.org:9000"
+  },
+  "accounts": {
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": "43109dc3cc77a631ae14ea6a62196ba3f4d81dd5ced074558e6bfc5ef206c765"
+    }
+  },
+  "deployments": {
+    "emulator": {
+      "emulator-account": ["TeaDonation", "TeaProfile"]
+    }
+  }
 }

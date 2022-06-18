@@ -11,21 +11,18 @@ import { getDomain } from "../common/utils";
 
 type Props = ReactModal.Props & {
   onClose: () => void;
-}
+};
 
-const widgetVariants = [
-  "coral",
-  "light-violet",
-  "main-dark",
-  "violet"
-]
+const widgetVariants = ["coral", "light-violet", "main-dark", "violet"];
 
-export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
-  const {user} = useFcl();
-  const {handle} = useUserInfo(user?.addr)
+export function WidgetGenerationModal({ isOpen, onClose, ...props }: Props) {
+  const { user } = useFcl();
+  const { handle } = useUserInfo(user?.addr);
   const [selected, setSelected] = useState(-1);
   const [showSelection, setShowSelection] = useState(true);
-  const widgets = widgetVariants.map(name => `/images/widgets/button-${name}.svg`);
+  const widgets = widgetVariants.map(
+    (name) => `/images/widgets/button-${name}.svg`
+  );
   const generatedCode = `
     <a href="${getDomain()}/${handle}" target="_blank">
       <img alt="FlowTea" src="${getDomain()}${widgets[selected]}" />
@@ -34,18 +31,18 @@ export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
 
   function onGenerateCode() {
     if (selected === -1) {
-      toast.error("Select a widget variant!")
+      toast.error("Select a widget variant!");
       return;
     }
-    setShowSelection(false)
+    setShowSelection(false);
   }
 
-  async function onCopyCode () {
+  async function onCopyCode() {
     try {
       await navigator.clipboard.writeText(generatedCode);
-      toast.success("Copied!")
+      toast.success("Copied!");
     } catch (e) {
-      toast.error("Failed to copy!")
+      toast.error("Failed to copy!");
     }
   }
 
@@ -54,11 +51,11 @@ export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
       style={{
         content: {
           padding: 100,
-          backgroundColor: '#F7F7F7',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center'
-        }
+          backgroundColor: "#F7F7F7",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        },
       }}
       isOpen={isOpen}
       {...props}
@@ -73,12 +70,12 @@ export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
                 selected={index === selected}
                 onClick={() => setSelected(index)}
               >
-                <WidgetImage src={widget} alt="Widget"/>
+                <WidgetImage src={widget} alt="Widget" />
               </SelectItem>
             ))}
           </SelectContainer>
           <PrimaryButton
-            style={{ width: '100%', maxWidth: 'unset' }}
+            style={{ width: "100%", maxWidth: "unset" }}
             onClick={onGenerateCode}
           >
             Generate your widget
@@ -89,7 +86,7 @@ export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
           <h2>Copy code to your website</h2>
           <TextArea value={generatedCode} />
           <PrimaryButton
-            style={{ width: '100%', maxWidth: 'unset' }}
+            style={{ width: "100%", maxWidth: "unset" }}
             onClick={onCopyCode}
           >
             Copy code
@@ -97,7 +94,7 @@ export function WidgetGenerationModal ({ isOpen, onClose, ...props }: Props) {
         </>
       )}
     </Modal>
-  )
+  );
 }
 
 const SelectContainer = styled.div`
@@ -112,17 +109,14 @@ const SelectContainer = styled.div`
 const SelectItem = styled.button<{ selected: boolean }>`
   border: 1px solid transparent;
   background: white;
-  box-shadow: 4px 4px 10px #A3A3A346;
+  box-shadow: 4px 4px 10px #a3a3a346;
   border-radius: 4px;
   padding: 20px;
   cursor: pointer;
-  ${({
-    selected,
-    theme
-  }) => selected && `border-color: ${theme.colors.pink}`};
-  
+  ${({ selected, theme }) => selected && `border-color: ${theme.colors.pink}`};
+
   &:hover {
-    border-color: ${({theme}) => theme.colors.pink};
+    border-color: ${({ theme }) => theme.colors.pink};
   }
 `;
 

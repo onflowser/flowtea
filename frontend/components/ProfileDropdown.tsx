@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { WidgetGenerationModal } from "./WidgetGenerationModal";
 import { useFcl } from "../common/FclContext";
 
-export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
+export function ProfileDropdown(props: HTMLAttributes<HTMLDivElement>) {
   const { isRegistered, isLoggedIn, logout } = useFcl();
   const [modalIsOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
@@ -16,9 +16,9 @@ export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
     if (!photoRef.current?.contains(event.target)) {
       setIsOpen(false);
     }
-  })
+  });
 
-  async function navigate (path: string) {
+  async function navigate(path: string) {
     await router.push(path);
     setIsOpen(false);
   }
@@ -54,7 +54,7 @@ export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
               </>
             )}
             <DropdownItem onClick={() => navigate("/settings")}>
-              {isRegistered ? 'Profile settings' : 'Create profile'}
+              {isRegistered ? "Profile settings" : "Create profile"}
             </DropdownItem>
             {isLoggedIn && (
               <DropdownItem onClick={() => navigate("/").then(logout)}>
@@ -65,7 +65,7 @@ export function ProfileDropdown (props: HTMLAttributes<HTMLDivElement>) {
         )}
       </Container>
     </>
-  )
+  );
 }
 
 const Container = styled.div`

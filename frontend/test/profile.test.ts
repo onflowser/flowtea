@@ -6,7 +6,7 @@ import {
   sendTransaction,
   deployContractByName,
   getAccountAddress,
-  executeScript
+  executeScript,
   // @ts-ignore
 } from "flow-js-testing";
 import { afterEach } from "@jest/globals";
@@ -50,10 +50,10 @@ describe("TeaProfile", () => {
     expect(tx1.events[0].type).toContain("TeaProfile.Registration");
 
     const [info] = await executeScript({
-      name: 'get-info',
-      args: [Alice]
-    })
-    expect(info).toEqual({ name: "Alice", description: "My description" })
+      name: "get-info",
+      args: [Alice],
+    });
+    expect(info).toEqual({ name: "Alice", description: "My description" });
 
     // Alice updates her own account's settings
     const [tx2, txError2] = await sendTransaction({
@@ -61,13 +61,16 @@ describe("TeaProfile", () => {
       args: ["Alice", "My new description"],
       signers: [Alice],
     });
-    expect(txError2).toBeNull()
+    expect(txError2).toBeNull();
 
     const [updatedInfo] = await executeScript({
-      name: 'get-info',
-      args: [Bob]
-    })
-    expect(updatedInfo).toEqual({ name: "Alice", description: "My new description" })
+      name: "get-info",
+      args: [Bob],
+    });
+    expect(updatedInfo).toEqual({
+      name: "Alice",
+      description: "My new description",
+    });
   });
 
   test("Duplicate profile on same account", async () => {
@@ -114,6 +117,6 @@ describe("TeaProfile", () => {
       signers: [Bob],
     });
 
-    expect(err2).toContain("Handle is already taken")
+    expect(err2).toContain("Handle is already taken");
   });
 });

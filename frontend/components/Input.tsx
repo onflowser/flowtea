@@ -4,14 +4,13 @@ import { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 type Props = {
   label?: string;
   placeholder?: string;
-}
+};
 
-export function Input ({
+export function Input({
   label,
   placeholder,
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & Props) {
-
   return (
     <Container>
       {label && <h6>{label}</h6>}
@@ -23,15 +22,14 @@ export function Input ({
         {...props}
       />
     </Container>
-  )
+  );
 }
 
-export function TextArea ({
+export function TextArea({
   label,
   placeholder,
   ...props
 }: TextareaHTMLAttributes<HTMLTextAreaElement> & Props) {
-
   return (
     <Container>
       <h6>{label}</h6>
@@ -43,7 +41,7 @@ export function TextArea ({
         {...props}
       />
     </Container>
-  )
+  );
 }
 
 const Container = styled.div`
@@ -51,9 +49,11 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
 
-  .white-field, .white-field-bottom, .white-field-100 {
+  .white-field,
+  .white-field-bottom,
+  .white-field-100 {
     background-color: #fff;
-    border: solid 1px #D9D9D9;
+    border: solid 1px #d9d9d9;
     border-radius: 10px 10px 10px 10px;
     font-size: 16px;
     color: var(--main-dark-color);
@@ -69,7 +69,8 @@ const Container = styled.div`
     color: var(--placeholder-text-color);
   }
 
-  .white-field h5, .white-field-bottom h5 {
+  .white-field h5,
+  .white-field-bottom h5 {
     font-weight: 400;
   }
 
