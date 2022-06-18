@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { isValidWebsiteUrl, wait } from "../common/utils";
 import { useUserInfo } from "../common/use-user-info";
 import MetaTags from "../components/MetaTags";
+import { RichTextEditor } from "../components/RichTextEditor";
 
 export default function Settings() {
   const router = useRouter();
@@ -144,11 +145,12 @@ export default function Settings() {
             onInput={(e) => setWebsiteUrl(e.currentTarget.value)}
             onBlur={onFormatWebsiteUrl}
           />
-          <TextArea
+          <RichTextEditor
             label="About"
+            preview="edit"
             placeholder="Hello! I just created Buy me a Flow tea profile..."
             value={description}
-            onInput={(e) => setDescription(e.currentTarget.value)}
+            onChange={(md) => setDescription(md || "")}
           />
         </div>
 

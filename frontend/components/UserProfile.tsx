@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import { useUserInfo } from "../common/use-user-info";
 import Link from "next/link";
 import { TextArea } from "./Input";
+import { MarkdownPreview } from "./MarkdownPreview";
 
 /**
  * @param userId Can either be a handle or account address.
@@ -77,10 +78,12 @@ export default function UserProfile({
         style={{ maxWidth: isSelf ? 800 : 1200 }}
       >
         <div className="bio-and-transactions">
-          <div className="bio-profile">
-            <h5>About {info?.name}</h5>
-            <p>{info?.description}</p>
-          </div>
+          {info?.description && (
+            <div className="bio-profile">
+              <h5>About {info?.name}</h5>
+              <MarkdownPreview source={info?.description} />
+            </div>
+          )}
 
           {donations?.length > 0 ? (
             donations.map((donation: any) => (

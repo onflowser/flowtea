@@ -1,5 +1,7 @@
+const removeImports = require("next-remove-imports")();
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = removeImports({
   reactStrictMode: true,
   webpack: (config, options) => {
     config.module.rules.push({
@@ -8,6 +10,6 @@ const nextConfig = {
     });
     return config;
   },
-};
+});
 
 module.exports = nextConfig;
