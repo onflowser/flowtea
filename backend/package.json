@@ -6,7 +6,6 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start:test": "export FLOWTEA_ACCOUNT_ADDRESS=0x01cf0e2f2f715450 && npm run start:debug",
     "start:local": "export FLOWTEA_ACCOUNT_ADDRESS=0xf8d6e0586b0a20c7 && npm run start:debug",
     "prebuild": "rimraf dist",
     "build": "nest build",

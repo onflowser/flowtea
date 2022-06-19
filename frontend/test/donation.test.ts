@@ -6,6 +6,7 @@ import {
   sendTransaction,
   deployContractByName,
   getAccountAddress,
+  executeScript,
   mintFlow,
   // @ts-ignore
 } from "flow-js-testing";
@@ -14,7 +15,7 @@ import { afterEach } from "@jest/globals";
 // We need to set timeout for a higher number, because some transactions might take up some time
 jest.setTimeout(10000);
 
-describe("TeaDonation", () => {
+describe("FlowTea donation", () => {
   // Instantiate emulator and path to Cadence files
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "../cadence");
@@ -25,37 +26,65 @@ describe("TeaDonation", () => {
 
   // Stop emulator, so it could be restarted
   afterEach(async () => {
-    // return emulator.stop();
+    await emulator.stop();
   });
 
-  test("Profile registration", async () => {
+  test("Donate", async () => {
     const Alice = await getAccountAddress("Alice");
     const Bob = await getAccountAddress("Bob");
-    console.log({ Alice, Bob });
+    const Owner = await getAccountAddress("Owner");
+    const fee = 0.05; // set 5% fee
+    // every new account has a default balance of 0.001
+    const defaultAccBalance = 0.001;
+    const donatedAmount = 1;
 
-    await mintFlow(Alice, "1.0");
+    await mintFlow(Alice, "2.0");
 
-    const [deploymentResult, error] = await deployContractByName({
-      to: Alice,
-      name: "TeaDonation",
+    const [deploymentResult, error1] = await deployContractByName({
+      to: Owner,
+      name: "FlowTea",
+      args: [Owner, `${fee}`],
     });
+    expect(error1).toBeNull();
+    console.log(deploymentResult);
 
-    expect(deploymentResult.statusString).toEqual("SEALED");
-    expect(error).toBeNull();
+    const [registerTx, error2] = await sendTransaction({
+      name: "register",
+      args: ["bob", "Bob", "https://example.com", "This is Bob!"],
+      signers: [Bob],
+    });
+    expect(error2).toBeNull();
+    console.log(registerTx);
 
-    const [tx, txError] = await sendTransaction({
+    const [donateTx, error3] = await sendTransaction({
       name: "donate",
-      args: ["Thanks for your hard work!", 0.5, true, Bob],
+      args: ["Good work bob!", donatedAmount, true, Bob],
       signers: [Alice],
     });
-    console.log(tx, txError);
+    expect(error3).toBeNull();
 
-    const donationEvents = tx.events.filter((event: { type: string }) =>
-      event.type.includes("TeaDonation.Donation")
+    // Make sure donation event is fired
+    const donationEvent = donateTx.events.find((event: any) =>
+      event.type.match("FlowTea.Donation")
     );
+    expect(donationEvent !== null).toBeTruthy();
+    console.log(donateTx);
 
-    console.log(donationEvents[0]);
-    expect(txError).toBeNull();
-    expect(donationEvents.length).toBe(1);
+    const bobBalance = await getFlowBalance(Bob);
+    const ownerBalance = await getFlowBalance(Owner);
+
+    expect(bobBalance).toBeCloseTo(donatedAmount + defaultAccBalance);
+    expect(ownerBalance).toBeCloseTo(donatedAmount * fee + defaultAccBalance);
   });
 });
+
+async function getFlowBalance(address: string) {
+  const [result, error] = await executeScript({
+    name: "get-flow-balance",
+    args: [address],
+  });
+  if (error) {
+    throw error;
+  }
+  return +result;
+}

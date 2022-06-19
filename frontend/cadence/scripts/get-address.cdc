@@ -1,5 +1,5 @@
-import TeaProfile from 0xTeaProfile
+import FlowTea from 0xFlowTea
 
 pub fun main(handle: String): Address? {
-    return TeaProfile.lookupAddress(handle: handle)
+    return FlowTea.lookupAddress(handle: handle)
 }

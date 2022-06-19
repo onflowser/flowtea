@@ -1,12 +1,24 @@
-pub contract TeaProfile {
+import FungibleToken from 0xee82856bf20e2aa6
+
+pub contract FlowTea {
 
     pub let publicPath: PublicPath
     pub let storagePath: StoragePath
     pub let privatePath: PrivatePath
     access(self) let handleMap: {String: Address};
     access(self) let reverseHandleMap: {Address: String};
+    access(self) let fee: UFix64
+    access(self) let feeAddress: Address
 
     pub event Registration(handle: String, name: String, address: Address)
+
+    pub event Donation(
+        from: Address,
+        to: Address,
+        amount: UFix64,
+        message: String,
+        recurring: Bool
+    )
 
     pub struct Info {
         pub var name: String
@@ -22,6 +34,13 @@ pub contract TeaProfile {
 
     pub resource interface Public {
         pub fun getInfo(): Info
+        pub fun donate(
+            from: &FungibleToken.Vault,
+            amount: UFix64,
+            fromAddress: Address, // TODO: do we need to provide a fromAddress as arg?
+            message: String,
+            recurring: Bool
+        )
     }
 
     pub resource interface Private {
@@ -39,6 +58,46 @@ pub contract TeaProfile {
             self.address = address
             self.websiteUrl = websiteUrl
             self.description = description
+        }
+
+        pub fun donate(
+            from: &FungibleToken.Vault,
+            amount: UFix64,
+            fromAddress: Address, // TODO: do we need to provide a fromAddress as arg?
+            message: String,
+            recurring: Bool
+        ) {
+            let toAddress = self.owner?.address!;
+            // calculate fee amount - predefined percentage of the total amount
+            let feeAmount = amount * FlowTea.fee
+            // withdraw tokens to temporary vaults
+            let donationVault <- from.withdraw(amount: amount)
+            let feeVault <- from.withdraw(amount: feeAmount)
+
+            // Get a reference to the donation recipient
+            let receiverRef = getAccount(toAddress)
+                .getCapability(/public/flowTokenReceiver)
+                .borrow<&{FungibleToken.Receiver}>()
+                ?? panic("Could not borrow receiver reference to the recipient's Vault")
+
+            // Get a reference to the fee receiver
+            let feeReceiverRef = getAccount(FlowTea.feeAddress)
+                .getCapability(/public/flowTokenReceiver)
+                .borrow<&{FungibleToken.Receiver}>()
+                ?? panic("Could not borrow receiver reference to the recipient's Vault")
+
+            // deposit donation in the recipient wallet
+            receiverRef.deposit(from: <-donationVault)
+            // deposit fee to the service owner wallet
+            feeReceiverRef.deposit(from: <-feeVault)
+
+            emit Donation(
+                from: fromAddress,
+                to: toAddress,
+                amount: amount,
+                message: message,
+                recurring: recurring
+            )
         }
 
         pub fun getInfo(): Info {
@@ -69,7 +128,7 @@ pub contract TeaProfile {
         return self.reverseHandleMap[address]
     }
 
-    pub fun createProject(handle: String, name: String, websiteUrl: String, description: String, address: Address) : @TeaProfile.Project {
+    pub fun createProject(handle: String, name: String, websiteUrl: String, description: String, address: Address) : @FlowTea.Project {
     	pre {
             handle.length <= 32: "Handle must be 32 or less characters"
             websiteUrl.length <= 64: "Website URL must be 64 or less characters"
@@ -81,14 +140,16 @@ pub contract TeaProfile {
         self.reverseHandleMap.insert(key: address, handle)
 
     	emit Registration(handle: handle, name: name, address: address)
-    	return <- create TeaProfile.Project(name: name, websiteUrl: websiteUrl, description: description, address: address)
+    	return <- create FlowTea.Project(name: name, websiteUrl: websiteUrl, description: description, address: address)
     }
 
-    init() {
-		self.publicPath = /public/teaProfile
-		self.storagePath = /storage/teaProfile
-		self.privatePath = /private/teaProfile
+    init(feeAddress: Address, fee: UFix64) {
+		self.publicPath = /public/flowTea
+		self.storagePath = /storage/flowTea
+		self.privatePath = /private/flowTea
         self.handleMap = {}
         self.reverseHandleMap = {}
+        self.fee = fee
+        self.feeAddress = feeAddress
 	}
 }
