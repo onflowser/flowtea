@@ -25,16 +25,24 @@ export default function UserProfile({
   const [flowAmount, setFlowAmount] = useState(0);
   const [message, setMessage] = useState("");
 
+  function resetValues() {
+    setRecurring(false);
+    setFlowAmount(0);
+    setMessage("");
+  }
+
   async function onSubmit() {
     if (!flowAmount) {
       toast.error("Select FLOW amount!");
       return;
     }
-    if (!userId) {
+    if (!address) {
       return;
     }
     try {
-      await donateFlow(message, flowAmount, recurring, userId);
+      await donateFlow(message, flowAmount, recurring, address);
+      resetValues();
+      toast.success(`You successfully donated ${flowAmount}FLOW!`);
     } catch (e) {
       console.error(e);
       toast.error("Donation failed!");

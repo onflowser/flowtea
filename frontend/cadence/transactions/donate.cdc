@@ -16,7 +16,6 @@ transaction(message: String, amount: UFix64, recurring: Bool, to: Address) {
 
         self.toProject = getAccount(to)
             .getCapability(FlowTea.publicPath)
-            // .borrow<&{FlowTea.Public}>()
             .borrow<&AnyResource{FlowTea.Public}>()
             ?? panic("Could not borrow receiver reference to the recipient's FlowTea Project")
 

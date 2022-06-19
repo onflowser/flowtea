@@ -21,7 +21,14 @@
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["FlowTea"]
+      "emulator-account": [
+        {
+          "name": "FlowTea",
+          "args": [
+            { "type": "Address", "value": "0xf8d6e0586b0a20c7" },
+            { "type": "UFix64", "value": "0.05" }
+          ]
+        }]
     }
   }
 }

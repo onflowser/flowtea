@@ -11,8 +11,7 @@ export function configureFcl(config = {}) {
     "discovery.wallet": getDiscoveryWallet(env),
     "0xFungibleToken": getFungibleTokenAddress(env),
     "0xFlowToken": getFlowTokenAddress(env),
-    "0xTeaDonation": getFlowTeaAddress(env),
-    "0xTeaProfile": getFlowTeaAddress(env),
+    "0xFlowTea": getFlowTeaAddress(env),
     ...config,
   });
 }
