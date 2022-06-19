@@ -19,7 +19,7 @@ export function MarkdownPreview({ ...props }: Props) {
 
 const Container = styled.div`
   * {
-    background-color: transparent;
+    background-color: transparent !important;
     font-family: "Poppins", sans-serif;
   }
 `;

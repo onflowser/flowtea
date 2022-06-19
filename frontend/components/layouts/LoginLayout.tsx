@@ -4,8 +4,6 @@ import styled from "styled-components";
 import { ProfileDropdown } from "../ProfileDropdown";
 
 export default function LoginLayout({ children }: any) {
-  const { isLoggedIn } = useFcl();
-
   return (
     <>
       <Navigation>

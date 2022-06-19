@@ -44,18 +44,18 @@ export function ProfileDropdown(props: HTMLAttributes<HTMLDivElement>) {
         {isOpen && (
           <Dropdown ref={menuRef}>
             {isRegistered && (
-              <>
-                <DropdownItem onClick={() => navigate("/profile")}>
-                  My profile
-                </DropdownItem>
-                <DropdownItem onClick={() => setIsModalOpen(true)}>
-                  Get my widget
-                </DropdownItem>
-              </>
+              <DropdownItem onClick={() => navigate("/profile")}>
+                My profile
+              </DropdownItem>
             )}
             <DropdownItem onClick={() => navigate("/settings")}>
               {isRegistered ? "Profile settings" : "Create profile"}
             </DropdownItem>
+            {isRegistered && (
+              <DropdownItem onClick={() => setIsModalOpen(true)}>
+                Get my widget
+              </DropdownItem>
+            )}
             {isLoggedIn && (
               <DropdownItem onClick={() => navigate("/").then(logout)}>
                 Logout
