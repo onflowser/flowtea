@@ -14,7 +14,7 @@ import { afterEach } from "@jest/globals";
 // We need to set timeout for a higher number, because some transactions might take up some time
 jest.setTimeout(10000);
 
-describe("TeaDonation", () => {
+describe("FlowTea donation", () => {
   // Instantiate emulator and path to Cadence files
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "../cadence");
@@ -25,37 +25,38 @@ describe("TeaDonation", () => {
 
   // Stop emulator, so it could be restarted
   afterEach(async () => {
-    // return emulator.stop();
+    await emulator.stop();
   });
 
-  test("Profile registration", async () => {
+  test("Donate", async () => {
     const Alice = await getAccountAddress("Alice");
     const Bob = await getAccountAddress("Bob");
-    console.log({ Alice, Bob });
+    const Owner = await getAccountAddress("Owner");
 
-    await mintFlow(Alice, "1.0");
+    await mintFlow(Alice, "2.0");
 
-    const [deploymentResult, error] = await deployContractByName({
-      to: Alice,
-      name: "TeaDonation",
+    const [deploymentResult, error1] = await deployContractByName({
+      to: Owner,
+      name: "FlowTea",
+      args: [Owner],
     });
+    expect(error1).toBeNull();
+    console.log(deploymentResult);
 
-    expect(deploymentResult.statusString).toEqual("SEALED");
-    expect(error).toBeNull();
+    const [registerTx, error2] = await sendTransaction({
+      name: "register",
+      args: ["bob", "Bob", "https://example.com", "This is Bob!"],
+      signers: [Bob],
+    });
+    expect(error2).toBeNull();
+    console.log(registerTx);
 
-    const [tx, txError] = await sendTransaction({
+    const [donateTx, error3] = await sendTransaction({
       name: "donate",
-      args: ["Thanks for your hard work!", 0.5, true, Bob],
+      args: ["Good work bob!", 1, true, Bob],
       signers: [Alice],
     });
-    console.log(tx, txError);
-
-    const donationEvents = tx.events.filter((event: { type: string }) =>
-      event.type.includes("TeaDonation.Donation")
-    );
-
-    console.log(donationEvents[0]);
-    expect(txError).toBeNull();
-    expect(donationEvents.length).toBe(1);
+    expect(error3).toBeNull();
+    console.log(donateTx);
   });
 });

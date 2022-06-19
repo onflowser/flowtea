@@ -6,8 +6,7 @@
     }
   },
   "contracts": {
-    "TeaDonation": "./cadence/contracts/TeaDonation.cdc",
-    "TeaProfile": "./cadence/contracts/TeaProfile.cdc"
+    "FlowTea": "./cadence/contracts/FlowTea.cdc"
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
@@ -22,7 +21,7 @@
   },
   "deployments": {
     "emulator": {
-      "emulator-account": ["TeaDonation", "TeaProfile"]
+      "emulator-account": ["FlowTea"]
     }
   }
 }

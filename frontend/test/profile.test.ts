@@ -5,6 +5,7 @@ import {
   emulator,
   sendTransaction,
   deployContractByName,
+  deployContract,
   getAccountAddress,
   executeScript,
   // @ts-ignore
@@ -14,7 +15,7 @@ import { afterEach } from "@jest/globals";
 // We need to set timeout for a higher number, because some transactions might take up some time
 jest.setTimeout(10000);
 
-describe("TeaProfile", () => {
+describe("FlowTea profile", () => {
   // Instantiate emulator and path to Cadence files
   beforeEach(async () => {
     const basePath = path.resolve(__dirname, "../cadence");
@@ -30,11 +31,12 @@ describe("TeaProfile", () => {
 
   test("Profile registration", async () => {
     const Alice = await getAccountAddress("Alice");
-    const Bob = await getAccountAddress("Alice");
+    const Bob = await getAccountAddress("Bob");
 
     const [deploymentResult, error] = await deployContractByName({
       to: Bob,
       name: "TeaProfile",
+      args: [Bob],
     });
     expect(deploymentResult.statusString).toEqual("SEALED");
     expect(error).toBeNull();
@@ -42,7 +44,7 @@ describe("TeaProfile", () => {
     // Alice registers to FlowTea
     const [tx1, txError1] = await sendTransaction({
       name: "register",
-      args: ["alice", "Alice", "My description"],
+      args: ["alice", "Alice", "https://example.com", "My description"],
       signers: [Alice],
     });
     expect(txError1).toBeNull();
@@ -53,12 +55,16 @@ describe("TeaProfile", () => {
       name: "get-info",
       args: [Alice],
     });
-    expect(info).toEqual({ name: "Alice", description: "My description" });
+    expect(info).toEqual({
+      name: "Alice",
+      websiteUrl: "https://example.com",
+      description: "My description",
+    });
 
     // Alice updates her own account's settings
     const [tx2, txError2] = await sendTransaction({
       name: "update",
-      args: ["Alice", "My new description"],
+      args: ["Alice", "https://example.com", "My new description"],
       signers: [Alice],
     });
     expect(txError2).toBeNull();
@@ -70,6 +76,7 @@ describe("TeaProfile", () => {
     expect(updatedInfo).toEqual({
       name: "Alice",
       description: "My new description",
+      websiteUrl: "https://example.com",
     });
   });
 
@@ -78,15 +85,16 @@ describe("TeaProfile", () => {
     await deployContractByName({
       to: Alice,
       name: "TeaProfile",
+      args: [Alice],
     });
     await sendTransaction({
       name: "register",
-      args: ["alice1", "Alice1", "This is me!"],
+      args: ["alice1", "Alice1", "https://example.com", "This is me!"],
       signers: [Alice],
     });
     const [tx, error] = await sendTransaction({
       name: "register",
-      args: ["alice2", "Alice2", "This is me!"],
+      args: ["alice2", "Alice2", "https://example.com", "This is me!"],
       signers: [Alice],
     });
     expect(error).toContain("Account is already registered");
@@ -100,12 +108,13 @@ describe("TeaProfile", () => {
     await deployContractByName({
       to: Owner,
       name: "TeaProfile",
+      args: [Owner],
     });
 
     // Alice registers and reserves usage of her project handle
     const [tx1, err1] = await sendTransaction({
       name: "register",
-      args: ["alice", "Alice", "This is Alice!"],
+      args: ["alice", "Alice", "https://example.com", "This is Alice!"],
       signers: [Alice],
     });
     expect(err1).toBeNull();
@@ -113,7 +122,12 @@ describe("TeaProfile", () => {
     // Bob tries to register under the same handle
     const [tx2, err2] = await sendTransaction({
       name: "register",
-      args: ["alice", "Bob", "This is Bob, but with Alice's handle!"],
+      args: [
+        "alice",
+        "Bob",
+        "https://example.com",
+        "This is Bob, but with Alice's handle!",
+      ],
       signers: [Bob],
     });
 

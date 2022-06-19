@@ -6,6 +6,7 @@ pub contract TeaDonation {
     access(contract) let fee: UFix64
 
     // service owner wallet, receives fee payments
+    // TODO: https://github.com/onflow/flow-core-contracts/blob/master/contracts/FlowToken.cdc#L60
     // access(contract) let ownerWallet: Capability<&{FungibleToken.Receiver}>
 
     pub event Donation(
