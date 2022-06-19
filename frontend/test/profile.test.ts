@@ -5,7 +5,6 @@ import {
   emulator,
   sendTransaction,
   deployContractByName,
-  deployContract,
   getAccountAddress,
   executeScript,
   // @ts-ignore
@@ -35,8 +34,8 @@ describe("FlowTea profile", () => {
 
     const [deploymentResult, error] = await deployContractByName({
       to: Bob,
-      name: "TeaProfile",
-      args: [Bob],
+      name: "FlowTea",
+      args: [Bob, "0.05"],
     });
     expect(deploymentResult.statusString).toEqual("SEALED");
     expect(error).toBeNull();
@@ -49,12 +48,13 @@ describe("FlowTea profile", () => {
     });
     expect(txError1).toBeNull();
     expect(tx1.events.length).toBe(1);
-    expect(tx1.events[0].type).toContain("TeaProfile.Registration");
+    expect(tx1.events[0].type).toContain("FlowTea.Registration");
 
-    const [info] = await executeScript({
+    const [info, infoErr] = await executeScript({
       name: "get-info",
       args: [Alice],
     });
+    expect(infoErr).toBeNull();
     expect(info).toEqual({
       name: "Alice",
       websiteUrl: "https://example.com",
@@ -69,10 +69,11 @@ describe("FlowTea profile", () => {
     });
     expect(txError2).toBeNull();
 
-    const [updatedInfo] = await executeScript({
+    const [updatedInfo, updatedInfoError] = await executeScript({
       name: "get-info",
-      args: [Bob],
+      args: [Alice],
     });
+    expect(updatedInfoError).toBeNull();
     expect(updatedInfo).toEqual({
       name: "Alice",
       description: "My new description",
@@ -84,8 +85,8 @@ describe("FlowTea profile", () => {
     const Alice = await getAccountAddress("Alice");
     await deployContractByName({
       to: Alice,
-      name: "TeaProfile",
-      args: [Alice],
+      name: "FlowTea",
+      args: [Alice, "0.05"],
     });
     await sendTransaction({
       name: "register",
@@ -107,8 +108,8 @@ describe("FlowTea profile", () => {
 
     await deployContractByName({
       to: Owner,
-      name: "TeaProfile",
-      args: [Owner],
+      name: "FlowTea",
+      args: [Owner, "0.05"],
     });
 
     // Alice registers and reserves usage of her project handle

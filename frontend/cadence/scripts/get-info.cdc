@@ -1,9 +1,9 @@
-import TeaProfile from 0xTeaProfile
+import FlowTea from 0xFlowTea
 
-pub fun main(acc: Address): TeaProfile.Info {
+pub fun main(acc: Address): FlowTea.Info {
 
     let project = getAccount(acc)
-        .getCapability<&{TeaProfile.Public}>(TeaProfile.publicPath)
+        .getCapability<&{FlowTea.Public}>(FlowTea.publicPath)
         .borrow()
         ?? panic("User not registered")
 
