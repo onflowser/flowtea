@@ -7,9 +7,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventEntity } from './event.entity';
+import { EventEntity } from './entities/event.entity';
 import { FindOptionsOrder, Repository } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity } from './entities/user.entity';
 import * as fcl from './fcl';
 import { FlowSignature } from './fcl';
 import { IsEmail } from 'class-validator';

@@ -2,13 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EventService } from './event.service';
-import { FlowService } from './flow.service';
-import { EventEntity } from './event.entity';
-import { ProcessingService } from './processing.service';
+import { EventBroadcasterService } from './services/event-broadcaster.service';
+import { FlowScannerService } from './services/flow-scanner.service';
+import { EventEntity } from './entities/event.entity';
+import { CronService } from './services/cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
-import { UserEntity } from './user.entity';
-import { EmailService } from './email.service';
+import { UserEntity } from './entities/user.entity';
+import { EmailService } from './services/email.service';
 
 @Module({
   imports: [
@@ -31,6 +31,11 @@ import { EmailService } from './email.service';
     }),
   ],
   controllers: [AppController],
-  providers: [EventService, FlowService, ProcessingService, EmailService],
+  providers: [
+    EventBroadcasterService,
+    FlowScannerService,
+    CronService,
+    EmailService,
+  ],
 })
 export class AppModule {}

@@ -2,14 +2,14 @@ import { EventBroadcasterInterface } from '@rayvin-flow/flow-scanner-lib/lib/bro
 import { FlowEvent } from '@rayvin-flow/flow-scanner-lib/lib/flow/models/flow-event';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventEntity } from './event.entity';
+import { EventEntity } from '../entities/event.entity';
 import { Repository } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../entities/user.entity';
 import { EmailService, EmailTemplate } from './email.service';
 
 @Injectable()
-export class EventService implements EventBroadcasterInterface {
-  private logger = new Logger(EventService.name);
+export class EventBroadcasterService implements EventBroadcasterInterface {
+  private logger = new Logger(EventBroadcasterService.name);
   constructor(
     @InjectRepository(EventEntity)
     private flowEventRepository: Repository<EventEntity>,

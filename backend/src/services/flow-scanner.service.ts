@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { FlowScanner } from '@rayvin-flow/flow-scanner-lib';
 import { ConfigProvider } from '@rayvin-flow/flow-scanner-lib/lib/providers/config-provider';
 import { MemorySettingsService } from '@rayvin-flow/flow-scanner-lib/lib/settings/memory-settings-service';
-import { EventService } from './event.service';
+import { EventBroadcasterService } from './event-broadcaster.service';
 
 @Injectable()
-export class FlowService {
+export class FlowScannerService {
   private flowScanner: FlowScanner;
   private maxRetries = 100;
   private retries = 0;
 
-  constructor(private readonly eventService: EventService) {}
+  constructor(private readonly eventService: EventBroadcasterService) {}
 
   init(monitorEvents = []) {
     console.log('Listening for events: ', monitorEvents);
