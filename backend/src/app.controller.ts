@@ -1,8 +1,24 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEntity } from './event.entity';
 import { FindManyOptions, FindOptionsOrder, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
+import * as fcl from './fcl';
+import { FlowSignature } from './fcl';
+import { IsEmail } from 'class-validator';
+
+class EmailUpdateDto {
+  signature: [FlowSignature];
+  @IsEmail()
+  email: string;
+}
 
 @Controller()
 export class AppController {
@@ -11,7 +27,9 @@ export class AppController {
     private flowEventRepository: Repository<EventEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-  ) {}
+  ) {
+    fcl.init();
+  }
 
   @Get('donations')
   async getDonations() {
@@ -61,5 +79,17 @@ export class AppController {
       from,
       to,
     };
+  }
+
+  @Put('users/email')
+  async updateUserEmailInfo(@Body() data: EmailUpdateDto) {
+    const isValid = await fcl.isValidSignature(data.email, data.signature);
+    if (!isValid) {
+      throw new UnauthorizedException('Signature invalid');
+    }
+    await this.userRepository.upsert(
+      { address: data.signature[0].addr, email: data.email },
+      { conflictPaths: ['address'] },
+    );
   }
 }

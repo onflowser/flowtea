@@ -3,7 +3,7 @@ import React from "react";
 import { ThemeProvider } from "styled-components";
 import DefaultLayout from "../components/layouts/LandingLayout";
 import { GlobalStyle } from "../components/GlobalStyles";
-import { FclProvider } from "../common/FclContext";
+import { FclProvider } from "../common/user-context";
 import { Toaster } from "react-hot-toast";
 import { theme } from "../common/theme";
 import { SWRConfig } from "swr";

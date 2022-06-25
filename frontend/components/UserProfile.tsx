@@ -1,4 +1,4 @@
-import { useFcl } from "../common/FclContext";
+import { useFcl } from "../common/user-context";
 import styled, { css } from "styled-components";
 import { PrimaryButton } from "./PrimaryButton";
 import Switch from "react-switch";

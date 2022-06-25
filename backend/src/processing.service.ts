@@ -11,7 +11,7 @@ export class ProcessingService {
     private flowEventRepository: Repository<EventEntity>,
   ) {}
 
-  @Cron(CronExpression.EVERY_30_SECONDS)
+  @Cron(CronExpression.EVERY_30_SECONDS) // TODO: set longer interval in production
   async handleCron() {
     const dayDiffThreshold = 30;
     const events = await this.flowEventRepository

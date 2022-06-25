@@ -64,6 +64,7 @@ type FclContextProps = {
     websiteUrl: string,
     description: string
   ) => Promise<TxResult>;
+  updateEmail: (email: string) => Promise<void>;
 };
 
 const defaultTxResult = { transactionId: "", status: "" };
@@ -97,9 +98,10 @@ const defaultValue: FclContextProps = {
   getFlowBalance: () => Promise.resolve(0),
   register: () => Promise.resolve(defaultTxResult),
   update: () => Promise.resolve(defaultTxResult),
+  updateEmail: () => Promise.resolve(),
 };
 
-const FclContext = React.createContext(defaultValue);
+const UserContext = React.createContext(defaultValue);
 
 export function FclProvider({
   config = {},
@@ -146,6 +148,29 @@ export function FclProvider({
       fcl.arg(websiteUrl, t.String),
       fcl.arg(description, t.String),
     ]);
+  }
+
+  async function signMessage(message: string) {
+    const signedMsg = Buffer.from(message).toString("hex");
+    return await fcl.currentUser.signUserMessage(signedMsg);
+  }
+
+  async function updateEmail(email: string) {
+    const signature = await signMessage(email);
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_API_HOST + "/users/email",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, signature }),
+      }
+    );
+    if (response.status != 200) {
+      const data = await response.json();
+      throw new Error(data.message);
+    }
   }
 
   async function update(name: string, websiteUrl: string, description: string) {
@@ -223,13 +248,14 @@ export function FclProvider({
   }
 
   return (
-    <FclContext.Provider
+    <UserContext.Provider
       value={{
         getFlowBalance,
         donateFlow,
         login,
         logout,
         update,
+        updateEmail,
         register,
         getInfo,
         getAddress,
@@ -246,10 +272,10 @@ export function FclProvider({
       }}
     >
       {children}
-    </FclContext.Provider>
+    </UserContext.Provider>
   );
 }
 
 export function useFcl() {
-  return useContext(FclContext);
+  return useContext(UserContext);
 }

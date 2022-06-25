@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { FlowService } from './flow.service';
+import { ValidationPipe } from '@nestjs/common';
 
 // contract deployment address
 const { FLOWTEA_ACCOUNT_ADDRESS } = process.env;
@@ -9,6 +10,8 @@ const address = FLOWTEA_ACCOUNT_ADDRESS.replace('0x', '');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({ origin: '*' });
+  app.useGlobalPipes(new ValidationPipe());
+
   const flowService = app.get(FlowService);
   flowService.init([
     // TODO: handle profile updates

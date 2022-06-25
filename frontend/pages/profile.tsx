@@ -1,5 +1,5 @@
 import UserProfile from "../components/UserProfile";
-import { useFcl } from "../common/FclContext";
+import { useFcl } from "../common/user-context";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ProfileLayout from "../components/layouts/ProfileLayout";

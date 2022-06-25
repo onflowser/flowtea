@@ -1,7 +1,7 @@
 import LoginLayout from "../components/layouts/LoginLayout";
 import { PrimaryButton } from "../components/PrimaryButton";
 import { Input, TextArea } from "../components/Input";
-import { useFcl } from "../common/FclContext";
+import { useFcl } from "../common/user-context";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -13,12 +13,20 @@ import { RichTextEditor } from "../components/RichTextEditor";
 export default function Settings() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, update, user, isRegistered, info, fetchCurrentUserInfo } =
-    useFcl();
+  const {
+    register,
+    update,
+    updateEmail,
+    user,
+    isRegistered,
+    info,
+    fetchCurrentUserInfo,
+  } = useFcl();
   const { handle: liveHandle } = useUserInfo(user?.addr);
   const { query } = useRouter();
   const [handle, setHandle] = useState("");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
 
@@ -96,6 +104,12 @@ export default function Settings() {
     } finally {
       setIsSubmitting(false);
     }
+    try {
+      await updateEmail(email);
+      toast.success("Email updated!");
+    } catch (e: any) {
+      toast.error(`Failed to update email: ${e.message}`);
+    }
   }
 
   function onFormatWebsiteUrl() {
@@ -136,6 +150,13 @@ export default function Settings() {
             placeholder="Name"
             value={name}
             onInput={(e) => setName(e.currentTarget.value)}
+          />
+          <Input
+            label="Email"
+            placeholder="Email"
+            type="email"
+            value={email}
+            onInput={(e) => setEmail(e.currentTarget.value)}
           />
           <Input
             label="Website"

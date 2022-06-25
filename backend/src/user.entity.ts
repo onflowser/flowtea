@@ -5,12 +5,12 @@ export class UserEntity {
   @PrimaryColumn()
   address: string;
 
-  @Column()
-  name: string;
+  @Column({ nullable: true })
+  name: string | null;
 
-  @Column({ type: 'datetime' })
-  createdAt: Date;
+  @Column({ type: 'datetime', nullable: true })
+  createdAt: Date | null;
 
   @Column({ nullable: true })
-  email: string;
+  email: string | null;
 }

@@ -3,7 +3,7 @@ import { createRef, HTMLAttributes, useState } from "react";
 import { useClickOutside } from "../common/use-click-outside";
 import { useRouter } from "next/router";
 import { WidgetGenerationModal } from "./WidgetGenerationModal";
-import { useFcl } from "../common/FclContext";
+import { useFcl } from "../common/user-context";
 
 export function ProfileDropdown(props: HTMLAttributes<HTMLDivElement>) {
   const { isRegistered, isLoggedIn, logout } = useFcl();
