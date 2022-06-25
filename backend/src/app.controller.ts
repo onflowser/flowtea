@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEntity } from './event.entity';
-import { FindManyOptions, FindOptionsOrder, Repository } from 'typeorm';
+import { FindOptionsOrder, Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import * as fcl from './fcl';
 import { FlowSignature } from './fcl';
@@ -67,13 +67,15 @@ export class AppController {
 
   @Get('users/:address/donations')
   async getUserDonations(@Param('address') address) {
-    const opts: FindManyOptions = {
-      where: { to: address },
-      order: { blockTimestamp: 'desc' },
-    };
     const [from, to] = await Promise.all([
-      this.flowEventRepository.find(opts),
-      this.flowEventRepository.find(opts),
+      this.flowEventRepository.find({
+        where: { from: address },
+        order: { blockTimestamp: 'desc' },
+      }),
+      this.flowEventRepository.find({
+        where: { to: address },
+        order: { blockTimestamp: 'desc' },
+      }),
     ]);
     return {
       from,

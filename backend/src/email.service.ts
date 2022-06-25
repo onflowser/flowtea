@@ -69,6 +69,9 @@ export class EmailService {
     sendGrid.setApiKey(process.env.SENDGRID_API_KEY);
   }
 
+  // For now, we should easily process all email requests in real time,
+  // but in case of large load, we should implement a job queue instead.
+  // One thing that would be usefully is a job retry policy in case of error.
   send<T extends EmailTemplate>(args: SendEmailArgs<T>) {
     const templateId = emailTemplateToId[args.template];
     if (!templateId) {

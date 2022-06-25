@@ -39,10 +39,10 @@ export class EventService implements EventBroadcasterInterface {
     await this.processDonationEvents(donationEvents);
   }
 
-  private async processDonationEvents(events: FlowEvent[]) {
+  private async processDonationEvents(flowEvents: FlowEvent[]) {
     try {
-      await this.flowEventRepository.save(
-        events.map(
+      const events = await this.flowEventRepository.save(
+        flowEvents.map(
           (event) =>
             ({
               id: `${event.blockHeight}.${event.transactionId}.${event.eventIndex}`,
@@ -51,15 +51,60 @@ export class EventService implements EventBroadcasterInterface {
             } as unknown as EventEntity),
         ),
       );
+      await Promise.allSettled(
+        events.map(async (event) => {
+          const [receiver, sender] = await Promise.all([
+            this.userRepository.findOneBy({
+              address: event.to,
+            }),
+            this.userRepository.findOneBy({
+              address: event.from,
+            }),
+          ]);
+
+          const futures = [];
+          if (receiver.email) {
+            futures.push(
+              this.emailService.send<EmailTemplate.TX_RECEIVED>({
+                template: EmailTemplate.TX_RECEIVED,
+                templateData: { flowAmount: event.amount },
+                to: receiver.email,
+              }),
+            );
+          } else {
+            this.logger.debug(
+              `Email not found for receiver: ${receiver.address}`,
+            );
+          }
+          if (sender.email) {
+            futures.push(
+              this.emailService.send<EmailTemplate.TX_SENT>({
+                template: EmailTemplate.TX_SENT,
+                templateData: {
+                  flowAmount: event.amount,
+                  receiverAddress: receiver.address,
+                },
+                to: sender.email,
+              }),
+            );
+          } else {
+            this.logger.debug(
+              `Email not found for sender: ${receiver.address}`,
+            );
+          }
+
+          return Promise.allSettled(futures);
+        }),
+      );
     } catch (e) {
       this.logger.error(`Error processing donation events: ${e}`);
     }
   }
 
-  private async processRegistrationEvents(events: FlowEvent[]) {
+  private async processRegistrationEvents(flowEvents: FlowEvent[]) {
     try {
       const users = await this.userRepository.save(
-        events.map(
+        flowEvents.map(
           (event) =>
             ({
               createdAt: event.blockTimestamp,
@@ -73,7 +118,7 @@ export class EventService implements EventBroadcasterInterface {
             this.logger.debug(`Email not found for: ${user.address}`);
             return;
           }
-          this.emailService.send<EmailTemplate.WELCOME>({
+          return this.emailService.send<EmailTemplate.WELCOME>({
             template: EmailTemplate.WELCOME,
             templateData: { name: user.name },
             to: user.email,
