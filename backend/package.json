@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^2.1.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schedule": "^2.0.1",
@@ -30,6 +31,7 @@
     "@rayvin-flow/flow-scanner-lib": "^1.0.1",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
+    "@sendgrid/mail": "^7.7.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.6"

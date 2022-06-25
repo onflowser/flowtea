@@ -1,25 +1,30 @@
 import { EventBroadcasterInterface } from '@rayvin-flow/flow-scanner-lib/lib/broadcaster/event-broadcaster';
 import { FlowEvent } from '@rayvin-flow/flow-scanner-lib/lib/flow/models/flow-event';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEntity } from './event.entity';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { EmailService, EmailTemplate } from './email.service';
 
 @Injectable()
 export class EventService implements EventBroadcasterInterface {
+  private logger = new Logger(EventService.name);
   constructor(
     @InjectRepository(EventEntity)
     private flowEventRepository: Repository<EventEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    private emailService: EmailService,
   ) {}
 
   async broadcastEvents(
     blockHeight: number,
     events: FlowEvent[],
   ): Promise<void> {
-    console.log(events);
+    if (events.length > 0) {
+      this.logger.debug(`Received events:`, events);
+    }
     const registrationEvents = [];
     const donationEvents = [];
     for (const event of events) {
@@ -47,13 +52,13 @@ export class EventService implements EventBroadcasterInterface {
         ),
       );
     } catch (e) {
-      console.log(e);
+      this.logger.error(`Error processing donation events: ${e}`);
     }
   }
 
   private async processRegistrationEvents(events: FlowEvent[]) {
     try {
-      await this.userRepository.save(
+      const users = await this.userRepository.save(
         events.map(
           (event) =>
             ({
@@ -62,8 +67,21 @@ export class EventService implements EventBroadcasterInterface {
             } as UserEntity),
         ),
       );
+      await Promise.allSettled(
+        users.map((user) => {
+          if (!user.email) {
+            this.logger.debug(`Email not found for: ${user.address}`);
+            return;
+          }
+          this.emailService.send<EmailTemplate.WELCOME>({
+            template: EmailTemplate.WELCOME,
+            templateData: { name: user.name },
+            to: user.email,
+          });
+        }),
+      );
     } catch (e) {
-      console.log(e);
+      this.logger.error(`Error processing registration events: ${e}`);
     }
   }
 
