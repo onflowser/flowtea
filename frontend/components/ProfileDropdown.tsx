@@ -30,7 +30,6 @@ export function ProfileDropdown(props: HTMLAttributes<HTMLDivElement>) {
           isOpen={true}
           shouldCloseOnOverlayClick
           onRequestClose={() => setIsModalOpen(false)}
-          onClose={() => setIsModalOpen(false)}
         />
       )}
       <Container {...props}>

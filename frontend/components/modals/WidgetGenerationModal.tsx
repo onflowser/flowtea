@@ -1,7 +1,7 @@
 import { Modal } from "./Modal";
 import ReactModal from "react-modal";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PrimaryButton } from "../PrimaryButton";
 import { TextArea } from "../inputs/Input";
 import { toast } from "react-hot-toast";
@@ -9,13 +9,11 @@ import { useFcl } from "../../common/user-context";
 import { useUserInfo } from "../../common/use-user-info";
 import { getDomain } from "../../common/utils";
 
-type Props = ReactModal.Props & {
-  onClose: () => void;
-};
+type Props = ReactModal.Props;
 
 const widgetVariants = ["coral", "light-violet", "main-dark", "violet"];
 
-export function WidgetGenerationModal({ isOpen, onClose, ...props }: Props) {
+export function WidgetGenerationModal({ isOpen, ...props }: Props) {
   const { user } = useFcl();
   const { handle } = useUserInfo(user?.addr);
   const [selected, setSelected] = useState(-1);

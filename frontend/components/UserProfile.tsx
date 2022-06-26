@@ -9,6 +9,7 @@ import { useUserInfo } from "../common/use-user-info";
 import Link from "next/link";
 import { TextArea } from "./inputs/Input";
 import { MarkdownPreview } from "./MarkdownPreview";
+import { ConfirmTransactionModal } from "./modals/ConfirmTransactionModal";
 
 /**
  * @param userId Can either be a handle or account address.
@@ -22,31 +23,37 @@ export default function UserProfile({
   const { address, isSelf, info, infoError, donations, donationsError } =
     useUserInfo(userId);
   const [recurring, setRecurring] = useState(false);
-  const [flowAmount, setFlowAmount] = useState(0);
+  const [flowTeaAmount, setFlowTeaAmount] = useState(0);
   const [message, setMessage] = useState("");
+  const [showConfirmTxModal, setConfirmTxModal] = useState(false);
 
   function resetValues() {
     setRecurring(false);
-    setFlowAmount(0);
+    setFlowTeaAmount(0);
     setMessage("");
   }
 
-  async function onSubmit() {
-    if (!flowAmount) {
-      toast.error("Select FLOW amount!");
-      return;
-    }
+  async function onConfirmTx() {
+    setConfirmTxModal(false);
     if (!address) {
       return;
     }
     try {
-      await donateFlow(message, flowAmount, recurring, address);
+      await donateFlow(message, flowTeaAmount, recurring, address);
       resetValues();
-      toast.success(`You successfully donated ${flowAmount}FLOW!`);
+      toast.success(`You successfully donated ${flowTeaAmount}FLOW!`);
     } catch (e) {
       console.error(e);
       toast.error("Donation failed!");
     }
+  }
+
+  async function onSubmit() {
+    if (!flowTeaAmount) {
+      toast.error("Select FLOW amount!");
+      return;
+    }
+    setConfirmTxModal(true);
   }
 
   if (infoError) {
@@ -62,6 +69,14 @@ export default function UserProfile({
 
   return (
     <Container>
+      <ConfirmTransactionModal
+        isOpen={showConfirmTxModal}
+        flowTeaAmount={flowTeaAmount}
+        shouldCloseOnOverlayClick
+        onConfirm={onConfirmTx}
+        onRequestClose={() => setConfirmTxModal(false)}
+      />
+
       <div className="dark-background-profile" />
 
       <div className="profile-photo-main-wrapper">
@@ -123,7 +138,10 @@ export default function UserProfile({
         {!isSelf && (
           <Shadow className="buy-flow-tea-form">
             <h5>Buy {info?.name} a FLOW Tea</h5>
-            <ChooseFlowAmount onChange={setFlowAmount} value={flowAmount} />
+            <ChooseFlowAmount
+              onChange={setFlowTeaAmount}
+              value={flowTeaAmount}
+            />
             <RepeatPaymentSwitch
               style={{ marginTop: 50 }}
               checked={recurring}
@@ -138,7 +156,7 @@ export default function UserProfile({
               onClick={onSubmit}
               style={{ width: "100%", maxWidth: "unset" }}
             >
-              Support {flowAmount || "X"} FLOW
+              Support {flowTeaAmount || "X"} FLOW
             </PrimaryButton>
           </Shadow>
         )}
@@ -429,7 +447,9 @@ const Container = styled.div`
     align-items: center;
     max-width: 80px;
     width: 100%;
-    color: var(--dark-violet-color);
+    * {
+      color: var(--dark-violet-color);
+    }
   }
 
   .tea-count img {

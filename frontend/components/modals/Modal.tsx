@@ -1,5 +1,6 @@
 import ReactModal from "react-modal";
 import { theme } from "../../common/theme";
+import styled from "styled-components";
 
 const customStyles = {
   content: {
@@ -23,6 +24,7 @@ export function Modal(props: ReactModal.Props) {
   return (
     <ReactModal
       {...props}
+      closeTimeoutMS={500}
       style={{
         content: { ...customStyles.content, ...props.style?.content },
         overlay: { ...customStyles.overlay, ...props.style?.overlay },

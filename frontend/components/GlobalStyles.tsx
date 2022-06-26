@@ -1,6 +1,31 @@
 import { createGlobalStyle } from "styled-components";
+import { theme } from "../common/theme";
 
 export const GlobalStyle = createGlobalStyle`
+  * {
+    color: ${theme.colors.mainDark}
+  }
+
+  .ReactModal__Overlay {
+    opacity: 0;
+    transition: all 500ms ease-in-out;
+    transform: scale(1.5);
+  }
+
+  .ReactModal__Overlay--open {
+    opacity: 0;
+  }
+  
+  .ReactModal__Overlay--after-open {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .ReactModal__Overlay--before-close {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  
   body {
     margin: 0;
     padding: 0;
