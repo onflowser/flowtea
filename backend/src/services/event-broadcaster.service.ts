@@ -133,8 +133,4 @@ export class EventBroadcasterService implements EventBroadcasterInterface {
       this.logger.error(`Error processing registration events: ${e}`);
     }
   }
-
-  destroy(): Promise<void> {
-    return Promise.resolve(undefined);
-  }
 }

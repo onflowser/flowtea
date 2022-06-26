@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { FlowScannerService } from './services/flow-scanner.service';
+import { ScannerService } from './services/scanner.service';
 import { ValidationPipe } from '@nestjs/common';
 
 // contract deployment address
@@ -12,7 +12,7 @@ async function bootstrap() {
   app.enableCors({ origin: '*' });
   app.useGlobalPipes(new ValidationPipe());
 
-  const flowService = app.get(FlowScannerService);
+  const flowService = app.get(ScannerService);
   flowService.init([
     // TODO: handle profile updates
     `A.${address}.FlowTea.Donation`,

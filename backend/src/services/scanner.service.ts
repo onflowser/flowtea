@@ -1,38 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { FlowScanner } from '@rayvin-flow/flow-scanner-lib';
 import { ConfigProvider } from '@rayvin-flow/flow-scanner-lib/lib/providers/config-provider';
-import { MemorySettingsService } from '@rayvin-flow/flow-scanner-lib/lib/settings/memory-settings-service';
 import { EventBroadcasterService } from './event-broadcaster.service';
+import { ScannerSettingsService } from './scanner-settings.service';
 
 @Injectable()
-export class FlowScannerService {
+export class ScannerService {
   private flowScanner: FlowScanner;
   private maxRetries = 100;
   private retries = 0;
 
-  constructor(private readonly eventService: EventBroadcasterService) {}
+  constructor(
+    private readonly eventService: EventBroadcasterService,
+    private scannerSettingsService: ScannerSettingsService,
+  ) {}
 
   init(monitorEvents = []) {
     console.log('Listening for events: ', monitorEvents);
-    // create provider for configuration (these are the minimum required values)
     const configProvider: ConfigProvider = () => ({
-      defaultStartBlockHeight: undefined, // this is the block height that the scanner will start from on the very first run (undefined to start at the latest block)
-      flowAccessNode: 'http://localhost:8080', // access node to use for Flow API requests
+      defaultStartBlockHeight: undefined, // Start at the latest block.
+      flowAccessNode: 'http://localhost:8080',
       maxFlowRequestsPerSecond: 10, // maximum number of requests to make to the Flow API per second
     });
 
-    // create the service that will persist settings (in this case, it is just in-memory)
-    const settingsService = new MemorySettingsService(); // TODO: store settings in persistent storage
-    this.flowScanner = new FlowScanner(
-      // event types to monitor
-      monitorEvents,
-      // pass in the configured providers
-      {
-        configProvider: configProvider,
-        eventBroadcasterProvider: async () => this.eventService,
-        settingsServiceProvider: async () => settingsService,
-      },
-    );
+    this.flowScanner = new FlowScanner(monitorEvents, {
+      configProvider: configProvider,
+      eventBroadcasterProvider: async () => this.eventService,
+      settingsServiceProvider: async () => this.scannerSettingsService,
+    });
   }
 
   async start() {
