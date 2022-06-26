@@ -1,8 +1,9 @@
 // @ts-ignore
 import * as fcl from "@onflow/fcl";
 import { env, Environment, getDomain } from "./utils";
+import { config } from "./config";
 
-export function configureFcl(config = {}) {
+export function configureFcl(overrideConfig = {}) {
   fcl.config({
     "app.detail.title": "FlowTea",
     env: getFlowEnv(env),
@@ -11,8 +12,8 @@ export function configureFcl(config = {}) {
     "discovery.wallet": getDiscoveryWallet(env),
     "0xFungibleToken": getFungibleTokenAddress(env),
     "0xFlowToken": getFlowTokenAddress(env),
-    "0xFlowTea": getFlowTeaAddress(env),
-    ...config,
+    "0xFlowTea": config.flow.deploymentAccountAddress,
+    ...overrideConfig,
   });
 }
 
@@ -58,15 +59,6 @@ function getFlowTokenAddress(env: Environment) {
       return "0x7e60df042a9c0868";
     case "development":
       return "0x0ae53cb6e3f42a79";
-  }
-}
-
-function getFlowTeaAddress(env: Environment) {
-  switch (env) {
-    case "production":
-    case "staging":
-    case "development":
-      return "0xf8d6e0586b0a20c7";
   }
 }
 

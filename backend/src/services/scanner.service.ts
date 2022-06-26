@@ -3,6 +3,7 @@ import { FlowScanner } from '@rayvin-flow/flow-scanner-lib';
 import { ConfigProvider } from '@rayvin-flow/flow-scanner-lib/lib/providers/config-provider';
 import { EventBroadcasterService } from './event-broadcaster.service';
 import { ScannerSettingsService } from './scanner-settings.service';
+import { config } from '../config';
 
 @Injectable()
 export class ScannerService {
@@ -19,7 +20,7 @@ export class ScannerService {
     console.log('Listening for events: ', monitorEvents);
     const configProvider: ConfigProvider = () => ({
       defaultStartBlockHeight: undefined, // Start at the latest block.
-      flowAccessNode: 'http://localhost:8080',
+      flowAccessNode: config.flow.accessNode,
       maxFlowRequestsPerSecond: 10, // maximum number of requests to make to the Flow API per second
     });
 

@@ -2,10 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ScannerService } from './services/scanner.service';
 import { ValidationPipe } from '@nestjs/common';
+import { config } from './config';
 
-// contract deployment address
-const { FLOWTEA_ACCOUNT_ADDRESS } = process.env;
-const address = FLOWTEA_ACCOUNT_ADDRESS.replace('0x', '');
+const address = config.flow.deploymentAccountAddress?.replace('0x', '');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,11 +19,6 @@ async function bootstrap() {
   ]);
   flowService.start();
   await app.listen(3000);
-}
-
-if (!FLOWTEA_ACCOUNT_ADDRESS) {
-  console.log('FLOWTEA_ACCOUNT_ADDRESS env variable unset!');
-  process.exit(1);
 }
 
 bootstrap();

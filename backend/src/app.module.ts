@@ -12,21 +12,15 @@ import { EmailService } from './services/email.service';
 import { UserService } from './services/user.service';
 import { ScannerSettingsService } from './services/scanner-settings.service';
 import { ScannerSettingsEntity } from './entities/scanner-settings.entity';
+import { config } from './config';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    // TODO: extract DB access config to .env files
     TypeOrmModule.forRoot({
-      type: 'mariadb',
-      host: 'localhost',
-      port: 3306,
-      username: '',
-      password: '',
-      database: 'test',
+      ...config.database,
       entities: [],
       autoLoadEntities: true,
-      synchronize: true, // TODO: remove this in production and write migrations instead
     }),
     TypeOrmModule.forFeature([
       DonationEntity,
@@ -34,7 +28,7 @@ import { ScannerSettingsEntity } from './entities/scanner-settings.entity';
       ScannerSettingsEntity,
     ]),
     ConfigModule.forRoot({
-      envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`],
+      envFilePath: [`.env.${config.environment}`],
     }),
   ],
   controllers: [AppController],

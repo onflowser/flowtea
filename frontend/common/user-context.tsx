@@ -29,6 +29,7 @@ import {
   getInfo,
 } from "./fcl-service";
 import useSWR, { KeyedMutator } from "swr";
+import { config } from "./config";
 
 type TxResult = { transactionId: string; status: any };
 
@@ -107,10 +108,10 @@ const defaultValue: FclContextProps = {
 const UserContext = React.createContext(defaultValue);
 
 export function FclProvider({
-  config = {},
+  configOverride = {},
   children,
 }: {
-  config?: object;
+  configOverride?: object;
   children: ReactChild;
 }) {
   const [user, setUser] = useState<FlowUser | null>(null);
@@ -123,8 +124,8 @@ export function FclProvider({
   const [isSendingDonation, setIsSendingDonation] = useState(false);
 
   useEffect(() => {
-    configureFcl(config);
-  }, [config]);
+    configureFcl(configOverride);
+  }, [configOverride]);
 
   useEffect(() => fcl.currentUser().subscribe(setUser), []);
 
@@ -163,16 +164,13 @@ export function FclProvider({
 
   async function updateEmail(email: string) {
     const signature = await signMessage(email);
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_API_HOST + "/users/email",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, signature }),
-      }
-    );
+    const response = await fetch(config.apiHost + "/users/email", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, signature }),
+    });
     if (response.status != 200) {
       const data = await response.json();
       throw new Error(data.message);

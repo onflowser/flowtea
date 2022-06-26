@@ -12,6 +12,7 @@ import {
   isUserIdAddress,
 } from "../common/fcl-service";
 import MetaTags from "../components/MetaTags";
+import { config } from "../common/config";
 
 type Donations = {
   to: any[];
@@ -53,7 +54,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
   const donations: Donations = await fetch(
-    process.env.NEXT_PUBLIC_API_HOST + `/users/${address}/donations`
+    config.apiHost + `/users/${address}/donations`
   )
     .then((res) => res.json())
     .catch(() => []);

@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 import { theme } from "../common/theme";
 import { SWRConfig } from "swr";
 import Head from "next/head";
+import { config } from "../common/config";
 
 function App({ Component, pageProps }: AppProps) {
   // @ts-ignore
@@ -25,9 +26,7 @@ function App({ Component, pageProps }: AppProps) {
           value={{
             refreshInterval: 3000,
             fetcher: (resource, init) =>
-              fetch(process.env.NEXT_PUBLIC_API_HOST + resource, init).then(
-                (res) => res.json()
-              ),
+              fetch(config.apiHost + resource, init).then((res) => res.json()),
           }}
         >
           <FclProvider>

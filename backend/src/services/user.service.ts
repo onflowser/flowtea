@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entities/user.entity';
-import { FindOptionsOrder, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { EmailService, EmailTemplate } from './email.service';
 import { FlowSignature } from '../fcl';
 import * as fcl from '../fcl';

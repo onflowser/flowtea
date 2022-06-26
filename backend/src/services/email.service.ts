@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as sendGrid from '@sendgrid/mail';
+import { config } from '../config';
 
 export enum EmailTemplate {
   WELCOME = 'welcome',
@@ -66,7 +67,7 @@ export class EmailService {
   private logger = new Logger(EmailService.name);
 
   constructor() {
-    sendGrid.setApiKey(process.env.SENDGRID_API_KEY);
+    sendGrid.setApiKey(config.email.sendgridApiKey);
   }
 
   // For now, we should easily process all email requests in real time,
@@ -84,7 +85,7 @@ export class EmailService {
       }, templateData: ${JSON.stringify(args.templateData)})`,
     );
 
-    if (process.env.ENABLE_SENDING_EMAIL !== 'true') {
+    if (!config.email.enableSendingEmail) {
       return;
     }
     return sendGrid.send({

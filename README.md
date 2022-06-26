@@ -32,6 +32,34 @@ cd ../backend && npm i
 
 ### 3. Run project
 
-- backend: `npm run start:debug`
+- backend: `npm run start:local`
 - frontend: `npm run dev`
 - flow emulator: check out [frontend/README](./frontend/README.md#Cadence)
+
+## Configuration
+
+The following env variables are available for configuration.
+
+### Frontend
+- `NEXT_PUBLIC_API_HOST` (default: `http://localhost:3000`)
+- `FLOW_DEPLOYMENT_ACCOUNT_ADDRESS` (default: `0xf8d6e0586b0a20c7`)
+
+### Backend
+
+#### General
+- `NODE_ENV` (default: `development`)
+
+#### Database
+- `TYPEORM_TYPE` (default: `mariadb`)
+- `TYPEORM_HOST` (default: `localhost`)
+- `TYPEORM_USERNAME` (default: ``)
+- `TYPEORM_PASSWORD` (default: ``)
+- `TYPEORM_DATABASE` (default: `test`)
+
+#### Flow
+- `FLOW_ACCESS_NODE` (default: `http://localhost:8080`)
+- `FLOW_DEPLOYMENT_ACCOUNT_ADDRESS` (default: `0xf8d6e0586b0a20c7`)
+
+#### Email
+- `EMAIL_ENABLE_SENDING` (default: `false`)
+- `EMAIL_SENDGRID_API_KEY` (required)
