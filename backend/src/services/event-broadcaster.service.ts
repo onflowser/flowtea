@@ -2,7 +2,7 @@ import { EventBroadcasterInterface } from '@rayvin-flow/flow-scanner-lib/lib/bro
 import { FlowEvent } from '@rayvin-flow/flow-scanner-lib/lib/flow/models/flow-event';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventEntity } from '../entities/event.entity';
+import { DonationEntity } from '../entities/donation.entity';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { EmailService, EmailTemplate } from './email.service';
@@ -11,8 +11,8 @@ import { EmailService, EmailTemplate } from './email.service';
 export class EventBroadcasterService implements EventBroadcasterInterface {
   private logger = new Logger(EventBroadcasterService.name);
   constructor(
-    @InjectRepository(EventEntity)
-    private flowEventRepository: Repository<EventEntity>,
+    @InjectRepository(DonationEntity)
+    private flowEventRepository: Repository<DonationEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     private emailService: EmailService,
@@ -22,37 +22,46 @@ export class EventBroadcasterService implements EventBroadcasterInterface {
     blockHeight: number,
     events: FlowEvent[],
   ): Promise<void> {
-    if (events.length > 0) {
-      this.logger.debug(`Received events:`, events);
-    }
     const registrationEvents = [];
     const donationEvents = [];
     for (const event of events) {
-      if (event.type.match(/Donation/)) {
+      if (event.type.match(/FlowTea\.Donation/)) {
         donationEvents.push(event);
       }
-      if (event.type.match(/Registration/)) {
+      if (event.type.match(/FlowTea\.Registration/)) {
         registrationEvents.push(event);
       }
     }
-    await this.processRegistrationEvents(registrationEvents);
-    await this.processDonationEvents(donationEvents);
+    if (registrationEvents.length > 0) {
+      this.logger.debug(
+        `Received ${registrationEvents.length} registration events`,
+        JSON.stringify(registrationEvents, null, 2),
+      );
+      await this.processRegistrationEvents(registrationEvents);
+    }
+    if (donationEvents.length > 0) {
+      this.logger.debug(
+        `Received ${donationEvents.length} donation events`,
+        JSON.stringify(donationEvents, null, 2),
+      );
+      await this.processDonationEvents(donationEvents);
+    }
   }
 
-  private async processDonationEvents(flowEvents: FlowEvent[]) {
+  private async processDonationEvents(events: FlowEvent[]) {
     try {
-      const events = await this.flowEventRepository.save(
-        flowEvents.map(
+      const donations = await this.flowEventRepository.save(
+        events.map(
           (event) =>
             ({
               id: `${event.blockHeight}.${event.transactionId}.${event.eventIndex}`,
               ...event,
               ...event.data,
-            } as unknown as EventEntity),
+            } as unknown as DonationEntity),
         ),
       );
       await Promise.allSettled(
-        events.map(async (event) => {
+        donations.map(async (event) => {
           const [receiver, sender] = await Promise.all([
             this.userRepository.findOneBy({
               address: event.to,
@@ -101,27 +110,37 @@ export class EventBroadcasterService implements EventBroadcasterInterface {
     }
   }
 
-  private async processRegistrationEvents(flowEvents: FlowEvent[]) {
+  private async processRegistrationEvents(events: FlowEvent[]) {
     try {
-      const users = await this.userRepository.save(
-        flowEvents.map(
+      await this.userRepository.upsert(
+        events.map(
           (event) =>
             ({
               createdAt: event.blockTimestamp,
               ...event.data,
             } as UserEntity),
         ),
+        { conflictPaths: ['address'] },
       );
+      const users = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.address IN (:...addresses)', {
+          addresses: events.map((e) => e.data.address),
+        })
+        .getMany();
       await Promise.allSettled(
-        users.map((user) => {
+        users.map(async (user) => {
           if (!user.email) {
             this.logger.debug(`Email not found for: ${user.address}`);
             return;
           }
-          return this.emailService.send<EmailTemplate.WELCOME>({
+          await this.emailService.send<EmailTemplate.WELCOME>({
             template: EmailTemplate.WELCOME,
             templateData: { name: user.name },
             to: user.email,
+          });
+          await this.userRepository.update(user.address, {
+            isWelcomeEmailSent: true,
           });
         }),
       );

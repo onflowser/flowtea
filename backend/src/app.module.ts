@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventBroadcasterService } from './services/event-broadcaster.service';
 import { FlowScannerService } from './services/flow-scanner.service';
-import { EventEntity } from './entities/event.entity';
+import { DonationEntity } from './entities/donation.entity';
 import { CronService } from './services/cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { UserEntity } from './entities/user.entity';
@@ -25,7 +25,7 @@ import { EmailService } from './services/email.service';
       autoLoadEntities: true,
       synchronize: true, // TODO: remove this in production and write migrations instead
     }),
-    TypeOrmModule.forFeature([EventEntity, UserEntity]),
+    TypeOrmModule.forFeature([DonationEntity, UserEntity]),
     ConfigModule.forRoot({
       envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`],
     }),

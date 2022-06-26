@@ -7,12 +7,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventEntity } from './entities/event.entity';
+import { DonationEntity } from './entities/donation.entity';
 import { FindOptionsOrder, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import * as fcl from './fcl';
 import { FlowSignature } from './fcl';
 import { IsEmail } from 'class-validator';
+import { EmailService, EmailTemplate } from './services/email.service';
 
 class EmailUpdateDto {
   signature: [FlowSignature];
@@ -23,10 +24,11 @@ class EmailUpdateDto {
 @Controller()
 export class AppController {
   constructor(
-    @InjectRepository(EventEntity)
-    private flowEventRepository: Repository<EventEntity>,
+    @InjectRepository(DonationEntity)
+    private flowEventRepository: Repository<DonationEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    private emailService: EmailService,
   ) {
     fcl.init();
   }
@@ -46,7 +48,7 @@ export class AppController {
 
   @Get('users/:address')
   async getUser(@Param('address') address) {
-    const order: FindOptionsOrder<EventEntity> = { blockTimestamp: 'desc' };
+    const order: FindOptionsOrder<DonationEntity> = { blockTimestamp: 'desc' };
     const [user, from, to] = await Promise.all([
       this.userRepository.findOneOrFail({ where: { address } }),
       this.flowEventRepository.find({
@@ -89,9 +91,21 @@ export class AppController {
     if (!isValid) {
       throw new UnauthorizedException('Signature invalid');
     }
+    const address = data.signature[0].addr;
     await this.userRepository.upsert(
-      { address: data.signature[0].addr, email: data.email },
+      { address, email: data.email },
       { conflictPaths: ['address'] },
     );
+    const user = await this.userRepository.findOneBy({ address });
+    if (user.email && !user.isWelcomeEmailSent) {
+      await this.emailService.send<EmailTemplate.WELCOME>({
+        template: EmailTemplate.WELCOME,
+        templateData: { name: user.name },
+        to: user.email,
+      });
+      await this.userRepository.update(user.address, {
+        isWelcomeEmailSent: true,
+      });
+    }
   }
 }

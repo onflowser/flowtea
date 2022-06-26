@@ -13,4 +13,7 @@ export class UserEntity {
 
   @Column({ nullable: true })
   email: string | null;
+
+  @Column({ type: 'boolean', default: false })
+  isWelcomeEmailSent: boolean;
 }
