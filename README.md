@@ -76,7 +76,7 @@ Example configuration for staging deployment (`flow.staging.json`).
 
 ### Frontend
 - `NEXT_PUBLIC_API_HOST` (default: `http://localhost:3000`)
-- `FLOW_DEPLOYMENT_ACCOUNT_ADDRESS` (default: `0xf8d6e0586b0a20c7`)
+- `NEXT_PUBLIC_FLOW_DEPLOYMENT_ACCOUNT_ADDRESS` (default: `0xf8d6e0586b0a20c7`)
 
 ### Backend
 

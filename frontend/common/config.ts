@@ -1,6 +1,6 @@
 const flow = {
   deploymentAccountAddress:
-    (process.env.FLOW_DEPLOYMENT_ACCOUNT_ADDRESS as any) ||
+    (process.env.NEXT_PUBLIC_FLOW_DEPLOYMENT_ACCOUNT_ADDRESS as any) ||
     "0xf8d6e0586b0a20c7",
 };
 
