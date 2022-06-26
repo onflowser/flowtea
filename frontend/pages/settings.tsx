@@ -1,6 +1,6 @@
 import LoginLayout from "../components/layouts/LoginLayout";
 import { PrimaryButton } from "../components/PrimaryButton";
-import { Input, TextArea } from "../components/Input";
+import { Input, TextArea } from "../components/inputs/Input";
 import { useFcl } from "../common/user-context";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 import { isValidWebsiteUrl, wait } from "../common/utils";
 import { useUserInfo } from "../common/use-user-info";
 import MetaTags from "../components/MetaTags";
-import { RichTextEditor } from "../components/RichTextEditor";
+import { RichTextEditor } from "../components/inputs/RichTextEditor";
 
 export default function Settings() {
   const router = useRouter();

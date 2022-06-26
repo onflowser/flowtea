@@ -38,7 +38,7 @@ export function useUserInfo(userId: string | undefined) {
     handle,
     isSelf,
     info,
-    donations: donations?.to, // TODO: how both to & from donations
+    donations, // TODO: how both to & from donations
     infoError,
     handleError,
     refetchInfo,

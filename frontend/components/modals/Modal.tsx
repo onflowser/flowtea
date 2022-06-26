@@ -1,5 +1,5 @@
 import ReactModal from "react-modal";
-import { theme } from "../common/theme";
+import { theme } from "../../common/theme";
 
 const customStyles = {
   content: {

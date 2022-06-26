@@ -7,7 +7,7 @@ import { HTMLAttributes, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useUserInfo } from "../common/use-user-info";
 import Link from "next/link";
-import { TextArea } from "./Input";
+import { TextArea } from "./inputs/Input";
 import { MarkdownPreview } from "./MarkdownPreview";
 
 /**
@@ -87,14 +87,27 @@ export default function UserProfile({
       >
         <div className="bio-and-transactions">
           {info?.description && (
-            <div className="bio-profile">
+            <Shadow className="bio-profile">
               <h5>About {info?.name}</h5>
               <MarkdownPreview source={info?.description} />
-            </div>
+            </Shadow>
           )}
 
-          {donations?.length > 0 ? (
-            donations.map((donation: any) => (
+          <TransactionStatsContainer>
+            <TransactionStats
+              icon="🏆"
+              title="Received donations"
+              value={donations?.to?.length ?? 0}
+            />
+            <TransactionStats
+              icon="💎"
+              title="Sent donations"
+              value={donations?.from?.length ?? 0}
+            />
+          </TransactionStatsContainer>
+
+          {donations?.to.length > 0 ? (
+            donations.to.map((donation: any) => (
               <Transaction
                 key={donation.id}
                 teaCount={donation.amount}
@@ -108,7 +121,7 @@ export default function UserProfile({
           )}
         </div>
         {!isSelf && (
-          <div className="buy-flow-tea-form">
+          <Shadow className="buy-flow-tea-form">
             <h5>Buy {info?.name} a FLOW Tea</h5>
             <ChooseFlowAmount onChange={setFlowAmount} value={flowAmount} />
             <RepeatPaymentSwitch
@@ -127,7 +140,7 @@ export default function UserProfile({
             >
               Support {flowAmount || "X"} FLOW
             </PrimaryButton>
-          </div>
+          </Shadow>
         )}
       </div>
     </Container>
@@ -234,6 +247,32 @@ function ChooseFlowAmount({
   );
 }
 
+const TransactionStatsContainer = styled.div`
+  display: flex;
+  margin-bottom: 50px;
+`;
+
+function TransactionStats(props: {
+  icon: string;
+  title: string;
+  value: number;
+}) {
+  return (
+    <Shadow>
+      <h4 style={{ textAlign: "center", fontSize: "20px" }}>
+        {props.icon}
+        <br />
+      </h4>
+      <b
+        style={{ textAlign: "center", display: "block", fontWeight: "normal" }}
+      >
+        {props.title}
+      </b>
+      <h4 style={{ textAlign: "center", fontSize: "20px" }}>{props.value}</h4>
+    </Shadow>
+  );
+}
+
 const X = styled.span`
   color: ${({ theme }) => theme.colors.darkViolet};
   font-size: 25px;
@@ -306,7 +345,7 @@ function Transaction({
   fromAddress: string;
 }) {
   return (
-    <div className="transactions-profil-details">
+    <Shadow className="transactions-profil-details">
       <div className="tea-count">
         <img src="/images/flow-tea-cup.svg" alt="" />
         <h4>x</h4>
@@ -316,7 +355,7 @@ function Transaction({
         Appreciated by {` `}
         <Link href={`/${fromAddress}`}>{fromAddress}</Link>
       </h6>
-    </div>
+    </Shadow>
   );
 }
 
@@ -357,9 +396,7 @@ const Container = styled.div`
 
   .bio-profile {
     padding: 50px 30px 50px 30px;
-    border: solid 2px #d9d9d9;
     margin-bottom: 50px;
-    border-radius: 1%;
   }
 
   .bio-profile h5 {
@@ -382,9 +419,7 @@ const Container = styled.div`
     justify-content: space-between;
     padding-left: 20px;
     padding-right: 20px;
-    border: solid 2px #d9d9d9;
     margin-bottom: 20px;
-    border-radius: 1%;
   }
 
   .tea-count {
@@ -410,12 +445,8 @@ const Container = styled.div`
   }
 
   .buy-flow-tea-form {
-    border: solid 2px #d9d9d9;
     padding: 50px 30px 50px 30px;
-    // TODO: use dark background ?
-    // background-color: var(--main-dark-color);
     flex: 6;
-    border-radius: 1%;
   }
 
   .buy-flow-tea-form h5 {
@@ -432,4 +463,11 @@ const Container = styled.div`
     width: 100%;
     margin-bottom: 20px;
   }
+`;
+
+const Shadow = styled.div`
+  border-radius: 20px;
+  padding: 15px 50px 15px 50px;
+  background: #f6f6f6;
+  box-shadow: 20px 20px 40px #d1d1d164, -20px -20px 60px #ffffff;
 `;
