@@ -42,9 +42,9 @@ function getFlowEnv(env: Environment) {
 function getAccessNodeApi(env: Environment) {
   switch (env) {
     case 'production':
-      return 'https://rest-mainnet.onflow.org/v1';
+      return 'https://rest-mainnet.onflow.org/v1'; // TODO: this is probably not a correct address
     case 'staging':
-      return 'https://rest-testnet.onflow.org/v1';
+      return 'https://access-testnet.onflow.org';
     case 'development':
     default:
       return 'http://localhost:8080';
