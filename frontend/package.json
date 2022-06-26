@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "flow-deploy:staging": "flow project deploy --network=testnet -f flow.json -f flow.staging.json",
+    "flow-deploy:development": "flow project deploy --update --network=emulator",
+    "flow-update-contract-sources": "curl https://raw.githubusercontent.com/onflow/flow-ft/master/contracts/FungibleToken.cdc > ./cadence/contracts/core/FungibleToken.cdc"
   },
   "dependencies": {
     "@onflow/fcl": "^0.0.78",

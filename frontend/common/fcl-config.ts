@@ -11,7 +11,6 @@ export function configureFcl(overrideConfig = {}) {
     "accessNode.api": getAccessNodeApi(env),
     "discovery.wallet": getDiscoveryWallet(env),
     "0xFungibleToken": getFungibleTokenAddress(env),
-    "0xFlowToken": getFlowTokenAddress(env),
     "0xFlowTea": config.flow.deploymentAccountAddress,
     ...overrideConfig,
   });
@@ -47,18 +46,6 @@ function getFungibleTokenAddress(env: Environment) {
       return "0x9a0766d93b6608b7";
     case "development":
       return "0xee82856bf20e2aa6";
-  }
-}
-
-function getFlowTokenAddress(env: Environment) {
-  // https://docs.onflow.org/core-contracts/flow-token/
-  switch (env) {
-    case "production":
-      return "0x1654653399040a61";
-    case "staging":
-      return "0x7e60df042a9c0868";
-    case "development":
-      return "0x0ae53cb6e3f42a79";
   }
 }
 

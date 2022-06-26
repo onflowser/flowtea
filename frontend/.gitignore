@@ -36,3 +36,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# private flow configs
+flow.staging.json
+flow.production.json

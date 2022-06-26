@@ -40,6 +40,40 @@ cd ../backend && npm i
 
 The following env variables are available for configuration.
 
+### Flow
+
+Example configuration for staging deployment (`flow.staging.json`).
+```json
+{
+  "accounts": {
+    "testnet-account": {
+      "address": "<insert-account-address>",
+      "key": "<insert-private-key>"
+    }
+  },
+  "deployments": {
+    "testnet": {
+      "testnet-account": [
+        {
+          "name": "FlowTea",
+          "args": [
+            {
+              "type": "Address",
+              "value": "0x7cba6748efed6e93"
+            },
+            {
+              "type": "UFix64",
+              "value": "0.05"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+
+```
+
 ### Frontend
 - `NEXT_PUBLIC_API_HOST` (default: `http://localhost:3000`)
 - `FLOW_DEPLOYMENT_ACCOUNT_ADDRESS` (default: `0xf8d6e0586b0a20c7`)

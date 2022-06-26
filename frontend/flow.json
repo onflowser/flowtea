@@ -6,7 +6,14 @@
     }
   },
   "contracts": {
-    "FlowTea": "./cadence/contracts/FlowTea.cdc"
+    "FlowTea": "./cadence/contracts/FlowTea.cdc",
+    "FungibleToken": {
+      "source": "./cadence/contracts/core/FungibleToken.cdc",
+      "aliases": {
+        "testnet": "9a0766d93b6608b7",
+        "emulator": "ee82856bf20e2aa6"
+      }
+    }
   },
   "networks": {
     "emulator": "127.0.0.1:3569",
@@ -25,10 +32,17 @@
         {
           "name": "FlowTea",
           "args": [
-            { "type": "Address", "value": "0xf8d6e0586b0a20c7" },
-            { "type": "UFix64", "value": "0.05" }
+            {
+              "type": "Address",
+              "value": "0xf8d6e0586b0a20c7"
+            },
+            {
+              "type": "UFix64",
+              "value": "0.05"
+            }
           ]
-        }]
+        }
+      ]
     }
   }
 }
