@@ -1,16 +1,15 @@
 // @ts-ignore
 import * as fcl from "@onflow/fcl";
-import { env, Environment, getDomain } from "./utils";
-import { config } from "./config";
+import { config, Environment, getDomain } from "./config";
 
 export function configureFcl(overrideConfig = {}) {
   fcl.config({
     "app.detail.title": "FlowTea",
-    env: getFlowEnv(env),
+    env: getFlowEnv(config.environment),
     "app.detail.icon": getIconUrl(),
-    "accessNode.api": getAccessNodeApi(env),
-    "discovery.wallet": getDiscoveryWallet(env),
-    "0xFungibleToken": getFungibleTokenAddress(env),
+    "accessNode.api": getAccessNodeApi(config.environment),
+    "discovery.wallet": getDiscoveryWallet(config.environment),
+    "0xFungibleToken": getFungibleTokenAddress(config.environment),
     "0xFlowTea": config.flow.deploymentAccountAddress,
     ...overrideConfig,
   });
@@ -23,6 +22,7 @@ function getAccessNodeApi(env: Environment) {
     case "staging":
       return "https://rest-testnet.onflow.org/v1";
     case "development":
+    default:
       return "http://localhost:8080";
   }
 }

@@ -21,7 +21,6 @@ import flowIcon from "../public/images/flow.png";
 import recurringPaymentIcon from "../public/images/recurring-payment.png";
 import teaImage from "../public/images/big-cup.svg";
 import MetaTags from "../components/MetaTags";
-import AppLayout from "../components/layouts/AppLayout";
 
 // --LANDING--SECTION--
 /* BIG INPUT */
