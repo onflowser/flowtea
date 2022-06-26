@@ -8,7 +8,7 @@ import MetaTags from "../components/MetaTags";
 
 export default function Profile() {
   const router = useRouter();
-  const { user, isLoggedIn, isRegistered } = useFcl();
+  const { user, isLoggedIn, isLoadingUserInfo, isRegistered } = useFcl();
 
   useEffect(() => {
     if (isLoggedIn !== undefined && !isLoggedIn) {
@@ -19,12 +19,12 @@ export default function Profile() {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    if (isLoggedIn && !isRegistered) {
+    if (user && isLoggedIn && !isLoadingUserInfo && !isRegistered) {
       router.replace("/settings").then(() => {
         toast.error("You need to register first!");
       });
     }
-  }, [isLoggedIn, isRegistered]);
+  }, [isLoggedIn, isRegistered, isLoadingUserInfo]);
 
   return (
     <>

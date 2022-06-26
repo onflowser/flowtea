@@ -110,11 +110,13 @@ export default function UserProfile({
 
           <TransactionStatsContainer>
             <TransactionStats
+              style={{ marginRight: 10 }}
               icon="🏆"
               title="Received donations"
               value={donations?.to?.length ?? 0}
             />
             <TransactionStats
+              style={{ marginLeft: 10 }}
               icon="💎"
               title="Sent donations"
               value={donations?.from?.length ?? 0}
@@ -270,23 +272,29 @@ const TransactionStatsContainer = styled.div`
   margin-bottom: 50px;
 `;
 
-function TransactionStats(props: {
+function TransactionStats({
+  icon,
+  title,
+  value,
+  style,
+  ...props
+}: {
   icon: string;
   title: string;
   value: number;
-}) {
+} & HTMLAttributes<HTMLDivElement>) {
   return (
-    <Shadow>
+    <Shadow style={{ flex: 1, ...style }} {...props}>
       <h4 style={{ textAlign: "center", fontSize: "20px" }}>
-        {props.icon}
+        {icon}
         <br />
       </h4>
       <b
         style={{ textAlign: "center", display: "block", fontWeight: "normal" }}
       >
-        {props.title}
+        {title}
       </b>
-      <h4 style={{ textAlign: "center", fontSize: "20px" }}>{props.value}</h4>
+      <h4 style={{ textAlign: "center", fontSize: "20px" }}>{value}</h4>
     </Shadow>
   );
 }
@@ -408,8 +416,7 @@ const Container = styled.div`
   }
 
   .bio-and-transactions {
-    //max-width: 40%;
-    flex: 4;
+    flex: 1;
   }
 
   .bio-profile {
@@ -466,7 +473,7 @@ const Container = styled.div`
 
   .buy-flow-tea-form {
     padding: 50px 30px 50px 30px;
-    flex: 6;
+    flex: 1;
   }
 
   .buy-flow-tea-form h5 {

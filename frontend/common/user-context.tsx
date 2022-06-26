@@ -28,14 +28,16 @@ import {
   getHandle,
   getInfo,
 } from "./fcl-service";
+import useSWR, { KeyedMutator } from "swr";
 
 type TxResult = { transactionId: string; status: any };
 
 type FclContextProps = {
   user: null | FlowUser;
-  info: null | FlowTeaInfo;
+  info: null | undefined | FlowTeaInfo;
   isLoggingIn: boolean;
   isLoggingOut: boolean;
+  isLoadingUserInfo: boolean;
   isLoggedIn: boolean | undefined;
   isSendingDonation: boolean;
   isRegistered: boolean;
@@ -44,7 +46,7 @@ type FclContextProps = {
   getAddress: (handle: string) => Promise<null | string>;
   getHandle: (address: string) => Promise<null | string>;
   isHandleAvailable: (handle: string) => Promise<boolean>;
-  fetchCurrentUserInfo: () => Promise<FlowTeaInfo | null>;
+  fetchCurrentUserInfo: KeyedMutator<FlowTeaInfo | null>;
   getInfo: (address: string) => Promise<FlowTeaInfo | null>;
   donateFlow: (
     message: string,
@@ -82,6 +84,7 @@ export type FlowUser = {
 const defaultValue: FclContextProps = {
   user: null,
   info: null,
+  isLoadingUserInfo: true,
   isLoggingIn: false,
   isLoggingOut: false,
   isLoggedIn: false,
@@ -111,7 +114,10 @@ export function FclProvider({
   children: ReactChild;
 }) {
   const [user, setUser] = useState<FlowUser | null>(null);
-  const [info, setInfo] = useState<FlowTeaInfo | null>(null);
+  const { data: info, mutate: fetchCurrentUserInfo } =
+    useSWR<FlowTeaInfo | null>(`info/${user?.addr}`, () =>
+      user?.addr ? getInfo(user?.addr) : null
+    );
   const [isLoggingIn, setLoggingIn] = useState(false);
   const [isLoggingOut, setLoggingOut] = useState(false);
   const [isSendingDonation, setIsSendingDonation] = useState(false);
@@ -220,7 +226,6 @@ export function FclProvider({
     setLoggingOut(true);
     try {
       await fcl.unauthenticate();
-      setInfo(null);
     } finally {
       setLoggingOut(false);
     }
@@ -232,18 +237,6 @@ export function FclProvider({
       return await fcl.authenticate();
     } finally {
       setLoggingIn(false);
-    }
-  }
-
-  async function fetchCurrentUserInfo() {
-    if (!user) return null;
-    try {
-      const info = await getInfo(user.addr);
-      setInfo(info);
-      return info;
-    } catch (e) {
-      console.error(e);
-      return null;
     }
   }
 
@@ -265,6 +258,7 @@ export function FclProvider({
         user,
         info,
         isSendingDonation,
+        isLoadingUserInfo: info == undefined,
         isRegistered: Boolean(info),
         isLoggedIn: user?.loggedIn,
         isLoggingIn,
