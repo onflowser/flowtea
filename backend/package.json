@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "start:local": "export FLOWTEA_ACCOUNT_ADDRESS=0xf8d6e0586b0a20c7 && npm run start:debug",
+    "start:staging": "source .env.staging && npm run start:debug",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

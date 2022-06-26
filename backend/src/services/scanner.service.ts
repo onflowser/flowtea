@@ -4,6 +4,7 @@ import { ConfigProvider } from '@rayvin-flow/flow-scanner-lib/lib/providers/conf
 import { EventBroadcasterService } from './event-broadcaster.service';
 import { ScannerSettingsService } from './scanner-settings.service';
 import { config } from '../config';
+import { wait } from '../utils';
 
 @Injectable()
 export class ScannerService {
@@ -39,11 +40,11 @@ export class ScannerService {
     try {
       await this.flowScanner.start();
     } catch (e) {
-      console.log('Scanner start error:', e.message);
       await this.stop();
       this.retries++;
       if (this.retries < this.maxRetries) {
         console.log('Retrying...');
+        await wait(5000);
         return this.start();
       }
     }

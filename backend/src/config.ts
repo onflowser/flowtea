@@ -15,6 +15,7 @@ type Config = {
   flow: FlowConfig;
   email: EmailConfig;
   environment: NodeEnvironment;
+  port: number;
 };
 
 const database: TypeOrmModuleOptions = {
@@ -27,13 +28,6 @@ const database: TypeOrmModuleOptions = {
   synchronize: process.env.NODE_ENV !== 'production',
 };
 
-const flow: FlowConfig = {
-  accessNode: process.env.FLOW_ACCESS_NODE || getAccessNodeApi(),
-  deploymentAccountAddress:
-    (process.env.FLOW_DEPLOYMENT_ACCOUNT_ADDRESS as any) ||
-    '0xf8d6e0586b0a20c7',
-};
-
 const email = {
   enableSendingEmail: (process.env.EMAIL_ENABLE_SENDING as any) === 'true',
   sendgridApiKey: process.env.EMAIL_SENDGRID_API_KEY as any,
@@ -41,11 +35,21 @@ const email = {
 
 const environment = (process.env.NODE_ENV as any) || 'development';
 
+const port = (process.env.PORT as any) || 3000;
+
+const flow: FlowConfig = {
+  accessNode: process.env.FLOW_ACCESS_NODE || getAccessNodeApi(),
+  deploymentAccountAddress:
+    (process.env.FLOW_DEPLOYMENT_ACCOUNT_ADDRESS as any) ||
+    '0xf8d6e0586b0a20c7',
+};
+
 export const config: Config = {
   database,
   flow,
   email,
   environment,
+  port,
 };
 
 if (!config.flow.deploymentAccountAddress) {

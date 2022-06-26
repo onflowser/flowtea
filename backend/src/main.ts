@@ -11,6 +11,9 @@ async function bootstrap() {
   app.enableCors({ origin: '*' });
   app.useGlobalPipes(new ValidationPipe());
 
+  console.log(`Starting backend in ${config.environment}`);
+  console.log(config);
+
   const flowService = app.get(ScannerService);
   flowService.init([
     // TODO: handle profile updates
@@ -18,7 +21,7 @@ async function bootstrap() {
     `A.${address}.FlowTea.Registration`,
   ]);
   flowService.start();
-  await app.listen(3000);
+  await app.listen(config.port);
 }
 
 bootstrap();
