@@ -7,7 +7,7 @@ import { TextArea } from "../inputs/Input";
 import { toast } from "react-hot-toast";
 import { useFcl } from "../../common/user-context";
 import { useUserInfo } from "../../common/use-user-info";
-import { getDomain } from "../../common/utils";
+import { getDomain } from "../../common/config";
 
 type Props = ReactModal.Props;
 

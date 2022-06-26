@@ -20,7 +20,6 @@ import donateFlowCode from "../cadence/transactions/donate.cdc";
 import registerFlowCode from "../cadence/transactions/register.cdc";
 // @ts-ignore
 import updateFlowCode from "../cadence/transactions/update.cdc";
-import { configureFcl } from "./fcl-config";
 import {
   FlowTeaInfo,
   getAddress,
@@ -107,13 +106,7 @@ const defaultValue: FclContextProps = {
 
 const UserContext = React.createContext(defaultValue);
 
-export function FclProvider({
-  configOverride = {},
-  children,
-}: {
-  configOverride?: object;
-  children: ReactChild;
-}) {
+export function FclProvider({ children }: { children: ReactChild }) {
   const [user, setUser] = useState<FlowUser | null>(null);
   const { data: info, mutate: fetchCurrentUserInfo } =
     useSWR<FlowTeaInfo | null>(`info/${user?.addr}`, () =>
@@ -122,10 +115,6 @@ export function FclProvider({
   const [isLoggingIn, setLoggingIn] = useState(false);
   const [isLoggingOut, setLoggingOut] = useState(false);
   const [isSendingDonation, setIsSendingDonation] = useState(false);
-
-  useEffect(() => {
-    configureFcl(configOverride);
-  }, [configOverride]);
 
   useEffect(() => fcl.currentUser().subscribe(setUser), []);
 

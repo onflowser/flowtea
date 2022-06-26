@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { getDomain } from "../common/utils";
+import { getDomain } from "../common/config";
 
 type Props = {
   title: string;

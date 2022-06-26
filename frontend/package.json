@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:staging": "source .env.production && next build && next start",
     "lint": "next lint",
     "flow-deploy:staging": "flow project deploy --network=testnet -f flow.json -f flow.staging.json",
     "flow-deploy:development": "flow project deploy --update --network=emulator",

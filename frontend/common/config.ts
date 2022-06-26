@@ -4,10 +4,10 @@ const flow = {
     "0xf8d6e0586b0a20c7",
 };
 
-export type Environment = "development" | "staging" | "production";
+export type AppEnvironment = "development" | "staging" | "production";
 
-export const environment: Environment = (process.env.NODE_ENV ||
-  "development") as Environment;
+export const environment: AppEnvironment = (process.env
+  .NEXT_PUBLIC_FLOWTEA_ENV || "development") as AppEnvironment;
 
 const apiHost =
   (process.env.NEXT_PUBLIC_API_HOST as any) || "http://localhost:3000";

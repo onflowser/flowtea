@@ -3,7 +3,6 @@ import Profile from "./profile";
 import { useRouter } from "next/router";
 import UserProfile from "../components/UserProfile";
 import { GetServerSideProps } from "next";
-import { configureFcl } from "../common/fcl-config";
 import {
   FlowTeaInfo,
   getAddress,
@@ -26,8 +25,6 @@ type Data = FlowTeaInfo & {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  configureFcl();
-
   const userId = context.query.handle as string;
   const isAddress = isUserIdAddress(userId);
   const address = isAddress
