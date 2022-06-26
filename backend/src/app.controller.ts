@@ -10,10 +10,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DonationEntity } from './entities/donation.entity';
 import { FindOptionsOrder, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
-import * as fcl from './fcl';
 import { FlowSignature } from './fcl';
 import { IsEmail } from 'class-validator';
-import { EmailService, EmailTemplate } from './services/email.service';
+import { EmailService } from './services/email.service';
+import { UserService } from './services/user.service';
 
 class EmailUpdateDto {
   signature: [FlowSignature];
@@ -25,17 +25,15 @@ class EmailUpdateDto {
 export class AppController {
   constructor(
     @InjectRepository(DonationEntity)
-    private flowEventRepository: Repository<DonationEntity>,
+    private donationRepository: Repository<DonationEntity>,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    private emailService: EmailService,
-  ) {
-    fcl.init();
-  }
+    private userService: UserService,
+  ) {}
 
   @Get('donations')
   async getDonations() {
-    const [donations, total] = await this.flowEventRepository.findAndCount({
+    const [donations, total] = await this.donationRepository.findAndCount({
       order: { blockTimestamp: 'desc' },
     });
     return { total, donations };
@@ -48,64 +46,16 @@ export class AppController {
 
   @Get('users/:address')
   async getUser(@Param('address') address) {
-    const order: FindOptionsOrder<DonationEntity> = { blockTimestamp: 'desc' };
-    const [user, from, to] = await Promise.all([
-      this.userRepository.findOneOrFail({ where: { address } }),
-      this.flowEventRepository.find({
-        where: { from: address },
-        order,
-      }),
-      this.flowEventRepository.find({
-        where: { to: address },
-        order,
-      }),
-    ]);
-    return {
-      user,
-      from,
-      to,
-    };
+    return this.userService.getUserInfo(address);
   }
 
   @Get('users/:address/donations')
   async getUserDonations(@Param('address') address) {
-    const [from, to] = await Promise.all([
-      this.flowEventRepository.find({
-        where: { from: address },
-        order: { blockTimestamp: 'desc' },
-      }),
-      this.flowEventRepository.find({
-        where: { to: address },
-        order: { blockTimestamp: 'desc' },
-      }),
-    ]);
-    return {
-      from,
-      to,
-    };
+    return this.userService.getUserDonations(address);
   }
 
   @Put('users/email')
   async updateUserEmailInfo(@Body() data: EmailUpdateDto) {
-    const isValid = await fcl.isValidSignature(data.email, data.signature);
-    if (!isValid) {
-      throw new UnauthorizedException('Signature invalid');
-    }
-    const address = data.signature[0].addr;
-    await this.userRepository.upsert(
-      { address, email: data.email },
-      { conflictPaths: ['address'] },
-    );
-    const user = await this.userRepository.findOneBy({ address });
-    if (user.email && !user.isWelcomeEmailSent) {
-      await this.emailService.send<EmailTemplate.WELCOME>({
-        template: EmailTemplate.WELCOME,
-        templateData: { name: user.name },
-        to: user.email,
-      });
-      await this.userRepository.update(user.address, {
-        isWelcomeEmailSent: true,
-      });
-    }
+    return this.userService.updateEmail(data.email, data.signature);
   }
 }

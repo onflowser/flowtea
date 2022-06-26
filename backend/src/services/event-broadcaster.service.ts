@@ -6,6 +6,7 @@ import { DonationEntity } from '../entities/donation.entity';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { EmailService, EmailTemplate } from './email.service';
+import { UserService } from './user.service';
 
 @Injectable()
 export class EventBroadcasterService implements EventBroadcasterInterface {
@@ -16,6 +17,7 @@ export class EventBroadcasterService implements EventBroadcasterInterface {
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
     private emailService: EmailService,
+    private userService: UserService,
   ) {}
 
   async broadcastEvents(
@@ -122,27 +124,10 @@ export class EventBroadcasterService implements EventBroadcasterInterface {
         ),
         { conflictPaths: ['address'] },
       );
-      const users = await this.userRepository
-        .createQueryBuilder('user')
-        .where('user.address IN (:...addresses)', {
-          addresses: events.map((e) => e.data.address),
-        })
-        .getMany();
       await Promise.allSettled(
-        users.map(async (user) => {
-          if (!user.email) {
-            this.logger.debug(`Email not found for: ${user.address}`);
-            return;
-          }
-          await this.emailService.send<EmailTemplate.WELCOME>({
-            template: EmailTemplate.WELCOME,
-            templateData: { name: user.name },
-            to: user.email,
-          });
-          await this.userRepository.update(user.address, {
-            isWelcomeEmailSent: true,
-          });
-        }),
+        events.map(async (e) =>
+          this.userService.sendWelcomeEmail(e.data.address),
+        ),
       );
     } catch (e) {
       this.logger.error(`Error processing registration events: ${e}`);

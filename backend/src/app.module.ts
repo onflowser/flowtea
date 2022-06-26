@@ -9,6 +9,7 @@ import { CronService } from './services/cron.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { UserEntity } from './entities/user.entity';
 import { EmailService } from './services/email.service';
+import { UserService } from './services/user.service';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { EmailService } from './services/email.service';
     FlowScannerService,
     CronService,
     EmailService,
+    UserService,
   ],
 })
 export class AppModule {}
