@@ -28,7 +28,7 @@ const database: TypeOrmModuleOptions = {
 };
 
 const flow: FlowConfig = {
-  accessNode: process.env.FLOW_ACCESS_NODE || 'http://localhost:8080',
+  accessNode: process.env.FLOW_ACCESS_NODE || getAccessNodeApi(),
   deploymentAccountAddress:
     (process.env.FLOW_DEPLOYMENT_ACCOUNT_ADDRESS as any) ||
     '0xf8d6e0586b0a20c7',
@@ -39,14 +39,27 @@ const email = {
   sendgridApiKey: process.env.EMAIL_SENDGRID_API_KEY as any,
 };
 
+const environment = (process.env.NODE_ENV as any) || 'development';
+
 export const config: Config = {
   database,
   flow,
   email,
-  environment: (process.env.NODE_ENV as any) || 'development',
+  environment,
 };
 
 if (!config.flow.deploymentAccountAddress) {
   console.log('FLOW_DEPLOYMENT_ACCOUNT_ADDRESS env variable must be set!');
   process.exit(1);
+}
+
+function getAccessNodeApi() {
+  switch (environment) {
+    case 'production':
+      return 'https://rest-mainnet.onflow.org/v1';
+    case 'staging':
+      return 'https://rest-testnet.onflow.org/v1';
+    case 'development':
+      return 'http://localhost:8080';
+  }
 }
