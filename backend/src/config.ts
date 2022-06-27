@@ -16,6 +16,7 @@ type Config = {
   email: EmailConfig;
   environment: NodeEnvironment;
   port: number;
+  paymentRecurringDayPeriod: number;
 };
 
 const database: TypeOrmModuleOptions = {
@@ -37,6 +38,10 @@ const environment = (process.env.NODE_ENV as any) || 'development';
 
 const port = (process.env.PORT as any) || 3000;
 
+const paymentRecurringDayPeriod = process.env.PAYMENT_RECURRING_DAY_PERIOD
+  ? parseInt(process.env.PAYMENT_RECURRING_DAY_PERIOD)
+  : 1;
+
 const flow: FlowConfig = {
   accessNode: process.env.FLOW_ACCESS_NODE || getAccessNodeApi(),
   deploymentAccountAddress:
@@ -50,6 +55,7 @@ export const config: Config = {
   email,
   environment,
   port,
+  paymentRecurringDayPeriod,
 };
 
 if (!config.flow.deploymentAccountAddress) {

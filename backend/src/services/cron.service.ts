@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { EmailService, EmailTemplate } from './email.service';
 import { UserEntity } from '../entities/user.entity';
+import { config } from '../config';
 
 @Injectable()
 export class CronService {
@@ -21,16 +22,14 @@ export class CronService {
    * Query for recurring transactions that happened 30days ago
    * and send confirmation emails for this month's payments
    */
-  @Cron(CronExpression.EVERY_30_SECONDS) // TODO: set longer interval in production
+  @Cron(CronExpression.EVERY_2_HOURS)
   async processRecurringTxReminders() {
-    // TODO: set 30day interval in production
-    const secDiffThreshold = 60;
     const donations = await this.flowEventRepository
       .createQueryBuilder('q')
       .select()
-      .where('TIME_TO_SEC(TIMEDIFF(q.blockTimestamp, :d)) % :n > 30', {
+      .where('DATEDIFF(q.blockTimestamp, :d) % :n = 0', {
         d: new Date().toISOString(),
-        n: secDiffThreshold,
+        n: config.paymentRecurringDayPeriod,
       })
       .getMany();
 
