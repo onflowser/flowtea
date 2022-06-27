@@ -5,6 +5,7 @@ import { EventBroadcasterService } from './event-broadcaster.service';
 import { ScannerSettingsService } from './scanner-settings.service';
 import { config } from '../config';
 import { wait } from '../utils';
+import { LoggerInterface } from '@rayvin-flow/flow-scanner-lib/lib/providers/log-provider';
 
 @Injectable()
 export class ScannerService {
@@ -28,6 +29,20 @@ export class ScannerService {
 
     this.flowScanner = new FlowScanner(monitorEvents, {
       configProvider: configProvider,
+      logProvider: (): LoggerInterface => ({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        info: (...args) => this.logger.log(...args),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        debug: (...args) => this.logger.debug(...args),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        warn: (...args) => this.logger.warn(...args),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        error: (...args) => this.logger.error(...args),
+      }),
       eventBroadcasterProvider: async () => this.eventService,
       settingsServiceProvider: async () => this.scannerSettingsService,
     });
