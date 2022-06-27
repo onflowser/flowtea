@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { FlowScanner } from '@rayvin-flow/flow-scanner-lib';
 import { ConfigProvider } from '@rayvin-flow/flow-scanner-lib/lib/providers/config-provider';
 import { EventBroadcasterService } from './event-broadcaster.service';
@@ -8,6 +8,7 @@ import { wait } from '../utils';
 
 @Injectable()
 export class ScannerService {
+  private logger = new Logger(ScannerService.name);
   private flowScanner: FlowScanner;
   private maxRetries = 100;
   private retries = 0;
@@ -18,7 +19,7 @@ export class ScannerService {
   ) {}
 
   init(monitorEvents = []) {
-    console.log('Listening for events: ', monitorEvents);
+    this.logger.debug('Listening for events: ', monitorEvents);
     const configProvider: ConfigProvider = () => ({
       defaultStartBlockHeight: undefined, // Start at the latest block.
       flowAccessNode: config.flow.accessNode,
@@ -36,14 +37,15 @@ export class ScannerService {
     if (!this.flowScanner) {
       throw new Error('Flow service not initialised');
     }
-    console.log('Starting');
+    this.logger.debug('Starting');
     try {
       await this.flowScanner.start();
     } catch (e) {
+      this.logger.error(e);
       await this.stop();
       this.retries++;
       if (this.retries < this.maxRetries) {
-        console.log('Retrying...');
+        this.logger.debug('Retrying...');
         await wait(5000);
         return this.start();
       }
@@ -52,7 +54,7 @@ export class ScannerService {
 
   async stop() {
     // when you are ready to stop the scanner, you can call the stop() method
-    console.log('Stopping scanner');
+    this.logger.debug('Stopping scanner');
     await this.flowScanner.stop();
   }
 }
