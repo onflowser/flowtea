@@ -30,12 +30,8 @@ export class ScannerService {
     this.flowScanner = new FlowScanner(monitorEvents, {
       configProvider: configProvider,
       logProvider: (): LoggerInterface => ({
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        info: (...args) => this.logger.log(...args),
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        debug: (...args) => this.logger.debug(...args),
+        info: () => null,
+        debug: () => null,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         warn: (...args) => this.logger.warn(...args),
