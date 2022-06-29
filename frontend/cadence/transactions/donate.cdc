@@ -1,5 +1,4 @@
 import FungibleToken from 0xFungibleToken
-import FlowToken from 0xFlowToken
 import FlowTea from 0xFlowTea
 
 transaction(message: String, amount: UFix64, recurring: Bool, to: Address) {
@@ -11,7 +10,7 @@ transaction(message: String, amount: UFix64, recurring: Bool, to: Address) {
     prepare(signer: AuthAccount) {
 
         // Get a reference to the signer's stored vault
-        self.fromVault = signer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
+        self.fromVault = signer.borrow<&FungibleToken.Vault>(from: /storage/flowTokenVault)
            ?? panic("Could not borrow reference to the owner's Vault!")
 
         self.toProject = getAccount(to)
