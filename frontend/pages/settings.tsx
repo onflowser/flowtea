@@ -76,6 +76,27 @@ export default function Settings() {
     }
   }
 
+  async function onUpdateEmail() {
+    try {
+      await updateEmail(email);
+      toast.success("Email updated!");
+    } catch (e: any) {
+      toast.error(`Failed to update email: ${e.message}`);
+    }
+  }
+
+  function isInfoChanged() {
+    return [
+      [info?.name, name],
+      [info?.description, description],
+      [info?.websiteUrl, websiteUrl],
+    ].some(([previous, current]) => previous !== current);
+  }
+
+  function isEmailChanged() {
+    return email !== "";
+  }
+
   async function onSubmit() {
     let errors = [];
     if (!name) {
@@ -96,19 +117,19 @@ export default function Settings() {
     }
     setIsSubmitting(true);
     try {
-      if (isRegistered) {
+      if (!isRegistered) {
+        await onRegister();
+      } else if (isInfoChanged()) {
         await onUpdate();
       } else {
-        await onRegister();
+        toast("Info unchanged!");
+      }
+
+      if (isEmailChanged()) {
+        await onUpdateEmail();
       }
     } finally {
       setIsSubmitting(false);
-    }
-    try {
-      await updateEmail(email);
-      toast.success("Email updated!");
-    } catch (e: any) {
-      toast.error(`Failed to update email: ${e.message}`);
     }
   }
 
