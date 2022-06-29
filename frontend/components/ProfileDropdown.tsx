@@ -83,6 +83,7 @@ const Photo = styled.img`
 
 const Dropdown = styled.div`
   position: absolute;
+  z-index: 100;
   width: 150px;
   right: 0;
   top: 110%;

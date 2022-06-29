@@ -2,7 +2,7 @@ export const colors = {
   pink: "#db537d",
   orange: "#fe6f6f",
   white: "#fff",
-  grey: "#f3f3f3",
+  grey: "#FCFCFC",
   darkGrey: "#91959D",
   darkBlue: "#294269",
   mainDark: "#141C2D",
@@ -26,7 +26,7 @@ export const theme = {
   },
   // maybe only for testing
   layout: {
-    navbar_height: "13rem",
+    navbar_height: "60px",
     max_width: "1200px",
     mobile_padding: "2rem",
   },

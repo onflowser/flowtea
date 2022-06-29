@@ -1,7 +1,7 @@
 import type { AppProps } from "next/app";
 import React from "react";
 import { ThemeProvider } from "styled-components";
-import DefaultLayout from "../components/layouts/LandingLayout";
+import DefaultLayout from "../components/layouts/MainLayout";
 import { GlobalStyle } from "../components/GlobalStyles";
 import { FclProvider } from "../common/user-context";
 import { Toaster } from "react-hot-toast";

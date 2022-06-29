@@ -75,21 +75,6 @@ export const GlobalStyle = createGlobalStyle`
     line-height: 1.2em;
   }
 
-  .nav-profile {
-    padding: 0px 20px 0px 20px;
-  }
-
-  .nav-profile-content {
-    max-width: 1360px;
-    width: 99%;
-    margin: 0 auto;
-    height: 100px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .profile-photo-small {
     max-width: 35px;
     width: 100%;

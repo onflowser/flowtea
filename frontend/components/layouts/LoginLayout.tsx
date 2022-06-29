@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { useFcl } from "../../common/user-context";
 import styled from "styled-components";
 import { ProfileDropdown } from "../ProfileDropdown";
+import { Footer } from "../Footer";
 
 export default function LoginLayout({ children }: any) {
   return (
@@ -13,6 +13,7 @@ export default function LoginLayout({ children }: any) {
         <ProfileDropdown style={{ position: "absolute", right: 50 }} />
       </Navigation>
       {children}
+      <Footer />
     </>
   );
 }

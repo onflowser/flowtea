@@ -1,4 +1,4 @@
-import ProfileLayout from "../components/layouts/ProfileLayout";
+import MainLayout from "../components/layouts/MainLayout";
 import Profile from "./profile";
 import { useRouter } from "next/router";
 import UserProfile from "../components/UserProfile";
@@ -80,4 +80,4 @@ export default function OtherUserProfile({ data }: { data: Data }) {
   );
 }
 
-Profile.Layout = ProfileLayout;
+Profile.Layout = MainLayout;

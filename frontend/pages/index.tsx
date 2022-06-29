@@ -14,7 +14,6 @@ import RoundLink from "../components/RoundLink";
 import blobImage from "../public/images/blob.svg";
 import teaCupImage from "../public/images/flow-tea-cup.png";
 import heartImage from "../public/images/heart.png";
-import bgImage from "../public/images/webp/bg.webp";
 import clapHands from "../public/images/clap-hands.png";
 import freeIcon from "../public/images/free.png";
 import flowIcon from "../public/images/flow.png";
@@ -122,11 +121,12 @@ const BigInput = ({
 };
 /* BIG INPUT */
 
-const SmallText = styled.div`
-  font-size: 1rem;
-  letter-spacing: 0px;
-  opacity: 0.88;
-  padding: 3rem;
+const Subtitle = styled.b`
+  font-size: 20px;
+  color: ${theme.colors.white};
+  text-align: center;
+  padding-bottom: 3rem;
+  opacity: 0.9;
 `;
 
 const CenterTitleBox = styled.div`
@@ -142,14 +142,15 @@ const CenterTitleBox = styled.div`
   z-index: 2;
 `;
 
-const BigText = styled.h1`
+const MainHeading = styled.h1`
   font-size: 4rem;
   line-height: 6rem;
   font-weight: 800;
-  opacity: 0.86;
+  opacity: 0.9;
   text-align: center;
   padding: 3rem;
   margin: 0;
+  color: ${theme.colors.white};
 
   @media only screen and (max-width: 1300px) {
     font-size: 3rem;
@@ -158,12 +159,12 @@ const BigText = styled.h1`
 `;
 const LandingSection = styled.div`
   background-color: #e5e5f7;
-  background-image: url("/images/bg.webp");
+  background-image: url("/images/landing-gradient.webp");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 
-  height: 100vh;
+  height: calc(100vh - ${theme.layout.navbar_height});
   box-sizing: border-box;
   position: relative;
 
@@ -171,28 +172,8 @@ const LandingSection = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
 // --LANDING--SECTION--
-// --Hey--You--Section--
-const HeyYouSectionContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  width: 100vw;
-  background: ${(props) => props.theme.colors.lightViolet};
-`;
-const HeyYouSection = styled.div`
-  max-width: ${({ theme }) => theme.layout.max_width};
-  padding: 10rem ${({ theme }) => theme.layout.mobile_padding};
-
-  display: flex;
-  flex-direction: row;
-
-  @media only screen and (max-width: 1200px) {
-    flex-direction: column;
-  }
-`;
 
 interface SectionContainerProps {
   color: string | undefined;
@@ -359,12 +340,14 @@ const BenefitTitle = styled.div`
   line-height: 2rem;
   font-weight: bold;
   padding-bottom: 1rem;
+  color: white;
 `;
 const BenefitText = styled.div`
   font-size: 1rem;
   line-height: 1.5rem;
   font-weight: medium;
   letter-spacing: 0px;
+  color: white;
 `;
 const BenefitBody = styled.div`
   flex-grow: 1;
@@ -442,11 +425,13 @@ const StepNum = styled.div`
   text-align: center;
   flex-shrink: 0;
   font-weight: 600;
+  color: white;
 `;
 
 const StepText = styled.div`
   flex-grow: 1;
   font-weight: bold;
+  color: white;
 `;
 const Step = ({ num, text }: any) => {
   return (
@@ -528,7 +513,12 @@ const Home: NextPage = () => {
       <MetaTags title="FlowTea ☕️" />
       <LandingSection>
         <CenterTitleBox>
-          <BigText>Let your appreciators buy you a Flow tea.</BigText>
+          <MainHeading>Let your appreciators buy you a Flow tea.</MainHeading>
+          <Subtitle>
+            Start getting founds for your project(s) in FLOW crypto currency.
+            Create your profile and share it to your appreciators. It is easy,
+            free and quick!
+          </Subtitle>
           <BigInput
             value={handle}
             onChange={setHandle}
@@ -539,7 +529,6 @@ const Home: NextPage = () => {
             linkHref=""
             onClick={onGoToProfile}
           />
-          <SmallText>It is free and quick!</SmallText>
         </CenterTitleBox>
       </LandingSection>
       <Section
@@ -587,9 +576,9 @@ const Home: NextPage = () => {
       <Section bgcolor={theme.colors.secondary} color={theme.colors.white}>
         <BenefitLeftColumn>
           <SmallRedText>BUY ME A FLOW TEA.</SmallRedText>
-          <BigHeading>AMAZING BENEFITS</BigHeading>
+          <BigHeading style={{ color: "white" }}>AMAZING BENEFITS</BigHeading>
           <SmallSquare color={theme.colors.primary} />
-          <NormalText>
+          <NormalText style={{ color: "white" }}>
             You are working hard, and you have a passion for what you do.
             Wouldn’t it be nice to get some appreciation and even Flow tokens
             for your project? FlowTea was designed for amazing people who are
@@ -661,28 +650,8 @@ const Home: NextPage = () => {
           </StepsWrapper>
         </HWorkRightColumn>
       </Section>
-      {/*<UnderConstructionContainer>
-        <UnderConstruction>⚠️ Site is under construction ⚠️</UnderConstruction>
-            </UnderConstructionContainer>*/}
     </>
   );
 };
-
-const UnderConstructionContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  width: 100vw;
-  background: ${(props) => props.theme.colors.yellow};
-`;
-
-const UnderConstruction = styled.div`
-  max-width: ${({ theme }) => theme.layout.max_width};
-  padding: 10rem ${({ theme }) => theme.layout.mobile_padding};
-
-  font-size: 3rem;
-`;
 
 export default Home;

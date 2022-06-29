@@ -2,7 +2,7 @@ import UserProfile from "../components/UserProfile";
 import { useFcl } from "../common/user-context";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import ProfileLayout from "../components/layouts/ProfileLayout";
+import MainLayout from "../components/layouts/MainLayout";
 import { toast } from "react-hot-toast";
 import MetaTags from "../components/MetaTags";
 
@@ -34,4 +34,4 @@ export default function Profile() {
   );
 }
 
-Profile.Layout = ProfileLayout;
+Profile.Layout = MainLayout;
