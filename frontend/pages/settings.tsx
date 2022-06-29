@@ -60,7 +60,7 @@ export default function Settings() {
           break;
         }
       }
-      await router.replace("/settings");
+      await router.replace("/profile");
       toast.success("Registered!");
     } catch (e: any) {
       toast.error(e.toString());
