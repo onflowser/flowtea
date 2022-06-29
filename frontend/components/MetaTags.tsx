@@ -7,7 +7,7 @@ type Props = {
 };
 
 const defaultDescription =
-  "You are working hard, and you have a passion for what you do. Wouldn’t it be nice to get some appreciation and even Flow tokens for your project? FlowTea was designed for amazing people who are building awesome projects and for awesome people, who appreciate amazing projects.";
+  "Start getting founds for your project(s) in FLOW crypto currency. Create your profile and share it to your appreciators. It is easy, free and quick!";
 
 export default function MetaTags({ title, description }: Props) {
   const domain = getDomain();
@@ -45,7 +45,6 @@ export default function MetaTags({ title, description }: Props) {
       <meta property="og:url" content={domain} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      {/* TODO: add thumbnails */}
       <meta property="og:image" content="/thumbnail.png" />
 
       <meta property="twitter:card" content="summary_large_image" />

@@ -65,15 +65,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 export default function OtherUserProfile({ data }: { data: Data }) {
+  const { donations, name, description, address } = data;
   const router = useRouter();
 
   // TODO: prerender UserProfile component with above data ^
-  const descPrefix = `${data.name} received ${data.donations.to.length} and given ${data.donations.from.length} donations.`;
+  const hasAnyDonations = donations.to.length > 0 || donations.from.length > 0;
+  const descPrefix = hasAnyDonations
+    ? `${name} received ${donations.to.length} and given ${donations.from.length} donations. `
+    : "";
   return (
     <>
       <MetaTags
-        title={`${data.name} (${data.address})`}
-        description={`${descPrefix} ${data.description}`}
+        title={`${name} (${address})`}
+        description={`${descPrefix}${description}`}
       />
       <UserProfile userId={router.query.handle as string} />
     </>
