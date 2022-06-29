@@ -133,9 +133,7 @@ export default function UserProfile({
             ))
           ) : donationsError ? (
             <div>Could not retrieve user donations.</div>
-          ) : (
-            <div>No donations yet!</div>
-          )}
+          ) : null}
         </div>
         {!isSelf && (
           <Shadow className="buy-flow-tea-form">

@@ -38,6 +38,7 @@ export function ConfirmTransactionModal(props: Props) {
 
   return (
     <Modal
+      onAfterOpen={onRefresh}
       style={{
         content: {
           padding: 100,
@@ -49,7 +50,7 @@ export function ConfirmTransactionModal(props: Props) {
       }}
       {...props}
     >
-      <span>TODO: insert missing image here</span>
+      <Image src="/images/confirm-transaction.png" alt="" />
 
       <Spacing height="xl" />
 
@@ -78,11 +79,17 @@ export function ConfirmTransactionModal(props: Props) {
   );
 }
 
-const Title = styled.h2``;
+const Image = styled.img`
+  max-width: 300px;
+`;
+
+const Title = styled.h2`
+  margin-bottom: 0.2em;
+`;
 
 const Amount = styled.b`
   font-size: 26px;
-  margin: 10px 0;
+  margin: 10px 0 0.2em;
 `;
 
 const Subtitle = styled.span`
