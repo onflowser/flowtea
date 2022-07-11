@@ -1,5 +1,7 @@
 import { ButtonHTMLAttributes, ReactChildren } from "react";
 import styled from "styled-components";
+import { SpinnerCircular } from "spinners-react";
+import { colors } from "../common/theme";
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactChildren | string | (string | number)[];
@@ -10,8 +12,17 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
 export function PrimaryButton({ isLoading, children, ...props }: Props) {
   return (
     <Container {...props}>
-      {/* TODO: replace with a proper loader animation */}
-      {isLoading ? "Loading..." : children}
+      {isLoading ? (
+        <SpinnerCircular
+          size={35}
+          thickness={100}
+          speed={100}
+          color={colors.white}
+          secondaryColor={colors.grey}
+        />
+      ) : (
+        children
+      )}
     </Container>
   );
 }
@@ -19,7 +30,8 @@ export function PrimaryButton({ isLoading, children, ...props }: Props) {
 const Container = styled.button`
   background-color: var(--dark-violet-color);
   max-width: 250px;
-  padding: 1.2rem 1.8rem;
+  height: 60px;
+  padding: 0 1.8rem;
   border-radius: 33px;
   display: flex;
   align-items: center;
