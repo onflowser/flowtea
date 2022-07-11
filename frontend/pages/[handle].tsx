@@ -43,6 +43,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
+  if (isAddress) {
+    return {
+      redirect: {
+        destination: `/${handle}`,
+        permanent: false,
+      },
+    };
+  }
 
   const info = await getInfo(address).catch(() => null);
   if (!info) {
