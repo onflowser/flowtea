@@ -41,6 +41,15 @@ export class UserService {
     return { from, to };
   }
 
+  async getEmail(userAddress: string, signature: [FlowSignature]) {
+    const isValid = await fcl.isValidSignature(userAddress, signature);
+    if (!isValid) {
+      throw new UnauthorizedException('Signature invalid');
+    }
+    const address = signature[0].addr;
+    return this.userRepository.findOneOrFail({ where: { address } });
+  }
+
   async updateEmail(email: string, signature: [FlowSignature]) {
     const isValid = await fcl.isValidSignature(email, signature);
     if (!isValid) {

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Put,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -11,14 +12,17 @@ import { DonationEntity } from './entities/donation.entity';
 import { FindOptionsOrder, Repository } from 'typeorm';
 import { UserEntity } from './entities/user.entity';
 import { FlowSignature } from './fcl';
-import { IsEmail } from 'class-validator';
-import { EmailService } from './services/email.service';
+import { IsEmail, IsString } from 'class-validator';
 import { UserService } from './services/user.service';
 
 class EmailUpdateDto {
   signature: [FlowSignature];
   @IsEmail()
   email: string;
+}
+
+class EmailGetDto {
+  signature: [FlowSignature];
 }
 
 @Controller()
@@ -52,6 +56,11 @@ export class AppController {
   @Get('users/:address/donations')
   async getUserDonations(@Param('address') address) {
     return this.userService.getUserDonations(address);
+  }
+
+  @Post('users/:address/email')
+  async getUserEmailInfo(@Param('address') address, @Body() data: EmailGetDto) {
+    return this.userService.getEmail(address, data.signature);
   }
 
   @Put('users/email')

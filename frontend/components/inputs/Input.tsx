@@ -1,10 +1,34 @@
 import styled from "styled-components";
-import { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
+import {
+  HTMLAttributes,
+  InputHTMLAttributes,
+  TextareaHTMLAttributes,
+} from "react";
 
 type Props = {
   label?: string;
   placeholder?: string;
 };
+
+export function PlaceholderInput({
+  label,
+  placeholder,
+  ...props
+}: HTMLAttributes<HTMLButtonElement> & Props) {
+  return (
+    <Container>
+      {label && <h6>{label}</h6>}
+      <button
+        className="white-field"
+        style={{ textAlign: "left", cursor: "pointer" }}
+        name={label}
+        {...props}
+      >
+        {placeholder}
+      </button>
+    </Container>
+  );
+}
 
 export function Input({
   label,

@@ -67,6 +67,7 @@ type FclContextProps = {
     description: string
   ) => Promise<TxResult>;
   updateEmail: (email: string) => Promise<void>;
+  getEmail: () => Promise<string>;
 };
 
 const defaultTxResult = { transactionId: "", status: "" };
@@ -102,6 +103,7 @@ const defaultValue: FclContextProps = {
   register: () => Promise.resolve(defaultTxResult),
   update: () => Promise.resolve(defaultTxResult),
   updateEmail: () => Promise.resolve(),
+  getEmail: () => Promise.resolve(""),
 };
 
 const UserContext = React.createContext(defaultValue);
@@ -149,6 +151,23 @@ export function FclProvider({ children }: { children: ReactChild }) {
   async function signMessage(message: string) {
     const signedMsg = Buffer.from(message).toString("hex");
     return await fcl.currentUser.signUserMessage(signedMsg);
+  }
+
+  async function getEmail() {
+    if (!user) return;
+    const signature = await signMessage(user.addr);
+    const response = await fetch(config.apiHost + `/users/${user.addr}/email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ address: user.addr, signature }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message);
+    }
+    return data.email;
   }
 
   async function updateEmail(email: string) {
@@ -236,6 +255,7 @@ export function FclProvider({ children }: { children: ReactChild }) {
         logout,
         update,
         updateEmail,
+        getEmail,
         register,
         getInfo,
         getAddress,

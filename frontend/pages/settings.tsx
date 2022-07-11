@@ -1,6 +1,6 @@
 import LoginLayout from "../components/layouts/LoginLayout";
 import { PrimaryButton } from "../components/PrimaryButton";
-import { Input, TextArea } from "../components/inputs/Input";
+import { Input, PlaceholderInput, TextArea } from "../components/inputs/Input";
 import { useFcl } from "../common/user-context";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -17,6 +17,7 @@ export default function Settings() {
     register,
     update,
     updateEmail,
+    getEmail,
     user,
     isRegistered,
     info,
@@ -47,9 +48,21 @@ export default function Settings() {
     }
   }, [liveHandle, info]);
 
+  async function onShowEmail() {
+    try {
+      setEmail(await getEmail());
+    } catch (e) {
+      toast.error("Failed to fetch email!");
+    }
+  }
+
   async function onRegister() {
     if (!handle) {
       toast.error("Please enter your handle!");
+      return;
+    }
+    if (!email) {
+      toast.error("Please provide your email!");
       return;
     }
     try {
@@ -60,6 +73,7 @@ export default function Settings() {
           break;
         }
       }
+      await onUpdateEmail();
       await router.replace("/profile");
       toast.success("Registered!");
     } catch (e: any) {
@@ -71,6 +85,9 @@ export default function Settings() {
     try {
       await update(name, websiteUrl, description);
       toast.success("Info updated!");
+      if (isEmailChanged()) {
+        await onUpdateEmail();
+      }
     } catch (e: any) {
       toast.error(e.toString());
     }
@@ -124,10 +141,6 @@ export default function Settings() {
       } else {
         toast("Info unchanged!");
       }
-
-      if (isEmailChanged()) {
-        await onUpdateEmail();
-      }
     } finally {
       setIsSubmitting(false);
     }
@@ -161,7 +174,7 @@ export default function Settings() {
           )}
           <Input
             label="Handle"
-            placeholder="flowtea.me/your-handle"
+            placeholder="your-flowtea-handle"
             value={handle}
             disabled={isRegistered}
             onInput={(e) => setHandle(e.currentTarget.value)}
@@ -172,13 +185,21 @@ export default function Settings() {
             value={name}
             onInput={(e) => setName(e.currentTarget.value)}
           />
-          <Input
-            label="Email"
-            placeholder="Email"
-            type="email"
-            value={email}
-            onInput={(e) => setEmail(e.currentTarget.value)}
-          />
+          {email || !isRegistered ? (
+            <Input
+              label="Email"
+              placeholder="Email"
+              type="email"
+              value={email}
+              onInput={(e) => setEmail(e.currentTarget.value)}
+            />
+          ) : (
+            <PlaceholderInput
+              label="Email"
+              placeholder="Show Email"
+              onClick={onShowEmail}
+            />
+          )}
           <Input
             label="Website"
             placeholder="Your website URL"
