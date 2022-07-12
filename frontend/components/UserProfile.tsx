@@ -134,7 +134,7 @@ export default function UserProfile({
             />
           </TransactionStatsContainer>
 
-          {donations?.to.length > 0 ? (
+          {donations?.to?.length && donations.to.length > 0 ? (
             donations.to.map((donation: any) => (
               <Transaction
                 key={donation.id}
