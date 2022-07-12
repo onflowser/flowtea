@@ -1,11 +1,15 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   Param,
+  PayloadTooLargeException,
   Post,
   Put,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DonationEntity } from './entities/donation.entity';
@@ -14,6 +18,7 @@ import { UserEntity } from './entities/user.entity';
 import { FlowSignature } from './fcl';
 import { IsEmail, IsString } from 'class-validator';
 import { UserService } from './services/user.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 class EmailUpdateDto {
   signature: [FlowSignature];
@@ -61,6 +66,22 @@ export class AppController {
   @Post('users/:address/email')
   async getUserEmailInfo(@Param('address') address, @Body() data: EmailGetDto) {
     return this.userService.getEmail(address, data.signature);
+  }
+
+  @Post('users/:address/photo')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadUserAvatar(
+    @Param('address') address,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.mimetype)) {
+      throw new BadRequestException('File type not supported');
+    }
+    // TODO: implement file validator pipe (see https://docs.nestjs.com/techniques/file-upload#file-validation)
+    if (file.size > 5000000) {
+      throw new PayloadTooLargeException('File too large');
+    }
+    return this.userService.updateProfilePicture(address, file);
   }
 
   @Put('users/email')

@@ -4,9 +4,12 @@ import { useClickOutside } from "../common/use-click-outside";
 import { useRouter } from "next/router";
 import { WidgetGenerationModal } from "./modals/WidgetGenerationModal";
 import { useFcl } from "../common/user-context";
+import { useUserInfo } from "../common/use-user-info";
 
 export function ProfileDropdown(props: HTMLAttributes<HTMLDivElement>) {
-  const { isRegistered, isLoggedIn, logout } = useFcl();
+  const { isRegistered, isLoggedIn, logout, user } = useFcl();
+  const { profilePhotoUrl } = useUserInfo(user?.addr);
+  // TODO: move useUserInfo for current user in user-context
   const [modalIsOpen, setIsModalOpen] = useState(false);
   const router = useRouter();
   const menuRef = createRef<HTMLDivElement>();
@@ -37,7 +40,7 @@ export function ProfileDropdown(props: HTMLAttributes<HTMLDivElement>) {
           ref={photoRef}
           onClick={() => setIsOpen(!isOpen)}
           className="profile-photo-small"
-          src="/images/profile-photo-small.svg"
+          src={profilePhotoUrl || "/images/profile-photo-small.svg"}
           alt=""
         />
         {isOpen && (
@@ -75,6 +78,9 @@ const Container = styled.div`
 const Photo = styled.img`
   cursor: pointer;
   transition: 0.3s ease-in-out all;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
 
   &:hover {
     transform: scale(1.1);

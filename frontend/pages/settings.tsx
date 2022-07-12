@@ -9,6 +9,7 @@ import { isValidWebsiteUrl, wait } from "../common/utils";
 import { useUserInfo } from "../common/use-user-info";
 import MetaTags from "../components/MetaTags";
 import { RichTextEditor } from "../components/inputs/RichTextEditor";
+import { ImageInput } from "../components/ImageInput";
 
 export default function Settings() {
   const router = useRouter();
@@ -18,18 +19,26 @@ export default function Settings() {
     update,
     updateEmail,
     getEmail,
+    uploadProfilePhoto,
     user,
     isRegistered,
     info,
     fetchCurrentUserInfo,
   } = useFcl();
-  const { handle: liveHandle } = useUserInfo(user?.addr);
+  const {
+    handle: liveHandle,
+    profilePhotoUrl,
+    refetchServerSideInfo,
+  } = useUserInfo(user?.addr);
   const { query } = useRouter();
   const [handle, setHandle] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
   const [websiteUrl, setWebsiteUrl] = useState("");
+  const [updatedProfilePhoto, setUpdatedProfilePhoto] = useState<File | null>(
+    null
+  );
 
   useEffect(() => {
     if (!isRegistered) {
@@ -47,6 +56,17 @@ export default function Settings() {
       setHandle(liveHandle);
     }
   }, [liveHandle, info]);
+
+  async function onUpdatePhoto() {
+    if (!updatedProfilePhoto) return;
+    try {
+      await uploadProfilePhoto(updatedProfilePhoto);
+      await refetchServerSideInfo();
+      toast.success("Profile photo updated!");
+    } catch (e) {
+      toast.error("Photo upload failed!");
+    }
+  }
 
   async function onShowEmail() {
     try {
@@ -141,6 +161,9 @@ export default function Settings() {
       } else {
         toast("Info unchanged!");
       }
+      if (updatedProfilePhoto !== null) {
+        await onUpdatePhoto();
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -158,9 +181,13 @@ export default function Settings() {
       <div className="profile-settings">
         {!isRegistered && <h3>Create your profile</h3>}
 
-        {/* TODO: add profile photo functionality */}
-        {/*<img src="/images/add-profile-photo.svg" alt=""/>*/}
-        {/*<p>Drop image to change photo</p>*/}
+        <ImageInput
+          isLoading={(updatedProfilePhoto ?? false) && isSubmitting}
+          imageFile={updatedProfilePhoto}
+          imageSrc={profilePhotoUrl}
+          placeholder="Drop image to change photo"
+          onInput={(file) => setUpdatedProfilePhoto(file)}
+        />
 
         <div className="profile-fields">
           {/* Hide the input if user is not signed in. */}

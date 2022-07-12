@@ -13,6 +13,7 @@ import { UserService } from './services/user.service';
 import { ScannerSettingsService } from './services/scanner-settings.service';
 import { ScannerSettingsEntity } from './entities/scanner-settings.entity';
 import { config } from './config';
+import { CloudinaryService } from './services/cloudinary.service';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { config } from './config';
     CronService,
     EmailService,
     UserService,
+    CloudinaryService,
   ],
 })
 export class AppModule {}

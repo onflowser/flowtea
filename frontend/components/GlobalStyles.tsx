@@ -109,11 +109,6 @@ export const GlobalStyle = createGlobalStyle`
     margin-bottom: 100px;
   }
 
-  .profile-settings img {
-    max-width: 150px;
-    width: 100%;
-  }
-
 
   .profile-fields {
     display: flex;
@@ -154,11 +149,6 @@ export const GlobalStyle = createGlobalStyle`
 
     h6 {
       font-size: 16px;
-    }
-
-    .profile-settings img {
-      max-width: 100px;
-      width: 100%;
     }
   }
 

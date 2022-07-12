@@ -6,6 +6,9 @@ export class UserEntity {
   address: string;
 
   @Column({ nullable: true })
+  profilePhotoUrl: string | null;
+
+  @Column({ nullable: true })
   name: string | null;
 
   @Column({ type: 'datetime', nullable: true })

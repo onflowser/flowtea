@@ -9,6 +9,11 @@ export type EmailConfig = {
   enableSendingEmail: boolean;
   sendgridApiKey: string;
 };
+export type CloudinaryConfig = {
+  cloudName: string;
+  apiKey: string;
+  apiSecret: string;
+};
 
 type Config = {
   database: TypeOrmModuleOptions;
@@ -17,6 +22,7 @@ type Config = {
   environment: NodeEnvironment;
   port: number;
   paymentRecurringDayPeriod: number;
+  cloudinary: CloudinaryConfig;
 };
 
 const database: TypeOrmModuleOptions = {
@@ -49,6 +55,12 @@ const flow: FlowConfig = {
     '0xf8d6e0586b0a20c7',
 };
 
+const cloudinary: CloudinaryConfig = {
+  cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  apiKey: process.env.CLOUDINARY_API_KEY,
+  apiSecret: process.env.CLOUDINARY_API_SECRET,
+};
+
 export const config: Config = {
   database,
   flow,
@@ -56,6 +68,7 @@ export const config: Config = {
   environment,
   port,
   paymentRecurringDayPeriod,
+  cloudinary,
 };
 
 if (!config.flow.deploymentAccountAddress) {

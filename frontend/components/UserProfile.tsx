@@ -10,6 +10,7 @@ import Link from "next/link";
 import { TextArea } from "./inputs/Input";
 import { MarkdownPreview } from "./MarkdownPreview";
 import { ConfirmTransactionModal } from "./modals/ConfirmTransactionModal";
+import { ImageInput } from "./ImageInput";
 
 /**
  * @param userId Can either be a handle or account address.
@@ -20,8 +21,15 @@ export default function UserProfile({
   userId: string | undefined;
 }) {
   const { isSendingDonation, donateFlow } = useFcl();
-  const { address, isSelf, info, infoError, donations, donationsError } =
-    useUserInfo(userId);
+  const {
+    address,
+    isSelf,
+    info,
+    infoError,
+    donations,
+    serverSideInfoError,
+    profilePhotoUrl,
+  } = useUserInfo(userId);
   const [recurring, setRecurring] = useState(false);
   const [flowTeaAmount, setFlowTeaAmount] = useState(0);
   const [message, setMessage] = useState("");
@@ -80,7 +88,10 @@ export default function UserProfile({
       <div className="dark-background-profile" />
 
       <div className="profile-photo-main-wrapper">
-        <img src="/images/profile-photo-main.svg" alt="" />
+        <ImageInput
+          imageSrc={profilePhotoUrl || "/images/profile-photo-main.svg"}
+          disabled
+        />
         <h3 className="profile-name">{info?.name}</h3>
         <a
           target="_blank"
@@ -131,7 +142,7 @@ export default function UserProfile({
                 fromAddress={donation.from}
               />
             ))
-          ) : donationsError ? (
+          ) : serverSideInfoError ? (
             <div>Could not retrieve user donations.</div>
           ) : null}
         </div>

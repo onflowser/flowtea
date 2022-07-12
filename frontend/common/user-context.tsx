@@ -29,6 +29,7 @@ import {
 } from "./fcl-service";
 import useSWR, { KeyedMutator } from "swr";
 import { config } from "./config";
+import { uploadFile } from "./utils";
 
 type TxResult = { transactionId: string; status: any };
 
@@ -68,6 +69,7 @@ type FclContextProps = {
   ) => Promise<TxResult>;
   updateEmail: (email: string) => Promise<void>;
   getEmail: () => Promise<string>;
+  uploadProfilePhoto: (file: File) => Promise<string>;
 };
 
 const defaultTxResult = { transactionId: "", status: "" };
@@ -104,6 +106,7 @@ const defaultValue: FclContextProps = {
   update: () => Promise.resolve(defaultTxResult),
   updateEmail: () => Promise.resolve(),
   getEmail: () => Promise.resolve(""),
+  uploadProfilePhoto: () => Promise.resolve(""),
 };
 
 const UserContext = React.createContext(defaultValue);
@@ -151,6 +154,12 @@ export function FclProvider({ children }: { children: ReactChild }) {
   async function signMessage(message: string) {
     const signedMsg = Buffer.from(message).toString("hex");
     return await fcl.currentUser.signUserMessage(signedMsg);
+  }
+
+  async function uploadProfilePhoto(photo: File) {
+    if (!user) return;
+    const data = await uploadFile(`/users/${user.addr}/photo`, photo);
+    return data.profilePhotoUrl;
   }
 
   async function getEmail() {
@@ -255,6 +264,7 @@ export function FclProvider({ children }: { children: ReactChild }) {
         logout,
         update,
         updateEmail,
+        uploadProfilePhoto,
         getEmail,
         register,
         getInfo,

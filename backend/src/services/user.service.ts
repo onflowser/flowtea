@@ -6,6 +6,7 @@ import { EmailService, EmailTemplate } from './email.service';
 import { FlowSignature } from '../fcl';
 import * as fcl from '../fcl';
 import { DonationEntity } from '../entities/donation.entity';
+import { CloudinaryService } from './cloudinary.service';
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,7 @@ export class UserService {
     @InjectRepository(DonationEntity)
     private donationRepository: Repository<DonationEntity>,
     private emailService: EmailService,
+    private cloudinaryService: CloudinaryService,
   ) {
     fcl.init();
   }
@@ -24,6 +26,7 @@ export class UserService {
       this.userRepository.findOneOrFail({ where: { address } }),
       this.getUserDonations(address),
     ]);
+    // TODO: hide email from public endpoints
     return { user, ...donations };
   }
 
@@ -48,6 +51,18 @@ export class UserService {
     }
     const address = signature[0].addr;
     return this.userRepository.findOneOrFail({ where: { address } });
+  }
+
+  async updateProfilePicture(address: string, file: Express.Multer.File) {
+    const user = await this.userRepository.findOneOrFail({
+      where: { address },
+    });
+    const uploadResponse = await this.cloudinaryService.upload(
+      file.buffer,
+      user.address,
+    );
+    user.profilePhotoUrl = uploadResponse.secure_url;
+    return await this.userRepository.save(user);
   }
 
   async updateEmail(email: string, signature: [FlowSignature]) {

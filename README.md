@@ -84,6 +84,11 @@ Example configuration for staging deployment (`flow.staging.json`).
 #### General
 - `NODE_ENV` (default: `development`)
 
+#### Cloudinary
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+
 #### Database
 - `TYPEORM_TYPE` (default: `mariadb`)
 - `TYPEORM_HOST` (default: `localhost`)

@@ -18,32 +18,40 @@ export function useUserInfo(userId: string | undefined) {
     () => (isAddress ? userId && getHandle(userId) : userId)
   );
   const {
-    data: donations,
-    error: donationsError,
-    isValidating: isValidatingDonations,
-  } = useSWR(address ? `/users/${address}/donations` : null);
+    data: serverSideInfo,
+    error: serverSideInfoError,
+    isValidating: isValidatingServerSideInfo,
+    mutate: refetchServerSideInfo,
+  } = useSWR(address ? `/users/${address}` : null);
   const {
     data: info,
     error: infoError,
     mutate: refetchInfo,
-  } = useSWR<FlowTeaInfo | null>(address ? `/users/${address}` : null, () =>
+  } = useSWR<FlowTeaInfo | null>(address ? `/flow/${address}` : null, () =>
     address ? getInfo(address) : null
   );
   const isSelf = address === user?.addr;
 
   return {
     isLoading:
-      address === undefined || donations === undefined || info === undefined,
+      address === undefined ||
+      serverSideInfo === undefined ||
+      info === undefined,
     address,
+    profilePhotoUrl: serverSideInfo?.user?.profilePhotoUrl ?? null,
+    refetchServerSideInfo,
     handle,
     isSelf,
     info,
-    donations, // TODO: how both to & from donations
+    donations: {
+      to: serverSideInfo?.to,
+      from: serverSideInfo?.from,
+    },
     infoError,
     handleError,
     refetchInfo,
     addressError,
-    donationsError,
-    isValidatingDonations,
+    serverSideInfoError,
+    isValidatingServerSideInfo,
   };
 }
