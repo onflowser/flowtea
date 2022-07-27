@@ -7,19 +7,19 @@ import * as t from "@onflow/types";
 
 // cadence files
 // @ts-ignore
-import getFlowBalanceCode from "../cadence/scripts/get-flow-balance.cdc";
+import getFlowBalanceCode from "../../cadence/scripts/get-flow-balance.cdc";
 // @ts-ignore
-import getAddressCode from "../cadence/scripts/get-address.cdc";
+import getAddressCode from "../../cadence/scripts/get-address.cdc";
 // @ts-ignore
-import getHandleCode from "../cadence/scripts/get-handle.cdc";
+import getHandleCode from "../../cadence/scripts/get-handle.cdc";
 // @ts-ignore
-import getInfoCode from "../cadence/scripts/get-info.cdc";
+import getInfoCode from "../../cadence/scripts/get-info.cdc";
 // @ts-ignore
-import donateFlowCode from "../cadence/transactions/donate.cdc";
+import donateFlowCode from "../../cadence/transactions/donate.cdc";
 // @ts-ignore
-import registerFlowCode from "../cadence/transactions/register.cdc";
+import registerFlowCode from "../../cadence/transactions/register.cdc";
 // @ts-ignore
-import updateFlowCode from "../cadence/transactions/update.cdc";
+import updateFlowCode from "../../cadence/transactions/update.cdc";
 import {
   FlowTeaInfo,
   getAddress,

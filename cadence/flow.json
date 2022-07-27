@@ -6,9 +6,9 @@
     }
   },
   "contracts": {
-    "FlowTea": "./cadence/contracts/FlowTea.cdc",
+    "FlowTea": "./contracts/FlowTea.cdc",
     "FungibleToken": {
-      "source": "./cadence/contracts/core/FungibleToken.cdc",
+      "source": "./contracts/core/FungibleToken.cdc",
       "aliases": {
         "testnet": "9a0766d93b6608b7",
         "emulator": "ee82856bf20e2aa6"

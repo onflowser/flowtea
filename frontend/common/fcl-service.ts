@@ -4,13 +4,13 @@ import * as fcl from "@onflow/fcl";
 import * as t from "@onflow/types";
 
 // @ts-ignore
-import getFlowBalanceCode from "../cadence/scripts/get-flow-balance.cdc";
+import getFlowBalanceCode from "../../cadence/scripts/get-flow-balance.cdc";
 // @ts-ignore
-import getInfoCode from "../cadence/scripts/get-info.cdc";
+import getInfoCode from "../../cadence/scripts/get-info.cdc";
 // @ts-ignore
-import getAddressCode from "../cadence/scripts/get-address.cdc";
+import getAddressCode from "../../cadence/scripts/get-address.cdc";
 // @ts-ignore
-import getHandleCode from "../cadence/scripts/get-handle.cdc";
+import getHandleCode from "../../cadence/scripts/get-handle.cdc";
 import { config, AppEnvironment, getDomain } from "./config";
 
 export type FlowTeaInfo = {

@@ -28,15 +28,19 @@ git clone https://github.com/onflowser/flowtea
 If the above requirements are met, you can proceed with npm lib installation.
 
 ```shell
-cd frontend && npm i
-cd ../backend && npm i
+npm run bootstrap
 ```
 
 ### 3. Run project
 
-- backend: `npm run start:local`
-- frontend: `npm run dev`
-- flow emulator: check out [frontend/README](./frontend/README.md#Cadence)
+In the root of the project run:
+```shell
+npm start
+```
+When all processes start up, make sure to also deploy the cadence contracts:
+```shell
+npm run flow:deploy
+```
 
 ## Configuration
 

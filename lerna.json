@@ -1,7 +1,8 @@
 {
   "packages": [
     "./backend",
-    "./frontend"
+    "./frontend",
+    "./cadence"
   ],
   "version": "0.0.1"
 }
