@@ -36,7 +36,7 @@ const email = {
 
 const environment = (process.env.NODE_ENV as any) || 'development';
 
-const port = (process.env.PORT as any) || 3000;
+const port = (process.env.PORT as any) || 3001;
 
 const paymentRecurringDayPeriod = process.env.PAYMENT_RECURRING_DAY_PERIOD
   ? parseInt(process.env.PAYMENT_RECURRING_DAY_PERIOD)

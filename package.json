@@ -1,0 +1,25 @@
+{
+  "name": "flowtea",
+  "version": "1.0.0",
+  "description": "<div align=\"center\"> \t<br> \t<img alt=\"Flowser logo\" src=\"./logo.svg\" width=\"150\" height=\"150\"> \t<h1>FlowTea</h1> \t<p> \t\t<b>Let your appreciators buy you a Flow tea.</b> \t</p> \t<br> \t<br> </div>",
+  "main": "index.js",
+  "scripts": {
+    "bootstrap": "npm i && lerna bootstrap",
+    "start-all:dev": "source .envrc && lerna run start:dev --parallel"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onflowser/flowtea.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/onflowser/flowtea/issues"
+  },
+  "homepage": "https://github.com/onflowser/flowtea#readme",
+  "devDependencies": {
+    "concurrently": "^7.3.0",
+    "lerna": "^5.2.0"
+  }
+}

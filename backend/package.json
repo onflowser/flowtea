@@ -1,5 +1,5 @@
 {
-  "name": "flowtea",
+  "name": "flowtea-backend",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -41,7 +41,6 @@
     "typeorm": "^0.3.6"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.0.0",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
     "@types/cron": "^2.0.0",

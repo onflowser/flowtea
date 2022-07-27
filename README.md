@@ -21,7 +21,9 @@ git clone https://github.com/onflowser/flowtea
 
 **Prerequisites:**
 - Node.js (+ npm)
+- MySQL or MariaDB
 - [Flow CLI](https://docs.onflow.org/flow-cli/)
+- [Nest CLI](https://docs.nestjs.com/#installation)
 
 If the above requirements are met, you can proceed with npm lib installation.
 
